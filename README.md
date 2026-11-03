@@ -110,9 +110,9 @@ The count of all symmetric moments through order four is $\binom{N+4}{4}-1$. Pyt
 
 For the path matrix $A$, the R engine uses
 
-$$
+```math
 T=(I-A)^{-1},\qquad \mathrm{d}T=T\,(\mathrm{d}A)\,T.
-$$
+```
 
 It then applies product rules to sparse source cumulants. Fitting uses these exact gradients with `nlminb`. This is an exact specialized derivative engine, not a general torch/autodiff graph. Native tensor contraction accelerates the repeated calculation, while the R implementation provides an independent reference path. The [RAM-style engine explanation](docs/engine.md) describes how this generalizes to user-defined models. Large-scale performance and calibration should be assessed for the requested trait/moment set.
 
