@@ -2,6 +2,41 @@
 .name_ok <- function(x) grepl("^[A-Za-z][A-Za-z0-9_.]*$", x)
 .sorted_tuple <- function(x) paste(sort(x), collapse = ",")
 
+.numeric_literal <- function(x) grepl("^[+-]?([0-9]+\\.?[0-9]*|\\.[0-9]+)([eE][+-]?[0-9]+)?$", x)
+
+# This parser deliberately never uses parse(), eval(), or expression substitution.
+# Cumulant arguments are variable identifiers, and labels are quoted identifiers.
+.parse_cumulant_statement <- function(line) {
+  m <- regexec("^k([34])\\s*\\(([^()]*)\\)\\s*(?:=\\s*(.+))?$", line, perl=TRUE)
+  bits <- regmatches(line,m)[[1L]]
+  if(!length(bits))stop("Malformed cumulant statement. Use k3(x, x, y) = free(\"s\") or k4(x, x, y, y) = 0: ",line)
+  q <- as.integer(bits[2L]); inside <- bits[3L]
+  name_pattern <- "[A-Za-z][A-Za-z0-9_.]*"
+  argument_pattern <- paste0("^\\s*",name_pattern,"\\s*(,\\s*",name_pattern,"\\s*){",q-1L,"}$")
+  if(!grepl(argument_pattern,inside,perl=TRUE))
+    stop("k",q," requires exactly ",q," plain variable identifiers separated by commas: ",line)
+  tuple <- trimws(strsplit(inside,",",fixed=TRUE)[[1L]])
+  rhs <- if(length(bits)>=4L)trimws(bits[4L]) else ""
+  modifier <- NULL
+  if(nzchar(rhs) && !grepl("^free\\s*\\(\\s*\\)$",rhs,perl=TRUE)) {
+    if(.numeric_literal(rhs)) {
+      if(!is.finite(as.numeric(rhs)))stop("Fixed cumulant must be a finite numeric literal: ",rhs)
+      modifier <- rhs
+    } else {
+      lm <- regexec("^free\\s*\\(\\s*([\"'])([A-Za-z][A-Za-z0-9_.]*)\\1\\s*\\)$",rhs,perl=TRUE)
+      lb <- regmatches(rhs,lm)[[1L]]
+      if(!length(lb))stop("Cumulant RHS must be free(), free(\"label\"), or a finite numeric literal; expressions and unquoted labels are not accepted: ",rhs)
+      modifier <- lb[3L]
+    }
+  }
+  list(lhs=tuple[1L],op=paste0("k",q),rhs=rhs,tuple=tuple,modifier=modifier,line=line)
+}
+
+.canonical_cumulant_text <- function(tuple,modifier=NULL) {
+  rhs <- if(is.null(modifier))"free()" else if(.numeric_literal(modifier))modifier else paste0('free("',modifier,'")')
+  paste0("k",length(tuple),"(",paste(tuple,collapse=", "),") = ",rhs)
+}
+
 #' Define a genomic comoment structural equation model
 #' @export
 gcmsem_model <- function(syntax, observed, latent = character(),
@@ -13,6 +48,7 @@ gcmsem_model <- function(syntax, observed, latent = character(),
   lines <- lines[nzchar(lines)]
   if (!length(lines)) stop("Empty model syntax")
   parsed <- lapply(lines, function(line) {
+    if(grepl("^k[34]\\s*\\(",line,perl=TRUE))return(.parse_cumulant_statement(line))
     m <- regexpr("=~|~~~~|~~~|~--|~~-|~~|~", line, perl = TRUE)
     if (m[1] < 1L) stop("Unsupported model statement: ", line)
     op <- regmatches(line, m)
@@ -31,7 +67,7 @@ gcmsem_model <- function(syntax, observed, latent = character(),
     if (kind == "cumulant") ii <- sort(ii)
     id <- paste(kind, .sorted_tuple(if(kind=="path") seq_along(ii) else ii), collapse=":")
     if(kind=="path") id <- paste("path",paste(ii,collapse=","),sep=":")
-    fixed <- !is.null(modifier) && grepl("^[+-]?([0-9]+\\.?[0-9]*|\\.[0-9]+)([eE][+-]?[0-9]+)?$",modifier)
+    fixed <- !is.null(modifier) && .numeric_literal(modifier)
     if (!is.null(modifier) && !fixed && !.name_ok(modifier)) stop("Invalid parameter modifier: ",modifier)
     label <- if (is.null(modifier) || fixed) "" else modifier
     value <- if(fixed) as.numeric(modifier) else default_start
@@ -55,6 +91,11 @@ gcmsem_model <- function(syntax, observed, latent = character(),
                       if(q==3)0 else 0.5,TRUE)
   }
   for(z in parsed) {
+    if(z$op %in% c("k3","k4")) {
+      start<-if(length(z$tuple)==4L && length(unique(z$tuple))==1L)0.5 else 0
+      put("cumulant",z$tuple,z$modifier,start)
+      next
+    }
     terms <- trimws(unlist(strsplit(z$rhs,"(?<![eE])\\+",perl=TRUE)))
     if(any(!nzchar(terms))) stop("Empty RHS term in ",z$line)
     for(term in terms) {
@@ -73,6 +114,10 @@ gcmsem_model <- function(syntax, observed, latent = character(),
         mod <- if(length(bits)==need+1L)bits[1] else NULL
         vars <- tail(bits,need)
         tuple <- switch(z$op,"~--"=c(z$lhs,z$lhs,vars),"~~-"=c(z$lhs,vars,vars),c(z$lhs,vars))
+        if(z$op%in%c("~--","~~-"))
+          stop("Operator ",z$op," has been retired because repeated-index direction is ambiguous. Replace this term with ",.canonical_cumulant_text(tuple,mod),".")
+        if(z$op%in%c("~~~","~~~~"))
+          warning("Higher-cumulant operator ",z$op," is deprecated. This term means ",.canonical_cumulant_text(tuple,mod),"; use that explicit syntax instead.",call.=FALSE)
         start <- if(q==2L && length(unique(tuple))==1L)1 else if(q==4L && length(unique(tuple))==1L)0.5 else 0
         put("cumulant",tuple,mod,start)
       }
