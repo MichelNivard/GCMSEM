@@ -64,7 +64,7 @@ parameter_estimates(fit)
 
 `gaussian_observed = FALSE` frees the marginal third and fourth cumulants of the **observed variables' disturbances**. `gaussian_latent` controls latent disturbances separately. These switches do not force marginal observed variables to be Gaussian when they receive non-Gaussian inputs. `orders = 2:3` in `gcmsem()` selects which observed moments enter the fitting objective; it is a different operation.
 
-The core syntax extends familiar SEM notation:
+Paths, loadings and covariances use familiar SEM notation. Higher cumulants use an explicit tuple of variables, with parameter labels kept outside that tuple:
 
 | Syntax | Meaning |
 |---|---|
@@ -72,14 +72,15 @@ The core syntax extends familiar SEM notation:
 | `f =~ a*x + a*y` | Factor with equal direct loadings a |
 | `f ~~ 1*f` | Fixed factor disturbance variance |
 | `x ~~ y` | Disturbance covariance |
-| `x ~~~ x*y` | Third cumulant of x,x,y disturbances |
-| `x ~-- y` | Alias for x,x,y |
-| `x ~~- y` | Alias for x,y,y |
-| `x ~~~~ x*y*y` | Fourth cumulant of x,x,y,y disturbances |
-| `f ~~~ s*f*f` | Free factor third cumulant labeled s |
-| `f ~~~~ k*f*f*f` | Free factor fourth cumulant labeled k |
+| `k3(x, x, y) = free("s")` | Third cumulant of x,x,y disturbances, labeled s |
+| `k3(x, y, y) = free("t")` | Third cumulant of x,y,y disturbances, labeled t |
+| `k4(x, x, y, y) = free()` | Free fourth cumulant of x,x,y,y disturbances |
+| `k3(f, f, f) = free("skew_f")` | Free factor third cumulant |
+| `k4(f, f, f, f) = 0` | Fix the factor fourth cumulant to its Gaussian value |
 
-Repeated names specify repeated tensor indices; fourth-order parameters are **excess cumulants**, so Gaussian means zero. Numeric multipliers fix parameters; repeated labels constrain equality. Tuple syntax also represents cross-cumulants involving three or four different traits. Higher cross-source cumulants not declared in syntax are zero. See the [model syntax guide](docs/model-syntax.md) for full defaults and examples. This is a documented subset and extension of lavaan-like syntax, not a drop-in replacement for every lavaan feature. Means are estimated by Python but are not currently fitted as an R mean structure.
+Every argument inside `k3(...)` or `k4(...)` is a variable. The quoted name inside `free("...")` is a parameter label, even when it has the same spelling as a variable. For example, `k3(x, x, y) = free("y")` contains two x indices and one y index; its parameter is labeled y. Reusing a label imposes equality. `free()` or a bare `k3(x, x, y)` creates an unlabeled free parameter; a numeric right-hand side fixes the cumulant.
+
+Repeated names specify repeated tensor indices; fourth-order parameters are **excess cumulants**, so Gaussian means zero. Tuple syntax also represents cross-cumulants involving three or four different traits. Higher cross-source cumulants not declared in syntax are zero. The old directional punctuation aliases have been retired rather than assigned a new meaning. See the [model syntax guide](docs/model-syntax.md) for defaults and migration guidance. This is a documented subset and extension of lavaan-like syntax, not a drop-in replacement for every lavaan feature. Means are estimated by Python but are not currently fitted as an R mean structure.
 
 ## Output and uncertainty
 
@@ -105,9 +106,15 @@ R minimizes a diagonal-weighted discrepancy. Its sandwich SEs use the entire sup
 
 ## Scaling and computation
 
-The count of all symmetric moments through order four grows as `choose(N + 4, 4) - 1`. Python computes higher-order responses one tuple at a time, supports selecting tuples, and checks expected memory requirements. The full joint sampling covariance still needs quadratic storage in the number of selected moments. Its rank is at most B−1 for B deletion groups; DWLS does not require inverting that matrix.
+The count of all symmetric moments through order four is $\binom{N+4}{4}-1$. Python computes higher-order responses one tuple at a time, supports selecting tuples, and checks expected memory requirements. The full joint sampling covariance still needs quadratic storage in the number of selected moments. Its rank is at most $B-1$ for $B$ deletion groups; DWLS does not require inverting that matrix.
 
-The R engine differentiates `T = (I-B)^(-1)` exactly using `dT = T dB T`, then applies product rules to sparse source cumulants. Fitting uses these gradients with `nlminb`. This is an exact specialized derivative engine, not a general torch/autodiff graph. Native tensor contraction accelerates the repeated calculation, while the R implementation provides an independent reference path. The [RAM-style engine explanation](docs/engine.md) describes how this generalizes to user-defined models. Large-scale performance and calibration should be assessed for the requested trait/moment set.
+For the path matrix $A$, the R engine uses
+
+$$
+T=(I-A)^{-1},\qquad \mathrm{d}T=T\,(\mathrm{d}A)\,T.
+$$
+
+It then applies product rules to sparse source cumulants. Fitting uses these exact gradients with `nlminb`. This is an exact specialized derivative engine, not a general torch/autodiff graph. Native tensor contraction accelerates the repeated calculation, while the R implementation provides an independent reference path. The [RAM-style engine explanation](docs/engine.md) describes how this generalizes to user-defined models. Large-scale performance and calibration should be assessed for the requested trait/moment set.
 
 ## Development and provenance
 
