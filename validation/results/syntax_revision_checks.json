@@ -1,0 +1,26 @@
+{
+  "package": "GCMSEM",
+  "version": "0.1.0",
+  "r_version": "4.3.3",
+  "build": "passed",
+  "install": "passed",
+  "R_CMD_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": 0,
+    "status": "OK"
+  },
+  "R_checks": 73,
+  "installed_canonical_syntax_smoke": "passed",
+  "source_snapshot_matches": [
+    "R/model.R",
+    "tests/r/test-core.R",
+    "man/gcmsem_model.Rd",
+    "README.md"
+  ],
+  "archive": "GCMSEM_0.1.0.tar.gz",
+  "archive_sha256": "1bfbe9ac90fbe76e213512ee02ec93c1d015759cf708d01da33f71bba67cbbf9",
+  "historical_simulation_results_modified": false,
+  "scope": "Explicit k3/k4 tuple grammar and GitHub math documentation revision; historical simulation results are unchanged.",
+  "date": "2026-11-03"
+}
