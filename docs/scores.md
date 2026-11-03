@@ -4,9 +4,9 @@
 
 For tag SNP j, source stratum c, and order q = 1, 2, 3, 4:
 
-$$
+```math
 L^{(q)}_{jc}=\sum_{k\in c} R_{jk}^{q}.
-$$
+```
 
 `R` is the signed correlation of genotype-standardized, minor-allele-coded genotypes. In particular, third powers preserve negative signs. Squared or absolute-valued LD input cannot recover these scores and is not a valid substitute. A supplied matrix cannot be automatically recognized as unsigned: its provenance remains the user's responsibility.
 
@@ -83,9 +83,9 @@ Supplied LD must be finite, symmetric, have a unit diagonal and entries in [-1,1
 
 With `--finite-reference`, the second-order score uses the conventional correction
 
-$$
+```math
 \widetilde{r^2}=r^2-\frac{1-r^2}{n_\mathrm{ref}-2}
-$$
+```
 
 for off-diagonal entries, retaining the self-term as exactly one. Negative corrected values are retained. This is an approximation for sample correlations, conditional on its sampling assumptions; it is not an exact correction for arbitrary reference sampling, relatedness, dosage imputation, or variant-dependent missingness. The complete reference sample count is used after mean imputation, rather than a different pairwise sample count for every LD pair.
 

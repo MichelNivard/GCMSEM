@@ -10,9 +10,9 @@ do not certify coverage for every GWAS architecture.
 
 For genotype-standardized effects, let
 
-$$
+```math
 \widehat b_{ja}=\sum_k R_{jk}\beta_{ka}+\epsilon_{ja}.
-$$
+```
 
 Here `j` is a regression/tag SNP, `k` is a reference/source SNP, and `a` is a
 trait. `beta` is the joint effect conditional on other variants; a GWAS reports
@@ -42,11 +42,11 @@ Source variants belong to disjoint annotation strata `c`. Within a stratum,
 their effect vectors have common cumulants through order four. Effect vectors
 at different source SNPs are independent under the working model. Thus
 
-$$
+```math
 L^{(q)}_{jc}=\sum_{k\in c} R_{jk}^{q},\qquad
 \operatorname{cum}(b_{ja_1},\ldots,b_{ja_q})
 =\sum_c L^{(q)}_{jc}\kappa_{c,a_1\ldots a_q}.
-$$
+```
 
 `L1` and `L3` retain LD signs. Replacing a cube by an absolute cube changes the
 estimand. Odd-order moments also depend on the chosen effect-allele convention;
@@ -68,18 +68,18 @@ calculation; it does not repair a misspecified mean regression.
 
 The default error model is joint mean-zero Gaussian sampling error. At a SNP,
 
-$$
+```math
 \Omega_{j,ab}=s_{ja}s_{jb}I_{ab},
-$$
+```
 
 where `s` denotes the reported standard error on the analysis scale. After
 fitting marginal means, a second-order regression includes both the LD scores
 and `s_a*s_b` as predictors:
 
-$$
+```math
 E[(\widehat b_{ja}-\mu_{ja})(\widehat b_{jb}-\mu_{jb})]
 =\sum_c L^{(2)}_{jc}\kappa_{c,ab}+s_{ja}s_{jb}I_{ab}.
-$$
+```
 
 This is an LDSC-style intercept model expressed on the effect scale. The
 off-diagonal noise coefficients represent correlated estimation error,
@@ -93,9 +93,9 @@ selection bias, or nonlinear/binary-outcome approximation error.
 Gaussian product corrections use the **whole** fitted noise matrix. For
 centered estimates `x`, for example,
 
-$$
+```math
 H_{abc}=x_ax_bx_c-\Omega_{ab}x_c-\Omega_{ac}x_b-\Omega_{bc}x_a,
-$$
+```
 
 and the fourth-order correction subtracts the six covariance-times-product
 terms and adds the three covariance-pairing terms. Repeated trait indices are
@@ -147,15 +147,15 @@ estimate of the number of independent genetic observations.
 For unequal deletion fractions `f_b`, the weighted delete-group construction
 uses
 
-$$
+```math
 \tau_b=\widehat m/f_b-(1/f_b-1)\widehat m_{-b},\qquad
 \widehat m_J=\sum_b f_b\tau_b,
-$$
+```
 
-$$
+```math
 \widehat V=\frac1B\sum_b
 \frac{(\tau_b-\widehat m_J)(\tau_b-\widehat m_J)^T}{1/f_b-1}.
-$$
+```
 
 For equal groups this becomes the usual delete-block jackknife covariance.
 The covariance formula is formally associated with the jackknife-corrected
@@ -177,10 +177,10 @@ moments can be necessary. A large SNP count does not remove this rank bound.
 The R package propagates disturbance cumulants through a linear structural
 model. For structural coefficient matrix `B`,
 
-$$
+```math
 z=(I-B)^{-1}e=T e,\qquad
 K^{(q)}_z=T^{\otimes q}K^{(q)}_e.
-$$
+```
 
 Observed and latent node distributions are disturbance distributions. Marking
 a disturbance Gaussian fixes its third cumulants and excess fourth cumulants
@@ -193,12 +193,12 @@ standardizing a nondegenerate variable.
 DWLS chooses parameters using inverse marginal sampling variances. Robust
 parameter uncertainty retains the full sampling covariance:
 
-$$
+```math
 W=\operatorname{diag}(1/\widehat V_{ii}),\quad
 A=J^TWJ,\quad
 \operatorname{Var}(\widehat\theta)
 =A^{-1}J^TW\widehat VWJA^{-1}.
-$$
+```
 
 There is no additional division by GWAS sample size. A singular sampling
 covariance does not itself prevent this sandwich computation because DWLS
@@ -246,10 +246,10 @@ procedure by adding a finite quadratic penalty for negative eigenvalues of
 source moment matrices. If `M` is the source raw-moment matrix indexed by
 monomials of degree zero, one, and two, this optional penalty is
 
-$$
+```math
 P(\theta)=\sum_i\{\min(\lambda_i(M(\theta)),0)\}^2,
 \qquad Q_{\mathrm{pen}}=Q_{\mathrm{DWLS}}+\rho P.
-$$
+```
 
 Source units are normalized using fixed scales determined at initialization;
 this scaling does not change positive semidefiniteness. The code differentiates
