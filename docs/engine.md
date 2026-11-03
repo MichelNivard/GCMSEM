@@ -4,42 +4,42 @@ The derivative implementation is model-general. It does not contain separate for
 
 Let `z` contain all observed and latent nodes and let `u` be their centered disturbances. The model is
 
-\[
+$$
 z=Az+u,\qquad y=Fz,\qquad T=F(I-A)^{-1}.
-\]
+$$
 
 `A` has outcome rows and predictor columns. Factor loadings are directed paths from a latent node to an indicator. `F` selects observed nodes. If `S` is the disturbance covariance matrix, the implied covariance is the usual RAM expression
 
-\[
+$$
 \Sigma=TST^\mathsf T.
-\]
+$$
 
 Let `Kq` be the symmetric disturbance cumulant tensor of order q. The same structure generalizes covariance to orders three and four:
 
-\[
+$$
 \kappa^{(q)}_{i_1\ldots i_q}
 =\sum_{j_1,\ldots,j_q}
 K^{(q)}_{j_1\ldots j_q}
 \prod_{r=1}^{q}T_{i_rj_r}.
-\]
+$$
 
 Undeclared cross-disturbance cumulants are zero. An independent-source model therefore needs only marginal source cumulants. The sparse implementation also supports declared cross-source cumulants, with the distinct permutations of a symmetric tuple counted explicitly. For example, xxy has three distinct permutations, not one or six.
 
 For every parameter, the derivative is
 
-\[
+$$
 \partial_\theta T
 =F(I-A)^{-1}(\partial_\theta A)(I-A)^{-1},
-\]
+$$
 
 followed by
 
-\[
+$$
 \partial_\theta\kappa^{(q)}_I
 =\sum_J(\partial_\theta K^{(q)}_J)\prod_rT_{i_rj_r}
 +\sum_JK^{(q)}_J\sum_s
 (\partial_\theta T_{i_sj_s})\prod_{r\ne s}T_{i_rj_r}.
-\]
+$$
 
 The product rule uses products excluding the differentiated factor; it never divides by a loading. Consequently exact zero loadings do not cause undefined derivatives. If a parameter labels multiple paths or source moments, all its contributions are accumulated. Setting a source's third and fourth cumulants to fixed Gaussian values removes those free parameters but uses the same engine.
 
@@ -49,16 +49,16 @@ The native C++ backend accelerates the tensor contractions and their derivatives
 
 For moment estimates `m`, diagonal inverse-variance weights `W`, and their complete sampling covariance `V`, the fit minimizes
 
-\[
+$$
 Q=(m-\mu(\theta))^\mathsf T W(m-\mu(\theta)),
-\]
+$$
 
 and uses
 
-\[
+$$
 \widehat{\mathrm{Var}}(\hat\theta)
 =(J^\mathsf T WJ)^{-1}J^\mathsf T WVWJ(J^\mathsf T WJ)^{-1}.
-\]
+$$
 
 `V` is already the sampling covariance of the moment estimates; there is no further division by GWAS sample size.
 

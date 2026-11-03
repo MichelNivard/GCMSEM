@@ -1,6 +1,6 @@
 # GCMSEM model syntax
 
-GCMSEM models the second, third and fourth **cumulants of joint SNP effects**. The fourth cumulant is excess kurtosis times variance squared, not the fourth central moment. Model equations refer to genomic effects, not directly to an individual-level phenotype regression.
+GCMSEM models the second, third and fourth **cumulants of joint SNP effects**. A marginal fourth cumulant is excess kurtosis times variance squared, not the fourth central moment. Model equations refer to genomic effects, not directly to an individual-level phenotype regression.
 
 ## Define a model
 
@@ -25,7 +25,7 @@ Defaults are explicit:
 - Observed higher moments can be nonzero even when that node's own disturbance is Gaussian, because non-Gaussian upstream sources propagate through paths.
 - There is no automatic equality of loadings, residual covariances, causal direction selection, or zero-confounder model selection.
 
-## Operators and modifiers
+## Paths, factors and covariances
 
 | Syntax | Meaning |
 |---|---|
@@ -33,16 +33,58 @@ Defaults are explicit:
 | `f =~ x + y + z` | Latent factor with three freely estimated loadings |
 | `x ~~ v*x` | Source/residual variance, labelled v |
 | `x ~~ c*y` | Source/residual covariance |
-| `x ~~~ x*y` | Source cumulant kappa(x,x,y), free |
-| `x ~~~ s*x*y` | Same source cumulant, labelled s |
-| `x ~-- y` | Alias for kappa(x,x,y) |
-| `x ~~- y` | Alias for kappa(x,y,y) |
-| `x ~~~~ k*x*y*z` | Source cumulant kappa(x,x,y,z), labelled k |
-| `x ~~~~ 0*x*x*x` | Fix x's marginal fourth cumulant to zero |
-| `f ~~~ f*f` | Free f's marginal third cumulant |
-| `f ~~~~ f*f*f` | Free f's marginal fourth cumulant |
 
-Numbers before `*` fix a coefficient. Reusing a label ties coefficients, including across statements. Labels and variable names must begin with a letter and contain letters, digits, underscores or periods. The parser accepts `#` comments, newline or semicolon statement separators, and `+` terms. It deliberately does not implement lavaan's thresholds, nonlinear constraints, defined parameters, intercept models, groups or full parser grammar. Unsupported syntax errors explicitly.
+In these statements, numbers before `*` fix a coefficient and labels before `*` name free parameters. Reusing a label ties coefficients, including across statements.
+
+## Higher source cumulants: explicit tuples
+
+Write each variable occurrence inside `k3(...)` or `k4(...)`; the tuple length specifies the cumulant order. Put a parameter label inside `free("label")` on the right of `=`. This separates variable names from parameter labels, even when they share the same spelling.
+
+| Syntax | Meaning |
+|---|---|
+| `k3(x, x, y)` | Free source cumulant $\kappa_3(x,x,y)$ |
+| `k3(x, x, y) = free()` | Same anonymous free parameter |
+| `k3(x, x, y) = free("s")` | Same source cumulant, labelled s |
+| `k3(x, y, y) = free("t")` | Source cumulant $\kappa_3(x,y,y)$, labelled t |
+| `k4(x, x, y, z) = free("k")` | Source cumulant $\kappa_4(x,x,y,z)$, labelled k |
+| `k4(x, x, x, x) = 0` | Fix x's marginal fourth cumulant to zero |
+| `k3(f, f, f) = free("s_f")` | Free f's marginal third cumulant |
+| `k4(f, f, f, f) = free("k_f")` | Free f's marginal fourth cumulant |
+
+The repeated names are the indices: `k3(x, x, y)` contains two copies of x, while `k3(x, y, y)` contains two copies of y. A cumulant is symmetric, so `k3(y, x, x)` denotes the same quantity as `k3(x, x, y)`. Tuple ordering does not specify a causal direction.
+
+The right side is optional. If present, it must be `free()`, `free("label")`, or a finite numeric constant, such as `0`, `-0.02` or `1e-6`. Single-quoted labels are also accepted. Labels and variable names must begin with a letter and contain letters, digits, underscores or periods. Reusing a label imposes equality on the original parameter scale, including across cumulant statements and path or covariance statements. For example, `k3(x, x, y) = free("x")` unambiguously uses x as both a variable name and a parameter label. Choose equality constraints with the parameters' units in mind.
+
+These are declarations **inside the model string**, not R function calls. The parser does not evaluate R code, expressions or function calls in the model. Use an outer single-quoted R string when the labels use double quotes:
+
+```r
+model <- gcmsem_model('
+  f =~ a*x + a*y
+  y ~ b*x
+  k3(f, f, f) = free("skew_f")
+  k4(f, f, f, f) = free("fourth_f")
+  k3(x, x, y) = free("xxy")
+  k3(x, y, y) = free("xyy")
+', observed = c('x', 'y'))
+```
+
+Here the Gaussian defaults still apply to undeclared marginal source cumulants. The four explicit declarations override their respective defaults; freeing one third cumulant does not automatically free a fourth cumulant. Mixed higher source cumulants remain zero unless declared. To fit only selected **observed** orders, use the separate `orders` argument to `gcmsem()` below.
+
+The parser accepts `#` comments and newline or semicolon statement separators. `+` separates terms in path, factor and covariance statements; a higher-cumulant statement declares one tuple. GCMSEM deliberately does not implement lavaan's thresholds, nonlinear constraints, defined parameters, intercept models, groups or full parser grammar. Unsupported syntax errors explicitly.
+
+### Migrate earlier higher-moment syntax
+
+The directional-looking aliases `~--` and `~~-` are rejected with a replacement in the error message. Their historical meaning is preserved in that replacement; it is never silently reversed. The older `~~~` and `~~~~` operators remain temporarily readable for existing saved models and emit a deprecation warning with the explicit tuple expansion. Use tuples for new or revised models.
+
+| Earlier statement | Replacement |
+|---|---|
+| `x ~-- y` | `k3(x, x, y)` |
+| `x ~~- y` | `k3(x, y, y)` |
+| `x ~~~ s*x*y` | `k3(x, x, y) = free("s")` |
+| `x ~~~~ k*x*y*y` | `k4(x, x, y, y) = free("k")` |
+| `f ~~~~ 0*f*f*f` | `k4(f, f, f, f) = 0` |
+
+## Variables and model scope
 
 All variables must be in `observed`, declared by `=~`, or passed in the `latent` argument. Latent regressions and reciprocal paths are allowed. A nonsingular `I-B` is required. `stable=TRUE` at fitting selects only available converged solutions whose feedback matrix has spectral radius less than one; this is an extra assumption and does not prove causal validity.
 

@@ -11,6 +11,13 @@ These are execution results for the checked-out implementation. The complete
 replication-level estimates, failure status, formal sandwich standard errors and
 source-moment warnings are in `validation/results/`.
 
+The subsequent explicit-tuple syntax revision passed **73 R checks**, a fresh
+installation, and `R CMD check` with **zero errors, warnings and notes**. The
+[revision check record](../validation/results/syntax_revision_checks.json)
+is separate from the original software-check snapshot. This parser and
+documentation change does not alter the estimator or the simulation results
+reported below.
+
 ## Design
 
 The experiment calls **GWASBrewer 0.3.0.0259** directly. Its bundled HapMap3
