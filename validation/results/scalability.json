@@ -1,0 +1,33 @@
+{
+  "purpose": "Computational dimensionality smoke; not statistical or interval calibration",
+  "status": "passed",
+  "seed": 902,
+  "n_traits": 15,
+  "n_tags": 120,
+  "jackknife_groups": 6,
+  "max_order": 4,
+  "n_moments": 3875,
+  "sampling_covariance_shape": [
+    3875,
+    3875
+  ],
+  "sampling_covariance_rank": 5,
+  "elapsed_seconds": 4.9508924709989515,
+  "estimated_peak_memory_mib": 229.9401092529297,
+  "memory_measurement": "Conservative estimator guard calculation, not measured process RSS",
+  "effect_fixture": "Independent Gaussian draws, identity LD, supplied zero sampling-noise matrix",
+  "warnings": [
+    "Fewer than 30 genomic jackknife groups; uncertainty is weakly calibrated",
+    "A deletion contains more than 10% of tag SNPs; unequal-block jackknife is approximate",
+    "Joint sampling covariance is necessarily rank deficient (moments >= jackknife groups); DWLS sandwich inference does not invert this matrix"
+  ],
+  "versions": {
+    "gcmsem": "0.1.0",
+    "python": "3.12.14",
+    "numpy": "2.3.5",
+    "scipy": "1.17.0"
+  },
+  "platform": "Linux-6.18.57-x86_64-with-glibc2.39",
+  "openblas_num_threads": "1",
+  "command": "OPENBLAS_NUM_THREADS=1 PYTHONPATH=python python validation/scalability.py"
+}

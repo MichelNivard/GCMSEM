@@ -1,0 +1,33 @@
+{
+  "version": "0.1.0",
+  "python_tests": {
+    "passed": 31,
+    "failed": 0,
+    "command": "OPENBLAS_NUM_THREADS=1 python -m pytest -q tests/python"
+  },
+  "r_package_check": {
+    "status": "OK",
+    "errors": 0,
+    "warnings": 0,
+    "notes": 0,
+    "core_checks_passed": 47
+  },
+  "native_kernel": {
+    "random_comparisons": 48,
+    "max_value_error": 2.84e-14,
+    "max_jacobian_error": 3.13e-12,
+    "finite_difference_relative_error": 7.94e-11
+  },
+  "end_to_end_toy": {
+    "cli_score": true,
+    "cli_estimate": true,
+    "r_read_and_fit": true,
+    "ab": 0.365029737949966,
+    "bc": 0.270171292806183,
+    "known_generating_paths": [
+      0.4,
+      0.25
+    ]
+  },
+  "scope": "Implementation checks, not universal statistical calibration."
+}

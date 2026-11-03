@@ -1,0 +1,2 @@
+run	scenario	status	error	seconds
+chain_001	chain	failed	estimated noise intercept (deletion=None) is not positive semidefinite (min eigenvalue -6.75886); no automatic projection is performed. Check scale, LD, overlap, or supply an independently justified noise_intercept.	0.09880788100053906

@@ -1,0 +1,31 @@
+{
+  "purpose": "Independent mathematical audit prompted by poor fourth-cumulant coverage in the 20-replicate chain experiment",
+  "status": "No algebraic error found in audited estimator expressions; empirical calibration remains unresolved by these checks alone",
+  "checks": [
+    "Scalar third-order response equals x^3 - 3*Omega*x",
+    "Scalar fourth-order response equals x^4 - 6*Omega*x^2 + 3*Omega^2 - 3*C_signal^2",
+    "Mixed xxyy Hermite response equals x^2*y^2 - Omega_xx*y^2 - Omega_yy*x^2 - 4*Omega_xy*x*y + Omega_xx*Omega_yy + 2*Omega_xy^2",
+    "Exact no-noise independent-SNP fixture recovers all 34 empirical cumulants for three traits and every checked genomic deletion",
+    "Exact heterogeneous L2/SE-product regression fixture separates genetic covariance from overlap intercepts",
+    "Annotation mixtures are pooled through raw moments before recentering",
+    "Installed GWASBrewer 0.3.0.0259 source uses SE-scaled Gaussian noise with the returned sampling correlation matrix; genotype-standardization restores 1/sqrt(N) noise SD"
+  ],
+  "chain_B_variance_check": {
+    "replicates": 20,
+    "target_population_variance": 0.00000513083632632119,
+    "mean_empirical_joint_effect_variance": 0.00000511135126,
+    "interpretation": "The large fourth-cumulant discrepancy is not explained by a grossly incorrect B variance target"
+  },
+  "regression_tests": [
+    "tests/python/test_estimator.py::test_exact_three_trait_empirical_cumulants_and_full_refits",
+    "tests/python/test_estimator.py::test_hermite_multiplicities_and_mixed_fourth",
+    "tests/python/test_estimator.py::test_mixture_pooling_uses_raw_moments",
+    "tests/python/test_estimator.py::test_noise_overlap_is_estimated_in_joint_regression"
+  ],
+  "estimator_changed_in_response_to_poor_coverage": false,
+  "limitations": [
+    "Passing algebraic fixtures does not establish interval coverage under realistic LD",
+    "This audit did not modify reported points, SEs, unsuccessful fits, or coverage results",
+    "Separate fresh source-effect simulations are needed to distinguish small-Monte-Carlo tail variability from systematic calibration problems"
+  ]
+}

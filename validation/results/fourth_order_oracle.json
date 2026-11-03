@@ -1,0 +1,40 @@
+{
+  "experiment": "noiseless scalar B fourth-cumulant LD-regression oracle",
+  "replicates": 1000,
+  "seed": 276351,
+  "source_variants": 38980,
+  "independent_ld_blocks": 78,
+  "source_distribution": "15% nonzero centered Gamma(shape=2), 85% zero",
+  "path_A_to_B": 0.4,
+  "known_nuisance": "population source mean zero and variance 0.2/J; no GWAS noise",
+  "target": 7.122201041909906e-10,
+  "mean_estimate": 6.625489694648198e-10,
+  "empirical_sd": 1.6894981710158908e-09,
+  "monte_carlo_se_mean": 5.342662323098888e-11,
+  "mean_to_target": 0.9302587298029279,
+  "sd_to_target": 2.372157372523187,
+  "monte_carlo_se_to_target": 0.07501420265533795,
+  "median_to_target": 0.39560902499962003,
+  "quantile_probabilities": [
+    0.01,
+    0.05,
+    0.25,
+    0.5,
+    0.75,
+    0.95,
+    0.99
+  ],
+  "quantile_to_target": [
+    -1.739934863576966,
+    -1.2743725898276892,
+    -0.46173178367908946,
+    0.39560902499962003,
+    1.5691902519516179,
+    4.749380676716178,
+    9.579112825191327
+  ],
+  "mean_realized_source_oracle_to_target": 1.0006461252683134,
+  "elapsed_seconds": 11.714731077001488,
+  "scope": "Independent fresh source draws and known generating LD; checks a population moment identity, not the complete fitted-nuisance pipeline or interval coverage",
+  "numpy_version": "2.3.5"
+}

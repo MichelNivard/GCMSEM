@@ -1,0 +1,288 @@
+{
+  "software": "GWASBrewer 0.3.0.0259",
+  "seed_base": 20261103,
+  "reference": "GWASBrewer bundled HapMap3 chromosome 19; minor-allele recoding",
+  "ld_patterns": 39,
+  "independent_blocks": 78,
+  "min_block": 140,
+  "max_block": 863,
+  "source_distribution": "15% nonzero: centered standardized gamma(shape=2); 85% zero",
+  "genotype_scale": "standardized",
+  "sampling_noise": "GWASBrewer correlated normal errors",
+  "sample_size": 50000,
+  "sample_overlap_fraction": 0.5,
+  "interval": "normal 1.96 * full-refit delete-block jackknife SE",
+  "caveat": "Small Monte Carlo study; does not establish general interval calibration. LD is known generating LD; reference-estimation uncertainty is excluded.",
+  "runs": [
+    {
+      "run": "chain_001",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.665551592999691,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2717550931631658
+    },
+    {
+      "run": "chain_002",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.65460586199697,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3069322223255315
+    },
+    {
+      "run": "chain_003",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.6608492960003782,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3003096256217912
+    },
+    {
+      "run": "chain_004",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.73919453200142,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.1551186325822411
+    },
+    {
+      "run": "chain_005",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.62460009699862,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2895735080868127
+    },
+    {
+      "run": "chain_006",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.778463431001001,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3829441813000678
+    },
+    {
+      "run": "chain_007",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.576892480999959,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2071244033075663
+    },
+    {
+      "run": "chain_008",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.6027220349969866,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.230788682760177
+    },
+    {
+      "run": "chain_009",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.620346854997479,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.4595598090096209
+    },
+    {
+      "run": "chain_010",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.6000897049998457,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3157017673621236
+    },
+    {
+      "run": "chain_011",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.673249497998768,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2986883459615455
+    },
+    {
+      "run": "chain_012",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.6813179460004894,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3027970572293982
+    },
+    {
+      "run": "chain_013",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.6905828719973215,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2190169024111389
+    },
+    {
+      "run": "chain_014",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.554084991999844,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.319828464159247
+    },
+    {
+      "run": "chain_015",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.485381552996841,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3230397115337529
+    },
+    {
+      "run": "chain_016",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.643523738002841,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2660253521446638
+    },
+    {
+      "run": "chain_017",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.685013145000994,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3204050657353726
+    },
+    {
+      "run": "chain_018",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.498949387998437,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.5475530348686994
+    },
+    {
+      "run": "chain_019",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.61206019599922,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.5407171892717527
+    },
+    {
+      "run": "chain_020",
+      "scenario": "chain",
+      "status": "ok",
+      "seconds": 3.930270938999456,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3368348526069993
+    },
+    {
+      "run": "null_001",
+      "scenario": "null",
+      "status": "ok",
+      "seconds": 3.7031072749996383,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.3019239176153324
+    },
+    {
+      "run": "null_002",
+      "scenario": "null",
+      "status": "ok",
+      "seconds": 3.722388860001956,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2440474167390695
+    },
+    {
+      "run": "null_003",
+      "scenario": "null",
+      "status": "ok",
+      "seconds": 3.491208759998699,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2614643761045222
+    },
+    {
+      "run": "null_004",
+      "scenario": "null",
+      "status": "ok",
+      "seconds": 3.4095862629983458,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2658883114471937
+    },
+    {
+      "run": "null_005",
+      "scenario": "null",
+      "status": "ok",
+      "seconds": 3.293530496997846,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2572507424366224
+    },
+    {
+      "run": "factor_001",
+      "scenario": "factor",
+      "status": "ok",
+      "seconds": 3.1738736490005977,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2926031569773137
+    },
+    {
+      "run": "factor_002",
+      "scenario": "factor",
+      "status": "ok",
+      "seconds": 3.32828062200133,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2823503626205321
+    },
+    {
+      "run": "factor_003",
+      "scenario": "factor",
+      "status": "ok",
+      "seconds": 3.6931582249999337,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.2995298625105989
+    },
+    {
+      "run": "factor_004",
+      "scenario": "factor",
+      "status": "ok",
+      "seconds": 3.9223640080017503,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.5303268708248441
+    },
+    {
+      "run": "factor_005",
+      "scenario": "factor",
+      "status": "ok",
+      "seconds": 3.624874852997891,
+      "n_moments": 34,
+      "n_blocks": 78,
+      "max_noise_intercept_error": 0.13489263312425492
+    }
+  ]
+}

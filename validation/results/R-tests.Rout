@@ -1,0 +1,74 @@
+
+R version 4.3.3 (2024-02-29) -- "Angel Food Cake"
+Copyright (C) 2024 The R Foundation for Statistical Computing
+Platform: x86_64-pc-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # R CMD check runs this top-level script in tests/.
+> source(file.path('r', 'test-core.R'), chdir=FALSE)
+ok 1 analytic one-way covariance 
+ok 2 analytic xxy cumulant 
+ok 3 analytic xyyy cumulant 
+ok 4 all exact derivatives match finite differences 
+ok 5 known source moments feasible 
+ok 6 3-trait full cumulant vector 
+ok 7 equality loading one parameter 
+ok 8 latent/mixed-source exact derivatives 
+ok 9 xxy/xyy aliases 
+ok 10 unknown variable rejected 
+ok 11 duplicate symmetric terms rejected 
+ok 12 self regression rejected 
+ok 13 noncanonical key rejected 
+ok 14 fit known moments/path 
+ok 15 interior identified inference valid 
+ok 16 sandwich SEs finite 
+ok 17 tiny-unit path invariance 
+ok 18 tiny-unit SE invariance 
+ok 19 tiny-unit inference valid 
+ok 20 observed order subsetting of full V 
+ok 21 DWLS ignores offdiagonal V for estimates 
+ok 22 sandwich uses offdiagonal V 
+ok 23 indefinite V rejected 
+ok 24 underidentified SEs withheld 
+ok 25 impossible cross-kurtosis rejected 
+ok 26 fixed model supported 
+PASS: 26 checks
+ok 27 compiled kernel agrees with R oracle 
+ok 28 fixed-zero source removed from boundary diagnostics 
+ok 29 source PSD penalty exact derivative 
+ok 30 PSD derivative valid at repeated eigenvalues 
+ok 31 optional penalized boundary fit flagged for inference 
+ok 32 raw DWLS Q separated from constraint penalty 
+ok 33 PSD constrained fit unit invariance 
+ok 34 default unconstrained higher-order Heywood estimate retained 
+PASS total: 34 checks
+ok 35 versioned Python bundle read 
+ok 36 missing schema version rejected 
+ok 37 missing cumulant convention rejected 
+PASS all: 37 checks
+ok 38 higher-order Heywood retains computable formal sandwich SE 
+ok 39 formal-only uncertainty explicitly labelled 
+ok 40 negative source variance retained without clipping 
+ok 41 classical Heywood retains formal SE and distinct admissibility flag 
+ok 42 negative variance remains in covariance eigenvalue diagnostic 
+ok 43 classical Heywood emits prominent warning 
+ok 44 higher-order Heywood emits prominent warning 
+ok 45 unconstrained selection uses minimum converged raw Q 
+ok 46 inadmissible lower-Q estimate preferred over admissible penalty fit by default 
+ok 47 negative variance tiny-unit invariance 
+PASS final: 47 checks
+> 
+> proc.time()
+   user  system elapsed 
+  0.834   0.023   0.843 

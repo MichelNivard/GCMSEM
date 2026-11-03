@@ -1,0 +1,41 @@
+{
+  "paths": [
+    {
+      "scenario": "chain",
+      "parameter": "ab",
+      "truth": 0.4,
+      "mean": 0.4056604646507772,
+      "empirical_sd": 0.13864252495509802,
+      "n": 20,
+      "n_reported_se": 18,
+      "conditional_coverage": 0.8333333333333334
+    },
+    {
+      "scenario": "chain",
+      "parameter": "bc",
+      "truth": 0.25,
+      "mean": 0.26200454980215765,
+      "empirical_sd": 0.14969913486765005,
+      "n": 20,
+      "n_reported_se": 18,
+      "conditional_coverage": 0.8888888888888888
+    },
+    {
+      "scenario": "factor",
+      "parameter": "a",
+      "truth": 0.4,
+      "mean": 0.3999070022394626,
+      "empirical_sd": 0.06491945497117374,
+      "n": 5,
+      "n_reported_se": 4,
+      "conditional_coverage": 1.0
+    }
+  ],
+  "n_moment_runs": 30,
+  "moment_failures": 0,
+  "sem_runs": 30,
+  "sem_converged": 27,
+  "sem_formal_se_available": 27,
+  "sem_source_admissible": 6,
+  "sem_regular_local_inference": 5
+}

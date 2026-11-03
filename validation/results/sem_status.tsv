@@ -1,0 +1,31 @@
+run	scenario	replicate	status	Q	converged	inference_valid	formal_se_available	source_admissible	jacobian_rank	n_parameters	gradient_max	inference_reasons
+chain_001	chain	1	ok	19.2736726817324	TRUE	FALSE	TRUE	FALSE	11	11	1.89174778085327e-07	parameter or source moment boundary; source moment feasibility checks failed
+chain_002	chain	2	ok	28.8410893577954	TRUE	FALSE	TRUE	FALSE	11	11	1.41787956966794e-05	parameter or source moment boundary; source moment feasibility checks failed
+chain_003	chain	3	ok	47.4342244137776	FALSE	FALSE	FALSE	FALSE	11	11	1.1581801597876e-05	optimizer did not converge; parameter or source moment boundary; source moment feasibility checks failed
+chain_004	chain	4	ok	13.9338747989275	TRUE	TRUE	TRUE	TRUE	11	11	2.76702655367413e-06	
+chain_005	chain	5	ok	27.7310415478257	TRUE	FALSE	TRUE	FALSE	11	11	2.3422598573861e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_006	chain	6	ok	22.4476013242255	TRUE	FALSE	TRUE	FALSE	11	11	1.71077099535537e-05	parameter or source moment boundary; source moment feasibility checks failed
+chain_007	chain	7	ok	8.20210351854115	TRUE	FALSE	TRUE	FALSE	11	11	1.43101922372223e-07	parameter or source moment boundary; source moment feasibility checks failed
+chain_008	chain	8	ok	34.790117764024	TRUE	TRUE	TRUE	TRUE	11	11	2.20624411999079e-06	
+chain_009	chain	9	ok	9.97980265820899	TRUE	FALSE	TRUE	FALSE	11	11	1.8590404744402e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_010	chain	10	ok	24.7874412064814	TRUE	TRUE	TRUE	TRUE	11	11	1.9225047325105e-07	
+chain_011	chain	11	ok	24.1783858225262	TRUE	FALSE	TRUE	FALSE	11	11	3.27935053337826e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_012	chain	12	ok	25.1174980675386	TRUE	FALSE	TRUE	FALSE	11	11	5.40200363569407e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_013	chain	13	ok	30.8000034650123	TRUE	FALSE	TRUE	FALSE	11	11	1.30424905197964e-05	parameter or source moment boundary; source moment feasibility checks failed
+chain_014	chain	14	ok	25.7692448222041	FALSE	FALSE	FALSE	TRUE	11	11	3.82039520641611e-07	optimizer did not converge
+chain_015	chain	15	ok	29.4611052597893	TRUE	FALSE	TRUE	FALSE	11	11	1.06976912915619e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_016	chain	16	ok	19.2037035022015	TRUE	FALSE	TRUE	FALSE	11	11	1.29316524705165e-05	parameter or source moment boundary; source moment feasibility checks failed
+chain_017	chain	17	ok	23.0966756330039	TRUE	FALSE	TRUE	FALSE	11	11	2.0446615329828e-05	parameter or source moment boundary; source moment feasibility checks failed
+chain_018	chain	18	ok	24.7696601234213	TRUE	FALSE	TRUE	FALSE	11	11	2.28242746176006e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_019	chain	19	ok	13.7372018642708	TRUE	FALSE	TRUE	FALSE	11	11	9.9847806220959e-06	parameter or source moment boundary; source moment feasibility checks failed
+chain_020	chain	20	ok	25.6785791905867	TRUE	FALSE	TRUE	FALSE	11	11	1.71225701259442e-07	parameter or source moment boundary; source moment feasibility checks failed
+null_001	null	1	ok	24.5656146940968	TRUE	TRUE	TRUE	TRUE	9	9	2.00343162260126e-08	
+null_002	null	2	ok	15.5564780287778	TRUE	FALSE	TRUE	FALSE	9	9	2.91901234862743e-07	parameter or source moment boundary; source moment feasibility checks failed
+null_003	null	3	ok	21.2977039817335	TRUE	FALSE	TRUE	FALSE	9	9	3.69446392833578e-08	parameter or source moment boundary; source moment feasibility checks failed
+null_004	null	4	ok	29.5725857176797	TRUE	FALSE	TRUE	FALSE	9	9	1.06730101938641e-07	parameter or source moment boundary; source moment feasibility checks failed
+null_005	null	5	ok	20.994152571708	TRUE	TRUE	TRUE	TRUE	9	9	2.79377802143137e-08	
+factor_001	factor	1	ok	6.70885959542062	TRUE	FALSE	TRUE	FALSE	12	12	1.26212576069371e-06	parameter or source moment boundary; source moment feasibility checks failed
+factor_002	factor	2	ok	20.2564107837898	TRUE	FALSE	TRUE	FALSE	12	12	2.09314580173738e-05	parameter or source moment boundary; source moment feasibility checks failed
+factor_003	factor	3	ok	27.3347200613723	TRUE	FALSE	TRUE	FALSE	12	12	2.00153501531662e-05	parameter or source moment boundary; source moment feasibility checks failed
+factor_004	factor	4	ok	15.3396122580004	FALSE	FALSE	FALSE	FALSE	12	12	1.24545470477888e-05	optimizer did not converge; parameter or source moment boundary; source moment feasibility checks failed
+factor_005	factor	5	ok	16.709204579966	TRUE	FALSE	TRUE	FALSE	12	12	1.41374386808637e-06	parameter or source moment boundary; source moment feasibility checks failed

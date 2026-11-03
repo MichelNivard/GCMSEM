@@ -1,0 +1,4 @@
+scenario	nonGaussian_Q	Gaussian_Q	covariance_only_Q	covariance_only_rank	covariance_only_parameters	covariance_only_inference_valid
+chain	19.2736726817324	25.9990262522764	0.20873998431811	5	11	FALSE
+null	24.5656146940968	39.3133664355341	4.80681518684501	3	9	FALSE
+factor	6.70885959542062	29.1745584135114	0.0273526739847695	4	12	FALSE
