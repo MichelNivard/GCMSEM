@@ -18,17 +18,47 @@ gcmsem_model(syntax, observed, latent = character(),
 \description{Parses a small lavaan-inspired syntax into a sparse linear SEM with
 source cumulants and shared parameter labels. No lavaan or MCMSEM dependency.}
 \details{Operators are \code{=~} for loadings, \code{~} for regressions and
-\code{~~} for source covariances. \code{x ~~~ x*y} is the source cumulant xxy;
-\code{x ~~~~ x*y*y} is xxyy. Optional aliases \code{x ~-- y} and
-\code{x ~~- y} denote xxy and xyy. Numeric modifiers fix values; labels tie
-parameters. Latent variances default to one, observed source variances are free,
-and other source cross-cumulants default to zero. Gaussian defaults affect source
-disturbances, not the resulting observed marginal distribution. Mean/intercept,
-threshold, group and general nonlinear-constraint syntax are not supported.}
+\code{~~} for source covariances. In these statements, numeric modifiers before
+\code{*} fix values and labels name free parameters.
+
+Higher source cumulants use explicit variable tuples:
+\code{k3(x, x, y) = free("s")} declares the third source cumulant xxy with
+parameter label s; \code{k3(x, y, y) = free("t")} instead declares xyy.
+\code{k4(x, x, y, y) = free("q")} declares the fourth source cumulant xxyy.
+Repeated variable names specify repeated indices. Tuples are symmetric and do
+not encode a causal direction. Fourth cumulants are excess cumulants, rather
+than fourth central moments.
+
+A standalone \code{k3(x, x, y)} or \code{k3(x, x, y) = free()} declares an
+anonymous free parameter. A finite numeric right side fixes the value, for
+example \code{k3(f, f, f) = 0} or \code{k4(f, f, f, f) = -1e-6}.
+Labels in \code{free("label")} may use either quote style. Variable names and
+labels must begin with a letter and contain letters, digits, underscores or
+periods. Labels may have the same spelling as variables without ambiguity.
+Reusing a label ties parameters on their original scale, including across
+different statement types. These declarations occur inside the model string;
+they are parsed without evaluating R code.
+
+Latent variances default to one, observed source variances are free, and other
+source cross-cumulants default to zero. Gaussian defaults affect source
+disturbances, not the resulting observed marginal distribution. Explicit
+cumulant declarations override the corresponding defaults. Selecting observed
+orders for fitting is separate; use the \code{orders} argument to \code{gcmsem}.
+
+The earlier aliases \code{x ~-- y} and \code{x ~~- y} are rejected with
+migration instructions: use \code{k3(x, x, y)} and \code{k3(x, y, y)},
+respectively. The older \code{~~~} and \code{~~~~} operators remain temporarily
+readable for saved models and emit deprecation warnings with tuple replacements.
+Mean/intercept, threshold, group and general nonlinear-constraint syntax are not
+supported.}
 \value{A \code{gcmsem_model} containing the parsed sparse parameter table,
 observed/latent node names, bounds and default starts.}
 \examples{
-m <- gcmsem_model('f =~ a*x + a*y; y ~ b*x', c('x','y'),
-                  gaussian_observed=FALSE, gaussian_latent=FALSE)
+m <- gcmsem_model('
+  f =~ a*x + a*y
+  y ~ b*x
+  k3(f, f, f) = free("skew_f")
+  k4(f, f, f, f) = free("fourth_f")
+', c('x','y'))
 print(m)
 }
