@@ -1,0 +1,15 @@
+^python$
+^pyproject\.toml$
+^\.github$
+^\.git.*$
+^\.pytest_cache$
+^INTERFACE\.md$
+^validation$
+^dist$
+^build$
+^GCMSEM.*\.tar\.gz$
+^GCMSEM.*\.Rcheck$
+^tests/python$
+
+^\.ruff_cache$
+^\.coverage$
