@@ -1,0 +1,2 @@
+PASS: 48 random value/Jacobian comparisons, N=1,2,5,7; p=0,1,11; exact zero loading stress. Max value 2.84e-14; max Jacobian 3.13e-12; finite-difference relative error 7.94e-11
+Benchmark N=8 sources=10 parameters=20 moments=486: native 0.0007s R 0.1340s speedup 201.0x (single environment)
