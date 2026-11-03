@@ -44,7 +44,7 @@ at different source SNPs are independent under the working model. Thus
 
 ```math
 L^{(q)}_{jc}=\sum_{k\in c} R_{jk}^{q},\qquad
-\operatorname{cum}(b_{ja_1},\ldots,b_{ja_q})
+\mathrm{cum}(b_{ja_1},\ldots,b_{ja_q})
 =\sum_c L^{(q)}_{jc}\kappa_{c,a_1\ldots a_q}.
 ```
 
@@ -194,9 +194,9 @@ DWLS chooses parameters using inverse marginal sampling variances. Robust
 parameter uncertainty retains the full sampling covariance:
 
 ```math
-W=\operatorname{diag}(1/\widehat V_{ii}),\quad
+W=\mathrm{diag}(1/\widehat V_{ii}),\quad
 A=J^TWJ,\quad
-\operatorname{Var}(\widehat\theta)
+\mathrm{Var}(\widehat\theta)
 =A^{-1}J^TW\widehat VWJA^{-1}.
 ```
 
