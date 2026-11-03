@@ -1,0 +1,2 @@
+# R CMD check runs this top-level script in tests/.
+source(file.path('r', 'test-core.R'), chdir=FALSE)
