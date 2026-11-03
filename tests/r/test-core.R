@@ -13,15 +13,64 @@ J<-implied_moments(m,p,jacobian=TRUE)$jacobian
 fd<-sapply(seq_along(p),function(i){u<-w<-p;u[i]<-u[i]+1e-5;w[i]<-w[i]-1e-5;(implied_moments(m,u)-implied_moments(m,w))/(2e-5)})
 check(near(J,fd,1e-7),'all exact derivatives match finite differences')
 check(source_diagnostics(m,p)$necessary_conditions_pass,'known source moments feasible')
-mm<-gcmsem_model('f =~ a*x + a*y + z\ny ~ b*x\nz ~ c*y\nx ~~ d*z\nx ~-- e*y\ny ~~~~ h*z*z*z',c('x','y','z'),gaussian_observed=FALSE,gaussian_latent=FALSE)
+mm<-gcmsem_model('f =~ a*x + a*y + z\ny ~ b*x\nz ~ c*y\nx ~~ d*z\nk3(x,x,y) = free("e")\nk4(y,z,z,z) = free("h")',c('x','y','z'),gaussian_observed=FALSE,gaussian_latent=FALSE)
 check(length(moment_keys(mm$observed))==31,'3-trait full cumulant vector')
 check(sum(names(mm$start)=='a')==1,'equality loading one parameter')
 jj<-implied_moments(mm,jacobian=TRUE)$jacobian
 ff<-sapply(seq_along(mm$start),function(i){u<-w<-mm$start;u[i]<-u[i]+1e-5;w[i]<-w[i]-1e-5;(implied_moments(mm,u)-implied_moments(mm,w))/(2e-5)})
 check(near(jj,ff,1e-7),'latent/mixed-source exact derivatives')
-a<-gcmsem_model('x ~-- k*y\nx ~~- l*y',c('x','y'))
-b<-gcmsem_model('x ~~~ k*x*y\nx ~~~ l*y*y',c('x','y'))
-check(identical(implied_moments(a),implied_moments(b)),'xxy/xyy aliases')
+# Canonical tuple syntax makes repeated positions explicit, independently of labels.
+a<-gcmsem_model('k3(x,x,y)=free("y"); k3(x,y,y)=free("x"); k4(y,x,y,x)=-0.2',c('x','y'))
+ap<-a$start;ap['y']<-3;ap['x']<-2
+av<-implied_moments(a,ap)
+check(near(av[c('x|x|y','x|y|y','x|x|y|y')],c(3,2,-.2)),
+      'explicit repeated indices remain unambiguous when labels equal variable names')
+anon<-gcmsem_model('k3(x,x,y); k3(x,y,y)=free(); k4(x,x,y,y)=free()',c('x','y'))
+check(all(c('k3(x,x,y)','k3(x,y,y)','k4(x,x,y,y)')%in%names(anon$start)),
+      'standalone and free() create anonymous source cumulants')
+eq<-gcmsem_model('k3(x,x,y)=free("s"); k3(x,y,y)=free("s")',c('x','y'))
+eqp<-eq$start;eqp['s']<-.75
+eqv<-implied_moments(eq,eqp)
+check(sum(names(eq$start)=='s')==1 && near(eqv[c('x|x|y','x|y|y')],rep(.75,2)),
+      'quoted repeated labels impose exact equality')
+single_quote<-gcmsem_model("k3(x,x,y)=free('s')",c('x','y'))
+check('s'%in%names(single_quote$start),'single-quoted labels supported without evaluation')
+fixed_cumulants<-gcmsem_model('k3(x,x,y)=0; k3(x,y,y)=-1.25e-2; k4(x,x,y,y)=+2e-1',c('x','y'))
+check(near(implied_moments(fixed_cumulants)[c('x|x|y','x|y|y','x|x|y|y')],c(0,-.0125,.2)),
+      'finite signed scientific numeric literals fix exact source cumulants')
+for(bad_syntax in c('k3(x,y)', 'k3(x,x,y,y)', 'k4(x,x,y)', 'k3(x,x,y,)',
+                     'k3(x,,y)', 'k3(x,x+y,y)', 'k3(x,x,y)=s',
+                     'k3(x,x,y)=free(s)', 'k3(x,x,y)=1/2',
+                     'k3(x,x,y)=Inf', 'k3(x,x,y)=1e999',
+                     'k3(x,x,y)=free("s","t")','k3(x,x,y)=free("bad label")',
+                     'k3(x,x,y)=free("s")oops','k3(x,x,y)=',
+                     'k3(x,x,unknown)')) {
+  check(fails(gcmsem_model(bad_syntax,c('x','y'))),paste('reject malformed cumulant:',bad_syntax))
+}
+check(fails(gcmsem_model('k3(x,x,y); k3(y,x,x)',c('x','y'))),
+      'duplicate symmetric explicit cumulants rejected')
+.gcmsem_parser_executed<-FALSE
+injection<-paste0('k3(x,x,y)=free(assign(".gcmsem_parser_executed",TRUE,envir=.GlobalEnv))')
+check(fails(gcmsem_model(injection,c('x','y'))) && !.gcmsem_parser_executed,
+      'model text never executes expressions')
+rm(.gcmsem_parser_executed)
+for(old in c('x ~-- s*y','x ~~- s*y')) {
+  err<-try(gcmsem_model(old,c('x','y')),silent=TRUE)
+  expected<-if(grepl('~--',old,fixed=TRUE))'k3(x, x, y) = free("s")' else 'k3(x, y, y) = free("s")'
+  check(inherits(err,'try-error') && grepl(expected,as.character(err),fixed=TRUE),
+        paste('retired shorthand gives exact migration:',old))
+}
+legacy_messages<-character()
+legacy<-withCallingHandlers(gcmsem_model('x ~~~ s*y*y; x ~~~~ t*x*y*y',c('x','y')),
+  warning=function(w){legacy_messages<<-c(legacy_messages,conditionMessage(w));invokeRestart('muffleWarning')})
+canonical<-gcmsem_model('k3(x,y,y)=free("s"); k4(x,x,y,y)=free("t")',c('x','y'))
+lp<-legacy$start;lp[c('s','t')]<-c(.8,1.2)
+check(near(implied_moments(legacy,lp),implied_moments(canonical,lp)),
+      'deprecated repeated-tilde models preserve numerical meaning')
+check(length(legacy_messages)==2 &&
+      any(grepl('k3(x, y, y) = free("s")',legacy_messages,fixed=TRUE)) &&
+      any(grepl('k4(x, x, y, y) = free("t")',legacy_messages,fixed=TRUE)),
+      'legacy warnings spell out exact canonical expansions')
 check(fails(gcmsem_model('x ~~ z',c('x','y'))),'unknown variable rejected')
 check(fails(gcmsem_model('x ~~ y\ny ~~ x',c('x','y'))),'duplicate symmetric terms rejected')
 check(fails(gcmsem_model('x ~ x',c('x','y'))),'self regression rejected')
@@ -49,7 +98,7 @@ check(fails(gcmsem(m,v,Vbad,verbose=FALSE)),'indefinite V rejected')
 u<-gcmsem_model('y ~ b*x\nx ~ c*y',c('x','y'))
 fu<-gcmsem(u,v,V,orders=2,n_starts=1,verbose=FALSE)
 check(!fu$diagnostics$inference_valid && all(is.na(parameter_estimates(fu)$se)),'underidentified SEs withheld')
-bad<-gcmsem_model('x ~~~~ 20*x*y*y',c('x','y'))
+bad<-gcmsem_model('k4(x,x,y,y)=20',c('x','y'))
 check(!source_diagnostics(bad)$necessary_conditions_pass,'impossible cross-kurtosis rejected')
 fixed<-gcmsem_model('x ~~ 1*x','x')
 fv<-implied_moments(fixed);vf<-diag(.01,3);dimnames(vf)<-list(names(fv),names(fv))
@@ -64,7 +113,7 @@ check(near(ri$estimate,ni$estimate,1e-12)&&near(ri$jacobian,ni$jacobian,1e-12),'
 zero<-gcmsem_model('f =~ 0*x; f ~~ 0*f', 'x')
 check(source_diagnostics(zero)$necessary_conditions_pass && source_diagnostics(zero)$covariance_min_eigen>0,'fixed-zero source removed from boundary diagnostics')
 # Independent finite differences for the exact source-PSD penalty gradient.
-pm<-gcmsem_model('x ~~ c*y; x ~-- s*y; x ~~- t*y; x ~~~~ h*x*y*y',c('x','y'),gaussian_observed=FALSE)
+pm<-gcmsem_model('x ~~ c*y; k3(x,x,y)=free("s"); k3(x,y,y)=free("t"); k4(x,x,y,y)=free("h")',c('x','y'),gaussian_observed=FALSE)
 pp<-pm$start;pp[c('h','c','s','t')]<-c(6,.2,.3,.4)
 ps<-GCMSEM:::.constraint_setup(pm,pm$start)
 pa<-GCMSEM:::.source_penalty(pm,pp,ps)
