@@ -215,11 +215,15 @@ gcmsem <- function(model,moments,V=NULL,orders=2:4,keys=NULL,start=NULL,
     local_identification_only=TRUE,fit_statistic_calibrated=FALSE,
     feasibility_method=feasibility,penalty_weight=best$weight,
     condition_number=if(p&&rank==p)max(singular)/min(singular) else Inf)
+  q_available<-formal_se_available && feasibility=="check" && !length(active)
+  q_reason<-if(!formal_se_available)"unavailable_numerical" else "unavailable_penalized_or_constrained"
+  q_stats<-.q_uncertainty((dat$m-final$implied)/dat$se,J,dat$corr,q_available,q_reason)
+  if(q_available && length(reasons))q_stats$Q_status<-"formal_only_flagged"
   fit<-list(model=model,coefficients=par,parameters=parameters,vcov=Cpar,
     fitted=final$implied,observed=dat$m,V=dat$V,residuals=dat$m-final$implied,
     objective=final$dwls,penalized_objective=best$opt$objective,
     constraint_penalty=final$penalty,estimator=if(feasibility=="check")"DWLS" else "DWLS with source-feasibility penalty",diagnostics=diagnostics,
-    starts=do.call(rbind,trace),parameter_scale=scale,call=match.call())
+    fit_measures=q_stats,starts=do.call(rbind,trace),parameter_scale=scale,call=match.call())
   class(fit)<-"gcmsem_fit"
   log("Selected Q",format(fit$objective,digits=9),"Jacobian rank",paste0(rank,"/",p),"inference",diagnostics$inference_valid)
   for(i in seq_len(nrow(parameters)))log("PARAMETER",parameters$parameter[i],"estimate",format(parameters$estimate[i],digits=10),"formal_se",format(parameters$se[i],digits=10),"status",parameters$se_status[i])
@@ -236,7 +240,9 @@ gcmsem <- function(model,moments,V=NULL,orders=2:4,keys=NULL,start=NULL,
     msg<-paste(c(flags,"All point estimates and computable formal sandwich SEs are retained. These diagnostics can reflect sampling variation or model problems; Gaussian/Wald inference is flagged."),collapse="; ")
     log(msg);warning(msg,call.=FALSE)
   }
-  log("Q is an uncalibrated discrepancy; no chi-square/WLSMV p-value. SEs are conditional on the specified model and selected solution.")
+  log("Q approximate SE",format(q_stats$Q_se,digits=7),"null mean",format(q_stats$Q_null_mean,digits=7),
+    "null SD",format(q_stats$Q_null_sd,digits=7),"moment-matched p (approximate)",format(q_stats$Q_p_approx,digits=7),"status",q_stats$Q_status)
+  log("Q uncertainty uses a local Gaussian quadratic approximation with fixed V and fitted tangent space; the moment-matched reference is not a validated WLSMV test. SEs are conditional on the specified model and selected solution.")
   fit$log<-attr(log,"lines")()
   if(write.to.tsv)fit$output_files<-export_gcmsem(fit,out,overwrite=overwrite)
   fit

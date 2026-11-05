@@ -37,6 +37,7 @@
   } else if(inherits(x,"gcmsem_fit")) {
     files<-paste0(prefix,c(".parameters.tsv",".fitted.tsv",".sampling_cov.tsv",
       ".vcov.tsv",".starts.tsv",".diagnostics.tsv",".model.txt"))
+    if(!is.null(x$fit_measures))files<-c(files,paste0(prefix,".fit_measures.tsv"))
     if(length(x$log))files<-c(files,paste0(prefix,".log"))
   } else stop("x must be a gcmsem_fit or gcmsem_moments object")
   files
@@ -99,6 +100,7 @@
     .export_table(.export_matrix(x$V,"key"),paste0(prefix,".sampling_cov.tsv"))
     .export_table(.export_matrix(x$vcov,"parameter"),paste0(prefix,".vcov.tsv"))
     .export_table(x$starts,paste0(prefix,".starts.tsv"))
+    if(!is.null(x$fit_measures)).export_table(x$fit_measures,paste0(prefix,".fit_measures.tsv"))
     d<-x$diagnostics
     fields<-c("converged","jacobian_rank","n_parameters","n_moments","residual_df","V_rank",
       "sandwich_rank","gradient_max","dwls_gradient_max","spectral_radius","stable",
