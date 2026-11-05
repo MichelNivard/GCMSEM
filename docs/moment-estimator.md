@@ -1,5 +1,31 @@
 # GWAS summary statistics to genomic cumulants
 
+In R, `estimate_moments()` returns the estimates, matrices and logs to your
+session. Use a GWAS manifest and a precomputed score archive:
+
+```r
+library(GCMSEM)
+moments <- estimate_moments("traits.tsv", "european.scores.npz",
+                            max_order = 4, n_blocks = 200)
+moments
+moments$S        # SNP-effect covariance matrix
+moments$R        # Genetic correlation matrix
+moments$R_SE     # Correlation SEs using the full sampling covariance
+moments$V       # Joint sampling covariance of all cumulants
+tail(moments$log)
+```
+
+The function also accepts an R manifest data frame, a named vector of GWAS
+filenames, or a named list of GWAS data frames. Named inputs require
+`effect_scale = "allele"` or `"genotype_standardized"`. Pass a Python
+environment through `python` when it is not the active environment.
+Use `export_gcmsem(moments, "results/moments")` or
+`write.to.tsv = TRUE, out = "results/moments"` to request file export.
+The [worked R tutorial](../tutorials/Causal-examples.md) explains the input
+files and shows the resulting console output.
+
+The command-line interface uses the same numerical engine:
+
 `gcmsem estimate` accepts any positive number of traits. The GWAS manifest has
 three required columns: `trait`, `path`, and `effect_scale`. Paths are relative
 to the manifest. `effect_scale` must explicitly be `allele` or
