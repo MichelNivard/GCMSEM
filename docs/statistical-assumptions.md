@@ -207,8 +207,12 @@ the regular, correctly specified SEM approximation. They are not generally
 robust to an arbitrarily misspecified SEM; in particular, the usual
 `J' W J` bread is not a general misspecification-robust Hessian. A
 rank-deficient parameter Jacobian or non-convergence can prevent a usable
-standard error. No WLSMV correction or generally calibrated chi-square
-model-fit test is implemented or implied by the DWLS discrepancy.
+standard error. A local Gaussian quadratic-form approximation supplies an SE for Q and a
+moment-matched scaled-chi-square diagnostic reference. It accounts for fitting
+parameters by projecting off the model Jacobian, while treating V and that
+tangent space as fixed. Its p-value is exploratory; calibrated higher-order
+model-fit inference and a WLSMV correction are not established. See the
+[derivation and limitations](../tutorials/R-results.md#how-the-approximate-se-is-calculated).
 
 Exact structured derivatives remove finite-difference error; multiple starts
 help detect numerical minima. Neither establishes identification. A zero
