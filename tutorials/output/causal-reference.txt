@@ -1,0 +1,215 @@
+R estimate_moments: prepared height/weight inputs
+
+GCMSEM moments
+Traits: Height, Weight
+SNPs: 1,074,059
+Cumulants: 14 (order 1: 2, order 2: 3, order 3: 4, order 4: 5)
+Sampling covariance V: 14 x 14   Jackknife groups: 200
+
+Genetic correlations ($R)
+       Height Weight
+Height  1.000  0.472
+Weight  0.472  1.000
+   user  system elapsed 
+156.469   4.738 161.517 
+PASS: R bridge reproduces all prior cumulants and V to tolerance 1e-12.
+
+R causal scripts: all six fits
+
+HEIGHT_HEAD
+        SNP A1 A2       BETA       SE      N CHR     BP  REF_AF
+  rs3131969  A  G -0.0009732 0.001167 360388   1 754182 0.12823
+ rs12562034  A  G  0.0011891 0.001097 360388   1 768448 0.09245
+  rs4040617  G  A -0.0009679 0.001128 360388   1 779322 0.11829
+
+ORIGINAL_HEAD
+        SNP A1 A2      BETA       SE      N    EAF CHR     BP
+  rs3131969  G  A  0.002058 0.002467 360388 0.8705   1 754182
+ rs12562034  A  G  0.002903 0.002679 360388 0.1060   1 768448
+  rs4040617  G  A -0.002119 0.002471 360388 0.1278   1 779322
+Warning messages:
+1: CLASSICAL HEYWOOD CASE: negative source variance for F; CLASSICAL HEYWOOD CASE: source covariance is not PSD (min eigenvalue -1); HIGHER-ORDER HEYWOOD CASE: joint source moment matrix is not PSD (min eigenvalue -1); All point estimates and computable formal sandwich SEs are retained. These diagnostics can reflect sampling variation or model problems; Gaussian/Wald inference is flagged. 
+2: CLASSICAL HEYWOOD CASE: negative source variance for F; CLASSICAL HEYWOOD CASE: source covariance is not PSD (min eigenvalue -1); HIGHER-ORDER HEYWOOD CASE: joint source moment matrix is not PSD (min eigenvalue -1); All point estimates and computable formal sandwich SEs are retained. These diagnostics can reflect sampling variation or model problems; Gaussian/Wald inference is flagged. 
+Warning message:
+CLASSICAL HEYWOOD CASE: negative source variance for F; CLASSICAL HEYWOOD CASE: source covariance is not PSD (min eigenvalue -1); HIGHER-ORDER HEYWOOD CASE: joint source moment matrix is not PSD (min eigenvalue -1); All point estimates and computable formal sandwich SEs are retained. These diagnostics can reflect sampling variation or model problems; Gaussian/Wald inference is flagged. 
+
+HW_MOMENTS
+GCMSEM moments
+Traits: Height, Weight
+SNPs: 1,074,059
+Cumulants: 14 (order 1: 2, order 2: 3, order 3: 4, order 4: 5)
+Sampling covariance V: 14 x 14   Jackknife groups: 200
+
+Genetic correlations ($R)
+       Height Weight
+Height  1.000  0.472
+Weight  0.472  1.000
+
+HW_SUMMARY
+GCMSEM DWLS fit
+Observed traits: Height, Weight
+Moments: 12   Free parameters: 8   Jacobian rank: 8/8
+Converged: yes   Uncalibrated Q: 1.797
+Formal sandwich SEs: available   Inference checks: flagged
+*** HEYWOOD CASE: source moment checks failed ***
+Negative source variance: F
+Estimates and available formal SEs retained.
+Flags: source moment feasibility checks failed
+
+Parameter estimates
+                               term           label estimate formal SE           se_status      z  p
+                   Height ~~ Height      variance_x    1.183    0.1095 formal_only_flagged   10.8 NA
+         k3(Height, Height, Height)          skew_x    3.887     2.777 formal_only_flagged    1.4 NA
+ k4(Height, Height, Height, Height)        excess_x    735.6     171.2 formal_only_flagged  4.296 NA
+                   Weight ~~ Weight      variance_y   0.9935   0.09489 formal_only_flagged  10.47 NA
+         k3(Weight, Weight, Weight)          skew_y    4.599     2.446 formal_only_flagged   1.88 NA
+ k4(Weight, Weight, Weight, Weight)        excess_y    406.8     185.5 formal_only_flagged  2.193 NA
+                             F ~~ F shared_variance  -0.1829    0.0438 formal_only_flagged -4.175 NA
+                    Weight ~ Height         forward   0.6549   0.04192 formal_only_flagged  15.62 NA
+
+BS_SUMMARY
+GCMSEM DWLS fit
+Observed traits: BMI, SBP
+Moments: 12   Free parameters: 8   Jacobian rank: 8/8
+Converged: yes   Uncalibrated Q: 5.349
+Formal sandwich SEs: available   Inference checks: flagged
+*** HEYWOOD CASE: source moment checks failed ***
+Negative source variance: F
+Estimates and available formal SEs retained.
+Flags: source moment feasibility checks failed
+
+Parameter estimates
+                   term           label estimate formal SE           se_status      z  p
+             BMI ~~ BMI      variance_x    1.204    0.1059 formal_only_flagged  11.37 NA
+      k3(BMI, BMI, BMI)          skew_x    2.481     2.514 formal_only_flagged 0.9867 NA
+ k4(BMI, BMI, BMI, BMI)        excess_x    440.9     270.8 formal_only_flagged  1.628 NA
+             SBP ~~ SBP      variance_y    1.233    0.1431 formal_only_flagged  8.615 NA
+      k3(SBP, SBP, SBP)          skew_y   -1.759     1.775 formal_only_flagged -0.991 NA
+ k4(SBP, SBP, SBP, SBP)        excess_y    414.3     79.36 formal_only_flagged   5.22 NA
+                 F ~~ F shared_variance  -0.2044   0.09672 formal_only_flagged -2.113 NA
+              SBP ~ BMI         forward    0.319   0.08567 formal_only_flagged  3.724 NA
+
+HW_PATHS
+       model   from     to original_estimate original_formal_se
+1    forward Height Weight         0.5629883         0.03603639
+2    reverse Weight Height         1.3957638         0.18554352
+3 reciprocal Height Weight         0.4882977         0.01974383
+4 reciprocal Weight Height         0.0500362         0.04327605
+
+BS_PATHS
+       model from  to original_estimate original_formal_se
+1    forward  BMI SBP        0.89051544         0.23913901
+2    reverse  SBP BMI       -0.02984400         0.01560565
+3 reciprocal  BMI SBP        0.77326628         0.14832094
+4 reciprocal  SBP BMI       -0.04287837         0.01315318
+
+HW_PATH
+              path  estimate  formal_se
+1 Height to Weight 0.5629883 0.03603639
+
+HW_REVERSE
+GCMSEM DWLS fit
+Observed traits: Height, Weight
+Moments: 12   Free parameters: 8   Jacobian rank: 8/8
+Converged: yes   Uncalibrated Q: 5.456
+Formal sandwich SEs: available   Inference checks: flagged
+*** HEYWOOD CASE: source moment checks failed ***
+Negative source variance: F
+Estimates and available formal SEs retained.
+Flags: source moment feasibility checks failed
+
+Parameter estimates
+                               term           label estimate formal SE           se_status      z  p
+                   Height ~~ Height      variance_x    2.035    0.3856 formal_only_flagged  5.277 NA
+         k3(Height, Height, Height)          skew_x   -2.118     1.326 formal_only_flagged -1.597 NA
+ k4(Height, Height, Height, Height)        excess_x    375.8     85.38 formal_only_flagged  4.401 NA
+                   Weight ~~ Weight      variance_y    1.728    0.1711 formal_only_flagged   10.1 NA
+         k3(Weight, Weight, Weight)          skew_y    2.334     1.324 formal_only_flagged  1.762 NA
+ k4(Weight, Weight, Weight, Weight)        excess_y    214.9     67.21 formal_only_flagged  3.197 NA
+                             F ~~ F shared_variance  -0.7279    0.1496 formal_only_flagged -4.865 NA
+                    Height ~ Weight         reverse      1.2    0.1595 formal_only_flagged  7.523 NA
+
+HW_RECIPROCAL
+GCMSEM DWLS fit
+Observed traits: Height, Weight
+Moments: 12   Free parameters: 8   Jacobian rank: 8/8
+Converged: yes   Uncalibrated Q: 4.286
+Formal sandwich SEs: available   Inference checks: passed
+Stable branch: yes
+Source moment checks: passed
+
+Parameter estimates
+                               term      label estimate formal SE     se_status     z          p
+                   Height ~~ Height variance_x   0.8665    0.1003 regular_local  8.64  5.641e-18
+         k3(Height, Height, Height)     skew_x    3.691     2.818 regular_local  1.31     0.1901
+ k4(Height, Height, Height, Height)   excess_x    778.3     161.3 regular_local 4.825  1.403e-06
+                   Weight ~~ Weight variance_y   0.6695   0.04529 regular_local 14.78  1.861e-49
+         k3(Weight, Weight, Weight)     skew_y     4.83     2.316 regular_local 2.086    0.03702
+ k4(Weight, Weight, Weight, Weight)   excess_y    433.1     168.9 regular_local 2.564    0.01036
+                    Weight ~ Height    forward    0.568   0.02297 regular_local 24.73 4.885e-135
+                    Height ~ Weight    reverse  0.04301    0.0372 regular_local 1.156     0.2476
+
+BS_REVERSE
+GCMSEM DWLS fit
+Observed traits: BMI, SBP
+Moments: 12   Free parameters: 8   Jacobian rank: 8/8
+Converged: yes   Uncalibrated Q: 16.39
+Formal sandwich SEs: available   Inference checks: passed
+Source moment checks: passed
+
+Parameter estimates
+                   term           label estimate formal SE     se_status      z         p
+             BMI ~~ BMI      variance_x   0.8281   0.06451 regular_local  12.84  1.01e-37
+      k3(BMI, BMI, BMI)          skew_x    3.839     2.614 regular_local  1.469    0.1418
+ k4(BMI, BMI, BMI, BMI)        excess_x    543.4     282.6 regular_local  1.923   0.05448
+             SBP ~~ SBP      variance_y   0.8021   0.07413 regular_local  10.82 2.763e-27
+      k3(SBP, SBP, SBP)          skew_y   -2.064     1.717 regular_local -1.202    0.2292
+ k4(SBP, SBP, SBP, SBP)        excess_y    406.2      79.3 regular_local  5.122 3.027e-07
+                 F ~~ F shared_variance   0.1979   0.08402 regular_local  2.356   0.01847
+              BMI ~ SBP         reverse  -0.0833   0.04356 regular_local -1.912   0.05583
+
+BS_RECIPROCAL
+GCMSEM DWLS fit
+Observed traits: BMI, SBP
+Moments: 12   Free parameters: 8   Jacobian rank: 8/8
+Converged: yes   Uncalibrated Q: 4.193
+Formal sandwich SEs: available   Inference checks: passed
+Stable branch: yes
+Source moment checks: passed
+
+Parameter estimates
+                   term      label estimate formal SE     se_status      z         p
+             BMI ~~ BMI variance_x    1.043   0.06989 regular_local  14.92 2.525e-50
+      k3(BMI, BMI, BMI)     skew_x    2.905     2.739 regular_local  1.061    0.2888
+ k4(BMI, BMI, BMI, BMI)   excess_x    610.5     276.1 regular_local  2.211   0.02704
+             SBP ~~ SBP variance_y   0.9988   0.08634 regular_local  11.57 6.014e-31
+      k3(SBP, SBP, SBP)     skew_y   -2.298     1.879 regular_local -1.223    0.2214
+ k4(SBP, SBP, SBP, SBP)   excess_y    441.6     101.8 regular_local  4.337 1.444e-05
+              SBP ~ BMI    forward    0.277   0.05314 regular_local  5.213 1.853e-07
+              BMI ~ SBP    reverse  -0.1197   0.03671 regular_local  -3.26  0.001114
+
+SESSION
+R version 4.3.3 (2024-02-29)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 24.04.3 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/blas/libblas.so.3.12.0 
+LAPACK: /usr/lib/x86_64-linux-gnu/lapack/liblapack.so.3.12.0
+
+locale:
+ [1] LC_CTYPE=C.UTF-8       LC_NUMERIC=C           LC_TIME=C.UTF-8        LC_COLLATE=C.UTF-8     LC_MONETARY=C.UTF-8   
+ [6] LC_MESSAGES=C.UTF-8    LC_PAPER=C.UTF-8       LC_NAME=C              LC_ADDRESS=C           LC_TELEPHONE=C        
+[11] LC_MEASUREMENT=C.UTF-8 LC_IDENTIFICATION=C   
+
+time zone: Europe/Amsterdam
+tzcode source: system (glibc)
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base     
+
+other attached packages:
+[1] GCMSEM_0.2.0
+
+loaded via a namespace (and not attached):
+[1] compiler_4.3.3 jsonlite_2.0.0
