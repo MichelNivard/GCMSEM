@@ -51,11 +51,16 @@
     dir.create(dirname(path),recursive=TRUE,showWarnings=FALSE)
     cat("",file=path)
   }
-  function(...) {
+  state<-new.env(parent=emptyenv());state$lines<-character()
+  writer<-function(...) {
     line<-paste(format(Sys.time(),"%Y-%m-%dT%H:%M:%SZ",tz="UTC"),paste(...,collapse=" "))
+    state$lines<-c(state$lines,line)
     if(verbose)cat(line,"\n")
     if(!is.null(path))cat(line,"\n",file=path,append=TRUE)
+    invisible(NULL)
   }
+  attr(writer,"lines")<-function()state$lines
+  writer
 }
 
 #' Fit a genomic comoment structural equation model
@@ -63,9 +68,11 @@
 gcmsem <- function(model,moments,V=NULL,orders=2:4,keys=NULL,start=NULL,
                    n_starts=5L,seed=1L,stable=FALSE,
                    control=list(iter.max=1000L,eval.max=2000L,rel.tol=1e-10),
-                   log_file=NULL,verbose=TRUE,rank_tolerance=1e-7,
+                   log_file=NULL,verbose=FALSE,rank_tolerance=1e-7,
                    boundary_tolerance=1e-6,gradient_tolerance=1e-3,
-                   feasibility=c("check","penalty"),penalty_weight=1e6) {
+                   feasibility=c("check","penalty"),penalty_weight=1e6,
+                   write.to.tsv=FALSE,out=NULL,overwrite=FALSE) {
+  .validate_export_options(write.to.tsv,out,overwrite)
   if(!inherits(model,"gcmsem_model"))stop("Build the model using gcmsem_model()")
   feasibility<-match.arg(feasibility)
   if(!is.numeric(penalty_weight)||length(penalty_weight)!=1||!is.finite(penalty_weight)||penalty_weight<=0)stop("penalty_weight must be positive and finite")
@@ -74,7 +81,7 @@ gcmsem <- function(model,moments,V=NULL,orders=2:4,keys=NULL,start=NULL,
   p<-length(model$start); d<-length(dat$m)
   if(!is.numeric(n_starts)||length(n_starts)!=1||n_starts<1||n_starts!=as.integer(n_starts))stop("n_starts must be a positive integer")
   log<-.log_writer(log_file,verbose)
-  log("GCMSEM 0.1.0 | DWLS with full-V sandwich | R",getRversion())
+  log("GCMSEM",as.character(utils::packageVersion("GCMSEM")),"| DWLS with full-V sandwich | R",getRversion())
   log("MODEL",gsub("[\r\n]+"," ; ",model$syntax))
   log("SETTINGS seed",seed,"starts",n_starts,"stable",stable,"feasibility",feasibility)
   log("Observed",length(model$observed),"latent",length(model$latent),"moments",d,"parameters",p,"V rank",dat$V_rank)
@@ -230,5 +237,7 @@ gcmsem <- function(model,moments,V=NULL,orders=2:4,keys=NULL,start=NULL,
     log(msg);warning(msg,call.=FALSE)
   }
   log("Q is an uncalibrated discrepancy; no chi-square/WLSMV p-value. SEs are conditional on the specified model and selected solution.")
+  fit$log<-attr(log,"lines")()
+  if(write.to.tsv)fit$output_files<-export_gcmsem(fit,out,overwrite=overwrite)
   fit
 }
