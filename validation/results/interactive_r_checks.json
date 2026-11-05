@@ -1,0 +1,59 @@
+{
+  "date": "2026-11-05",
+  "r_package": "0.2.0",
+  "python_engine": "0.1.0",
+  "python_tests": {
+    "passed": 49,
+    "command": "python -m pytest tests/python -q"
+  },
+  "r_tests": {
+    "core_checks": 73,
+    "presentation_checks": 37,
+    "bridge_checks": 25,
+    "transformation_and_export_regressions": "passed",
+    "python_bridge_executed": true
+  },
+  "r_cmd_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": 0,
+    "status": "OK",
+    "command": "R CMD check GCMSEM_0.2.0.tar.gz --no-manual --no-vignettes"
+  },
+  "empirical": {
+    "prepared_height_weight": "moments and full V reproduced within 1e-12",
+    "original_neale_height_weight": "moments, full V and correlations exactly identical to prepared-file route",
+    "six_sem_fits": "coefficients and parameter covariance reproduced within 1e-12",
+    "correlation_pairs": 105,
+    "pearson": 0.9828554507609955,
+    "rmse": 0.05125939184478091,
+    "scatterplot": "tutorials/figures/correlation-scatterplot.png"
+  },
+  "tested_source_sha256": {
+    "R/constraints.R": "8ba0c02e4fe2a7357ba2222ae66932d99130f5872ee6707fb5a6c3f3eda29163",
+    "R/estimate.R": "901390a001bd33fa439869a746daa3665bb51a560839b05305ff88540d536c60",
+    "R/export.R": "359d2a0a8ea37eb48782c666bf970a7b603a18d6081394c0b46856dd78a3fc7f",
+    "R/fit.R": "84ba242cc1a49494489f3a2bfa820482dd8c962261b1454159cabcaa93c2916e",
+    "R/io.R": "4e64d2fd3e4831ee146794fde4a3378fd734882a131a9c466e877481a2d1cda6",
+    "R/model.R": "4965bdf260533dce0203e198668e750888cd8264855eb042b49f6b4ac22ce4ff",
+    "R/moments.R": "b9f0881ff88226134d3468fe7d17c68086823f36b28962e3b55473e237f7983a",
+    "R/transform.R": "5ad1ffed724c316566f3f45e70aa2b6b554e1fdd2c181540f6fca620c824dd6f",
+    "man/GCMSEM-package.Rd": "4313f9b66bb6eb36c4ecbe106df582102325fff2664b168a89a3f04b2cefb878",
+    "man/estimate_moments.Rd": "6b2db091e046175a572df1487750a8019097f16552031c1483a62e0f87019739",
+    "man/export_gcmsem.Rd": "750b61ed9971911b0ab3b95205508de3f3d2490b422bc8cd4597ce23d2f7c910",
+    "man/gcmsem.Rd": "9dda4f26ca87dcbec093309bd4b4e660ad2e1dcdc5c8ccebb1b71bd37a484dff",
+    "man/gcmsem_methods.Rd": "c47b8b547a0745196325746d7635b479d5ce8d674281c6dddf013968e0d2b032",
+    "man/gcmsem_model.Rd": "9a6e5757ff60799110a986c285d3a26d34176329873836973ed19ef5fa0371cd",
+    "man/implied_moments.Rd": "471295bb136eee8db77f49850b57484158928c599140c37446c8aad75954f969",
+    "man/parameter_estimates.Rd": "7ebd30231f624bf953ae3a11e3e46b8b0c5e8b3d7e8424ff072d0784df67f7bb",
+    "man/read_moments.Rd": "eba79ccad025298663d9340df2e7c4436fb2cf92dd02b53231d5e6ca725faeeb",
+    "man/standardize_moments.Rd": "a5c136c59bddd773f926b14f8d2ab7240013a63789320084c7e0074342c56bce",
+    "tests/r/test-core.R": "56812300676579528653cde3fe6d25c3bf0b21a84a60f2c474c53e000ca9f33a",
+    "tests/r/test-estimation.R": "3a450537ee2889804f44a6617f544aed135d40934e173ce702eb7489caf0f405",
+    "tests/r/test-presentation.R": "d678178bffafc57f1990f31176d3264f65c2aea6fd72e7329fa3a53374f39efb",
+    "tests/r/test-transform.R": "5fd19537206b0c4d486f36ddc1a7306729890828eb959dbc3fbb26e0c21a0772",
+    "DESCRIPTION": "2006eb3965afc1b10e4b1898fa26d36a3ed7b2293028308f6f0be1dfc6f37f00",
+    "NAMESPACE": "1ea0f17533a34004efa49a6454a35a7bb3b14bd8f7b28d7c6df5aece6e8fda5b",
+    "tests/run-tests.R": "b4f830bc09f614781039a76d2007ae8a0ea84ee5488ec7c0020dc8933fe64f50"
+  }
+}
