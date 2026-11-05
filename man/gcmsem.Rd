@@ -5,9 +5,10 @@
 gcmsem(model, moments, V = NULL, orders = 2:4, keys = NULL,
   start = NULL, n_starts = 5L, seed = 1L, stable = FALSE,
   control = list(iter.max = 1000L, eval.max = 2000L, rel.tol = 1e-10),
-  log_file = NULL, verbose = TRUE, rank_tolerance = 1e-7,
+  log_file = NULL, verbose = FALSE, rank_tolerance = 1e-7,
   boundary_tolerance = 1e-6, gradient_tolerance = 1e-3,
-  feasibility = c("check", "penalty"), penalty_weight = 1e6)
+  feasibility = c("check", "penalty"), penalty_weight = 1e6,
+  write.to.tsv = FALSE, out = NULL, overwrite = FALSE)
 }
 \arguments{
 \item{model}{A \code{gcmsem_model}.}
@@ -21,12 +22,15 @@ gcmsem(model, moments, V = NULL, orders = 2:4, keys = NULL,
 \item{stable}{Require a returned solution with spectral radius of B less than one.}
 \item{control}{nlminb optimizer control list.}
 \item{log_file}{Optional timestamped text log.}
-\item{verbose}{Write progress to the console.}
+\item{verbose}{Write timestamped progress to the console. Logs are retained in the returned object regardless of this setting.}
 \item{rank_tolerance}{Relative singular-value rank threshold.}
 \item{boundary_tolerance}{Boundary threshold in internally scaled units.}
 \item{gradient_tolerance}{Maximum interior standardized gradient for inference.}
 \item{feasibility}{Default unpenalized diagnostic checks, or an explicitly requested exact-gradient source-feasibility penalty sensitivity estimator.}
 \item{penalty_weight}{Initial positive penalty strength, increased up to 1e12 until independent normalized source checks pass.}
+\item{write.to.tsv}{Also export the completed fit to files. The default returns the R object without creating output files.}
+\item{out}{Output path prefix required when \code{write.to.tsv = TRUE}.}
+\item{overwrite}{Allow existing export files to be replaced.}
 }
 \description{Fits DWLS using exact structured Jacobians, automatic parameter
 scaling, multistart optimization and full-sampling-covariance sandwich uncertainty.}
@@ -45,7 +49,10 @@ distinct. Numerical penalty enforcement does not guarantee exact feasibility or
 global optimality. Q is uncalibrated: no WLSMV correction or chi-square
 fit p-value is supplied. Inference is local and conditional on the model and solution.}
 \value{A \code{gcmsem_fit} with coefficients, parameter table, sandwich covariance,
-fitted/observed cumulants, residuals, discrepancy, per-start results and diagnostics.}
+fitted/observed cumulants, residuals, discrepancy, per-start results, diagnostics
+and a character vector of timestamped log lines. \code{summary(fit)} returns a
+structured summary with a readable print method; \code{coef()}, \code{vcov()},
+\code{fitted()} and \code{as.data.frame()} extract ordinary R objects.}
 \examples{
 m <- gcmsem_model('y ~ b*x', c('x','y'), gaussian_observed=FALSE)
 p <- m$start; p['b'] <- 0.4
