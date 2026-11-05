@@ -1,0 +1,37 @@
+{
+  "updated_utc": "2026-11-05T16:57:59.711122+00:00",
+  "r_version": "0.3.0",
+  "python_version": "0.1.0",
+  "python_tests": 49,
+  "r_core_checks": 73,
+  "r_presentation_checks": 37,
+  "r_bridge_checks": 25,
+  "q_uncertainty_checks": 14,
+  "moment_transformation_checks": "passed",
+  "r_cmd_check": {
+    "errors": 0,
+    "warnings": 0,
+    "notes": 0
+  },
+  "correlation_recomputed_from_gwas": {
+    "tags": 1012060,
+    "traits": 15,
+    "jackknife_groups": 200,
+    "elapsed_seconds": 858.664,
+    "max_abs_rg_difference_from_archive": 0.0
+  },
+  "six_causal_refits": "All coefficients reproduce archived values within 1e-10; Q diagnostics added without changing optimizer",
+  "zenodo_record": "23977299",
+  "zenodo_publication": "Published, eight files complete; all four archive sizes/MD5s verified",
+  "source_sha256": {
+    "R/constraints.R": "8ba0c02e4fe2a7357ba2222ae66932d99130f5872ee6707fb5a6c3f3eda29163",
+    "R/estimate.R": "901390a001bd33fa439869a746daa3665bb51a560839b05305ff88540d536c60",
+    "R/export.R": "97d86ce1657524250ec68ddbc4eb6015caf2960475bc84643b5132b4d4e71abc",
+    "R/fit-measures.R": "e8b574423b1aa0cf5cd7e6b48e75f8782fd2f7f466187ec7dcf66223b10f46a2",
+    "R/fit.R": "9c28f88de4125117550486e7b053c49da3ff9a8ee1a3ef34e48e1aac1d570477",
+    "R/io.R": "fd88872ea3defa6f51ddb8fcee82b7f0df7ec82756319aed7d306c86ee12c4f5",
+    "R/model.R": "4965bdf260533dce0203e198668e750888cd8264855eb042b49f6b4ac22ce4ff",
+    "R/moments.R": "b9f0881ff88226134d3468fe7d17c68086823f36b28962e3b55473e237f7983a",
+    "R/transform.R": "5ad1ffed724c316566f3f45e70aa2b6b554e1fdd2c181540f6fca620c824dd6f"
+  }
+}
