@@ -74,25 +74,25 @@ Compare Q across candidate models only when they use the same input moments, sca
 
 ### How the approximate SE is calculated
 
-Let $m$ contain estimated moments, $f(\widehat\theta)$ their fitted values and $D=\operatorname{diag}(1/\sqrt{V_{ii}})$. Define standardized residuals $e=D[m-f(\widehat\theta)]$, moment-error correlation $C=DVD$, and the standardized model Jacobian $J=D\,\partial f/\partial\theta$. The projection $P=I-JJ^+$ removes changes that can be absorbed by refitting the parameters. Here $J^+$ is the Moore–Penrose inverse; the implementation uses an SVD.
+Let $m$ contain estimated moments, $f(\widehat\theta)$ their fitted values and $D=\mathrm{diag}(1/\sqrt{V_{ii}})$. Define standardized residuals $e=D[m-f(\widehat\theta)]$, moment-error correlation $C=DVD$, and the standardized model Jacobian $J=D(\partial f/\partial\theta)$. The projection $P=I-JJ^+$ removes changes that can be absorbed by refitting the parameters. Here $J^+$ is the Moore–Penrose inverse; the implementation uses an SVD.
 
 ```math
 C_r=PCP,\qquad Q=e^\top e,
 ```
 
 ```math
-E_0(Q)\approx\operatorname{tr}(C_r),\qquad
-\operatorname{Var}_0(Q)\approx2\operatorname{tr}(C_r^2),
+E_0(Q)\approx\mathrm{tr}(C_r),\qquad
+\mathrm{Var}_0(Q)\approx2\mathrm{tr}(C_r^2),
 ```
 
 ```math
-\widehat{\operatorname{SE}}(Q)
-\approx\sqrt{2\operatorname{tr}(C_r^2)+4e^\top C_r e}.
+\widehat{\mathrm{SE}}(Q)
+\approx\sqrt{2\mathrm{tr}(C_r^2)+4e^\top C_r e}.
 ```
 
 These are Gaussian quadratic-form identities applied to a locally linearized fitted model. The last equation substitutes observed residuals for unknown population misfit. Because those residuals also contain noise, it can overestimate the sampling SD near a well-fitting model. `Q_null_sd` describes the correctly specified case directly. Neither quantity justifies a symmetric normal confidence interval around a nonnegative Q statistic.
 
-The reference matches the first two null moments to $a\chi^2_\nu$, with $a=\operatorname{tr}(C_r^2)/\operatorname{tr}(C_r)$ and $\nu=\operatorname{tr}(C_r)^2/\operatorname{tr}(C_r^2)$. When standardized moment errors are independent, it reduces to the familiar chi-square reference with moments-minus-parameters degrees of freedom. Correlated moments generally produce a weighted sum of chi-squares, which this reference only approximates. See [Yuan and Bentler's quadratic-form approximations](https://doi.org/10.1348/000711009X449771).
+The reference matches the first two null moments to $a\chi^2_\nu$, with $a=\mathrm{tr}(C_r^2)/\mathrm{tr}(C_r)$ and $\nu=\mathrm{tr}(C_r)^2/\mathrm{tr}(C_r^2)$. When standardized moment errors are independent, it reduces to the familiar chi-square reference with moments-minus-parameters degrees of freedom. Correlated moments generally produce a weighted sum of chi-squares, which this reference only approximates. See [Yuan and Bentler's quadratic-form approximations](https://doi.org/10.1348/000711009X449771).
 
 The calculation holds `V`, the weights, and the fitted tangent space fixed. Nonlinear curvature, uncertainty in `V`, LD-reference uncertainty, source-boundary behavior and selection among models can affect its accuracy. **The package has not established calibrated Q p-values for higher-order GWAS moments.** Use this as a diagnostic reference, inspect residuals and validate consequential decisions by simulation. The existing parameter SE and higher-order coverage limitations remain relevant.
 
