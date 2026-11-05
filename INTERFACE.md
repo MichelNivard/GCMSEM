@@ -15,3 +15,7 @@ R syntax: `y ~ b*x`; `f =~ a*x + a*y`; `x ~~ v*x`; repeated labels tie parameter
 Default estimator unconstrained DWLS, full V robust sandwich without N division, multistart nlminb with exact structured forward-mode derivatives. Retain classical/higher-order Heywood estimates and computable formal sandwich SEs with prominent warnings and separate source-admissibility/inference flags. Do not preferentially select admissible source moments or clip free variances by default. Identification or numerical failures must never yield fabricated SEs. Optional feasibility penalties are an explicitly different estimator. No WLSMV or calibrated chi-square p-values claimed. Preserve reciprocal stability and source permutation limitations.
 
 Do not commit large GWAS, licensed reference data, runtime binaries, or old empirical archives. Commit small reproducible synthetic fixtures/results and scripts; validation reports must state what actually ran.
+
+## R model-fit diagnostics (0.3.0)
+
+`fit_measures(fit)` returns the one-row `fit$fit_measures` data frame. It includes Q, a local Gaussian approximate sampling SD (`Q_se`), its delta-method component, null-reference mean/SD/95th percentile, moment-matched reference scale and degrees of freedom, an explicitly approximate tail probability, and a status. This adds no filtering or change to fitted parameter values. Optional fit export adds `.fit_measures.tsv`; summaries and retained logs display the same diagnostics. See `?fit_measures` and the [R results guide](tutorials/R-results.md) for assumptions and unavailable cases.
