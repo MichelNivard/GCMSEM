@@ -1,4 +1,5 @@
-# Interactive helpers for the worked GCMSEM / S-LD4M comparison.
+# Interactive helpers for the archived matched-input GCMSEM / S-LD4M diagnostic.
+# Use original_polygenicity.R for the author-reference pipeline comparison.
 # Run from the GCMSEM repository root. Results stay in your R session.
 
 read_polygenicity_comparison <- function(out = "tutorial-results/polygenicity") {
@@ -40,7 +41,7 @@ run_polygenicity_example <- function(data_dir = "tutorial-data",
 }
 
 print.gcmsem_polygenicity_comparison <- function(x, ...) {
-  cat("GCMSEM and original S-LD4M: effective polygenicity\n")
+  cat("GCMSEM and matched-input S-LD4M: effective polygenicity\n")
   empirical <- is.null(x$analysis$ld_reference)
   cat(nrow(x$comparison), "traits;", format(x$analysis$n_tags, big.mark=","),
       if(empirical) "common HM3 tags\n" else "simulated source/tag variants\n")
@@ -68,7 +69,9 @@ plot.gcmsem_polygenicity_comparison <- function(x, uncertainty = TRUE, input = c
   flagged <- d[[if(input=="beta") "flags_beta" else "flags"]] != "none"
   col <- ifelse(flagged, "#B45309", "#16697A")
   plot(xx, yy, xlim=lim, ylim=lim, asp=1, pch=ifelse(flagged,17,19), col=col,
-       xlab=paste0("Original S-LD4M, ", if(input=="beta") "BETA squared" else x$agreement$sld4m_input, " (thousands)"),
+       xlab=if (identical(x$agreement$sld4m_input,"author reference"))
+         "S-LD4M with author reference (thousands)" else
+         paste0("S-LD4M with shared inputs, ",if(input=="beta") "BETA squared" else x$agreement$sld4m_input," (thousands)"),
        ylab="GCMSEM (thousands of effective variants)",
        main=paste(nrow(d), if(uncertainty) "traits: estimates and one-SE bars" else "traits: effective polygenicity"), ...)
   abline(0,1,lty=2,col="grey45")

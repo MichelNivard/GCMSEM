@@ -9,7 +9,7 @@ GCMSEM estimates genetic moments from GWAS summary statistics and fits user-defi
 | [Working with R results](R-results.md) | Inspect objects, check fit with Q and its approximate uncertainty, interpret warnings and save results. |
 | [Height/weight and BMI/SBP](Causal-examples.md) | Obtain real GWAS summary statistics, estimate moments, draw six models and assess fit before interpreting paths. |
 | [Fifteen-trait correlations](Fifteen-trait-correlations.md) | Compute a full genetic-correlation matrix from GWAS files, run standard LDSC, and compare 105 pairs in R. |
-| [Kurtosis and polygenicity](Polygenicity.md) | Estimate effective polygenicity for 15 traits, compare original S-LD4M with GCMSEM, and inspect the scatterplot and uncertainty. |
+| [Kurtosis and polygenicity](Polygenicity.md) | Estimate effective polygenicity for 15 traits, run S-LD4M with its author-supplied reference inputs and compare it with GCMSEM, and inspect the scatterplot and uncertainty. |
 | [Data and scores](Data-and-scores.md) | Understand the precomputed HapMap3-tag scores, input datasets and download checksums. |
 | [Standard LDSC environment](Standard-LDSC-environment.md) | Install the original LDSC software and standard reference/weight files. |
 | [Execution report](Execution-report.md) | Inspect measured results, checks and validation limits. |

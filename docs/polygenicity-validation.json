@@ -131,5 +131,7 @@
     "Original software run on matched GCMSEM scores and weights, not a reproduction of the 2019 reference pipeline",
     "Two simulation architectures at one seed; no interval-coverage claim",
     "FMR was not fitted to empirical GWAS"
-  ]
+  ],
+  "analysis_kind": "Historical matched-input diagnostic; not an independent original-reference pipeline",
+  "primary_analysis": "original-sld4m-validation.json"
 }
