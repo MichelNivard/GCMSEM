@@ -147,7 +147,7 @@ def main(argv=None):
         code = args.func(args)
         log.info("SUCCESS elapsed_seconds=%.3f", time.monotonic() - started)
         return 0 if code is None else code
-    except (ValueError, OSError, KeyError, FloatingPointError, np.linalg.LinAlgError) as exc:
+    except (ValueError, OSError, EOFError, KeyError, FloatingPointError, np.linalg.LinAlgError) as exc:
         log.error("FAILED %s: %s", type(exc).__name__, exc)
         return 2
     finally:
