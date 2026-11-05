@@ -16,4 +16,9 @@ validation/work*.log
 *.so
 *.o
 .DS_Store
+tutorial-data/
+tutorial-results/
+external-data/
+reference-work/
+external/
 

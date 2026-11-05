@@ -25,6 +25,8 @@ Python requires NumPy and SciPy. R uses its standard libraries and a small C++ k
 
 ## Run a complete small example
 
+For real GWAS analyses, see the [Wiki](https://github.com/MichelNivard/GCMSEM/wiki) and [empirical tutorial source](tutorials/README.md): height/weight and BMI/SBP SEMs, and a 15-trait comparison with standard LDSC. Numerical data are packaged separately from this repository; the tutorial page states their publication status.
+
 ```bash
 python examples/make_toy_inputs.py --out toy
 gcmsem score --manifest toy/ld_manifest.tsv --out toy/scores.npz

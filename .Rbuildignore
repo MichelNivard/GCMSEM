@@ -13,3 +13,8 @@
 
 ^\.ruff_cache$
 ^\.coverage$
+^tutorials$
+^tutorial-data$
+^tutorial-results$
+^wiki$
+^external$
