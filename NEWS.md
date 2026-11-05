@@ -1,3 +1,26 @@
+# GCMSEM 0.2.0
+
+- `estimate_moments()` runs the Python summary-statistics engine from R and
+  returns a `gcmsem_moments` object. It accepts manifests, named GWAS paths,
+  or named lists of GWAS data frames.
+- Moment objects include named covariance and correlation matrices, their
+  standard errors, the full sampling covariance, genomic deletion estimates,
+  conditional moment bundles, provenance, and the estimation log.
+- Fit and moment objects have readable print and summary methods. Assigning
+  a fit or summary keeps the result in R; `write.to.tsv = TRUE` and
+  `export_gcmsem()` provide explicit table export.
+- `standardize_moments()` transforms cumulants, their joint covariance, and
+  deletion estimates using fixed trait scales and records the scale factors.
+- Worked tutorials now include complete R scripts, file descriptions,
+  executed console output, and a scatterplot of 105 GCMSEM/standard-LDSC
+  correlation pairs. An original Neale Lab GWAS preparation script provides
+  a source-download route for the causal examples.
+- Unconstrained estimates and computable formal standard errors remain
+  available for Heywood cases, with prominent warnings and separate
+  convergence, identification, source-admissibility, and inference flags.
+
+The accompanying Python numerical engine remains version 0.1.0.
+
 # GCMSEM 0.1.0
 
 Initial standalone implementation of Genomic Comoment SEM.

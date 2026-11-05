@@ -1,8 +1,8 @@
 # GCMSEM — Genomic Comoment SEM
 
-GCMSEM estimates covariance, co-skewness and fourth cumulants of joint SNP effects from GWAS summary statistics, then fits structural equation models to those quantities. It contains a Python pipeline and an independent R package. Neither requires MCMSEM or lavaan.
+GCMSEM estimates covariance, co-skewness and fourth cumulants of joint SNP effects from GWAS summary statistics, then fits structural equation models to those quantities. Its R interface returns moment matrices, fitted models, parameter tables and logs directly to your R session. The standalone SEM engine has no dependency on MCMSEM or lavaan; a Python engine handles summary-statistic harmonization and moment estimation.
 
-**Version 0.1.0 is an initial research release.** The software includes input validation, reproducible tests, logs and numerical diagnostics. Its higher-order inference is still being validated; passing software tests is not a certification of interval coverage or causal identification. See the [executed validation](docs/validation.md) and [statistical assumptions](docs/statistical-assumptions.md).
+**R package version 0.2.0 adds an interactive R workflow.** The Python engine remains at version 0.1.0. The software includes input validation, reproducible tests, logs and numerical diagnostics. Higher-order inference remains under validation; interval coverage and causal identification depend on the statistical model and data. See the [executed validation](docs/validation.md) and [statistical assumptions](docs/statistical-assumptions.md).
 
 ## What is included
 
@@ -14,27 +14,87 @@ GCMSEM estimates covariance, co-skewness and fourth cumulants of joint SNP effec
 
 ## Install
 
-From the repository root:
+Use Python 3.10 or newer, R 4.1 or newer, and a C++ compiler. Run these commands in a terminal:
 
 ```bash
+git clone https://github.com/MichelNivard/GCMSEM.git
+cd GCMSEM
+python3 -m venv .venv
+source .venv/bin/activate
 python -m pip install .
+Rscript -e 'install.packages("jsonlite", repos="https://cloud.r-project.org")'
 R CMD INSTALL .
 ```
 
-Python requires NumPy and SciPy. R uses its standard libraries and a small C++ kernel; a working C++ compiler is required for source installation. `jsonlite` is optional for richer bundle metadata parsing. GWASBrewer is used only by the separate simulation validation.
+The Python installation includes NumPy and SciPy. The R-to-Python bridge, `estimate_moments()`, requires `jsonlite`. Start R from this terminal with the Python environment still activated. You can also pass its executable explicitly, for example `python = ".venv/bin/python"`. R-only fitting from existing moment objects uses R's standard libraries and the compiled kernel. GWASBrewer is used by the separate simulation validation.
 
 ## Run a complete small example
 
-For real GWAS analyses, see the [Wiki](https://github.com/MichelNivard/GCMSEM/wiki) and [empirical tutorial source](tutorials/README.md): height/weight and BMI/SBP SEMs, and a 15-trait comparison with standard LDSC. Numerical data are packaged separately from this repository; the tutorial page states their publication status.
+This example runs immediately after installation and generates its own inputs. From the repository directory, create three synthetic GWAS tables and their signed LD-power scores:
 
 ```bash
 python examples/make_toy_inputs.py --out toy
 gcmsem score --manifest toy/ld_manifest.tsv --out toy/scores.npz
-gcmsem estimate --sumstats toy/sumstats.tsv --scores toy/scores.npz --noise-intercept toy/noise.tsv --out toy/result
-Rscript examples/fit_bundle.R toy/result
 ```
 
-The toy input uses three traits, unequal synthetic LD block sizes, non-Gaussian effects and correlated sampling error. This quickstart supplies the known generating noise covariance; omit `--noise-intercept` to estimate it from LD regressions, as in an ordinary GWAS analysis. It requires no downloads. The [GWASBrewer validation](validation/) uses the real HapMap3 chromosome 19 LD pattern, actual varying block lengths, and both estimated and supplied overlap correction. The toy example is not a substitute for that validation.
+`toy/A.tsv`, `toy/B.tsv` and `toy/C.tsv` contain one SNP per row, with `SNP`, `A1`, `A2`, `BETA`, `SE` and `EAF` columns. `toy/sumstats.tsv` names those files and declares per-allele effects. `toy/scores.npz` holds their LD-power scores; `toy/noise.tsv` contains the known cross-trait sampling-noise intercepts for this simulation.
+
+Now start R in the same directory:
+
+```r
+library(GCMSEM)
+
+moments <- estimate_moments(
+  "toy/sumstats.tsv",
+  scores = "toy/scores.npz",
+  noise_intercept = "toy/noise.tsv",
+  n_blocks = 80
+)
+moments
+
+scaled <- standardize_moments(moments)
+model <- gcmsem_model('
+  B ~ ab*A
+  C ~ bc*B
+', observed = c("A", "B", "C"), gaussian_observed = FALSE)
+
+fit <- gcmsem(model, scaled, n_starts = 8, seed = 20261103)
+summary(fit)
+parameter_estimates(fit)
+
+moments$R                 # Complete 3 x 3 genetic-correlation matrix
+coef(fit)[c("ab", "bc")]  # Named path estimates
+vcov(fit)                 # Parameter sampling covariance
+tail(fit$log, 3)          # Retained estimation log
+```
+
+The moment object prints:
+
+```text
+GCMSEM moments
+Traits: A, B, C
+SNPs: 3,769
+Cumulants: 34 (order 1: 3, order 2: 6, order 3: 10, order 4: 15)
+Sampling covariance V: 34 x 34   Jackknife groups: 80
+
+Genetic correlations ($R)
+       A      B      C
+A 1.0000 0.4095 0.0421
+B 0.4095 1.0000 0.3293
+C 0.0421 0.3293 1.0000
+```
+
+The fitted paths are approximately `ab = 0.3367` and `bc = 0.3001`; `summary(fit)` displays their formal SEs alongside all source-moment parameters and model diagnostics.
+
+`standardize_moments()` divides each trait's SNP effects by its estimated marginal SD and transforms every cumulant and its sampling covariance consistently. The scaling constants are held fixed for fitting and SE calculation; `scaled$scaling$scale` records them. Path estimates from this fit are on that SNP-effect-SD scale.
+
+The toy input has three traits, unequal synthetic LD block sizes, non-Gaussian effects and correlated sampling error. For an ordinary GWAS analysis, omit `noise_intercept` to estimate it from LD regressions. The [GWASBrewer validation](validation/) separately uses the real HapMap3 chromosome 19 LD pattern and varying block lengths.
+
+For real data, follow the [height/weight and BMI/SBP tutorial](tutorials/Causal-examples.md) or the [15-trait LDSC comparison](tutorials/Fifteen-trait-correlations.md). They explain each input file, show executable R code and include the resulting console output. The correlation tutorial reads standard LDSC estimates into R and draws this comparison:
+
+![GCMSEM and standard LDSC genetic correlations for 105 trait pairs](tutorials/figures/correlation-scatterplot.png)
+
+The empirical numerical archives are stored separately from GitHub. Their public release is pending; see the [data availability and installation page](tutorials/README.md). The small example above requires no empirical downloads.
 
 For real GWAS, use an appropriate signed LD reference and an explicit sumstats manifest:
 
@@ -49,20 +109,6 @@ Save this as a tab-separated file. Each GWAS table requires `SNP`, `A1`, `A2`, `
 See [score construction](docs/scores.md) for reference formats and finite-reference corrections, and the [moment estimator guide](docs/moment-estimator.md) for GWAS inputs, equations, selection of higher moments, and output files. The harmonizer uses a common complete set of tags across traits; it does not combine pair-specific SNP subsets into a joint covariance. It keeps zero-effect SNPs and applies no association-significance filter.
 
 ## Specify a model in R
-
-```r
-library(GCMSEM)
-data <- read_moments("toy/result")
-
-model <- gcmsem_model('
-  B ~ ab*A
-  C ~ bc*B
-', observed = c("A", "B", "C"), gaussian_observed = FALSE)
-
-fit <- gcmsem(model, data, n_starts = 8, log_file = "toy/sem.log")
-summary(fit)
-parameter_estimates(fit)
-```
 
 `gaussian_observed = FALSE` frees the marginal third and fourth cumulants of the **observed variables' disturbances**. `gaussian_latent` controls latent disturbances separately. These switches do not force marginal observed variables to be Gaussian when they receive non-Gaussian inputs. `orders = 2:3` in `gcmsem()` selects which observed moments enter the fitting objective; it is a different operation.
 
@@ -84,21 +130,46 @@ Every argument inside `k3(...)` or `k4(...)` is a variable. The quoted name insi
 
 Repeated names specify repeated tensor indices; fourth-order parameters are **excess cumulants**, so Gaussian means zero. Tuple syntax also represents cross-cumulants involving three or four different traits. Higher cross-source cumulants not declared in syntax are zero. The old directional punctuation aliases have been retired rather than assigned a new meaning. See the [model syntax guide](docs/model-syntax.md) for defaults and migration guidance. This is a documented subset and extension of lavaan-like syntax, not a drop-in replacement for every lavaan feature. Means are estimated by Python but are not currently fitted as an R mean structure.
 
-## Output and uncertainty
+## Work with results in R
 
-Python writes a labeled, versioned bundle:
+`estimate_moments()` and `gcmsem()` return R objects and create no result files by default. Typing an object prints a compact overview. `summary(fit)` displays its diagnostics and parameter table; assigning `s <- summary(fit)` keeps a structured summary without printing. Use `as.data.frame()` to extract the moment or parameter table.
 
-| File suffix | Contents |
+| R expression | Contents |
 |---|---|
-| `.moments.tsv` | Canonical moment keys, estimates and jackknife SEs |
-| `.sampling_cov.tsv` | Full joint sampling covariance, with matching row/column keys |
-| `.jackknife.tsv` | Genomic deletion estimates |
-| `.covariance.tsv` | SNP-effect covariance matrix across all traits |
-| `.correlation.tsv` | SNP-effect correlation matrix across all traits |
-| `.metadata.json` | Versions, settings, inputs, hashes, QC and statistical assumptions |
-| `.log` | Timestamped commands, stage progress, intercepts and diagnostics |
+| `moments$moments` | Data frame of cumulant keys, orders, estimates and jackknife SEs |
+| `moments$S`, `moments$S_SE` | SNP-effect covariance and SE matrices for all traits |
+| `moments$R`, `moments$R_SE` | Genetic correlations and delta-method SEs using the full sampling covariance |
+| `moments$V` | Full joint sampling covariance of the cumulant estimates |
+| `moments$jackknife` | Matrix of genomic deletion estimates |
+| `moments$metadata`, `moments$log` | Provenance, QC, settings and the Python estimation log |
+| `parameter_estimates(fit)` | Numeric parameter estimates, formal SEs and inference-status labels |
+| `coef(fit)`, `vcov(fit)` | Named coefficient vector and parameter sampling covariance |
+| `fit$diagnostics`, `fit$log` | Convergence, identification, source-moment checks and fitting log |
 
-Multiple MAF strata additionally produce conditional bundles. Pooling uses raw-moment mixture identities, not a simple average of fourth cumulants. Source counts remain fixed when tag rows are filtered or deleted. Jackknife groups preserve whole LD blocks and account for unequal deletion sizes.
+`summary(moments)` shows the covariance and correlation matrices with SEs. Console previews show at most six traits; `print(moments, max.traits = Inf)` shows all traits. Every matrix in the object is complete.
+
+Save the entire object with ordinary R serialization, or request tabular files explicitly:
+
+```r
+saveRDS(fit, "toy/fit.rds")
+restored <- readRDS("toy/fit.rds")
+
+export_gcmsem(moments, "toy/exported-moments")
+export_gcmsem(fit, "toy/exported-fit")
+reloaded <- read_moments("toy/exported-moments")
+
+# This option still returns the fitted R object.
+fit_with_files <- gcmsem(
+  model, scaled, n_starts = 8, seed = 20261103,
+  write.to.tsv = TRUE, out = "toy/another-fit"
+)
+```
+
+Exports refuse existing files unless `overwrite = TRUE`. `estimate_moments()` accepts the same `write.to.tsv` and `out` arguments. `log_file` explicitly writes a fit log, while `verbose = TRUE` displays progress in the console. Logs remain available in the returned objects.
+
+The Python CLI remains available for terminal workflows and writes versioned moment bundles; `read_moments(prefix)` loads them into the same R object format. [The estimator guide](docs/moment-estimator.md) describes each bundle file. Multiple MAF strata produce conditional objects in `moments$conditional`. Pooling uses raw-moment mixture identities. Source counts remain fixed when tag rows are filtered or deleted. Jackknife groups preserve whole LD blocks and account for unequal deletion sizes.
+
+## Uncertainty
 
 R minimizes a diagonal-weighted discrepancy. Its sandwich SEs use the entire supplied sampling covariance, without dividing by sample size again. `Q` is reported as an **uncalibrated discrepancy**, not a WLSMV or chi-square test.
 
@@ -124,7 +195,7 @@ It then applies product rules to sparse source cumulants. Fitting uses these exa
 python -m pip install '.[test]'
 python -m pytest tests/python -q
 R CMD build . --no-build-vignettes --no-manual
-R CMD check GCMSEM_0.1.0.tar.gz --no-manual --no-vignettes
+R CMD check GCMSEM_0.2.0.tar.gz --no-manual --no-vignettes
 ```
 
 GitHub Actions runs Python tests and R package checks. See [contributing](CONTRIBUTING.md), [references](docs/references.md), [statistical assumptions](docs/statistical-assumptions.md), and [validation](docs/validation.md). All empirical reference and GWAS datasets retain their own licenses and must be obtained separately.
