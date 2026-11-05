@@ -20,3 +20,13 @@ plot_causal_model(hw_model, "Height to weight with a common source")
 ```
 
 The [causal tutorial](../Causal-examples.md) defines each model beside its diagram. Rectangle nodes are traits, elliptical nodes are sources, and arrows carry parameter names or fixed values. The diagrams show assumptions, not fitted effect estimates. The numerical datasets remain in the external release.
+
+The three `polygenicity-*.png` figures and PDF counterparts come from the executed [15-trait S-LD4M comparison](../Polygenicity.md). After running that tutorial:
+
+```r
+plot(result, uncertainty = FALSE)
+plot(result, uncertainty = TRUE)
+plot(result, uncertainty = FALSE, input = "beta")
+```
+
+The first uses original S-LD4M's Z-squared input, the second adds full one-SE bars, and the third shows its supported BETA-squared sensitivity analysis. Every trait remains visible. Orange triangles mark method diagnostics; the tables contain their reasons.

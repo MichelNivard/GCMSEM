@@ -1,0 +1,35 @@
+GCMSEM and original S-LD4M: effective polygenicity
+15 traits; 1,012,000 common HM3 tags
+Source-weighted MAF-bin aggregation; HM3 proxy for source LD averages
+S-LD4M input: Z squared
+         trait  gcmsem gcmsem_se   sld4m sld4m_se
+ DrinksPerWeek 15911.0   4375.65 16098.6   5605.5
+      VitaminD   273.4     99.25   260.1    245.9
+           SBP 11971.0   2022.82 11912.6   2019.4
+      Insomnia 26836.9   6143.74 23528.5   4865.9
+    Depression 30796.4 108314.67 20264.3  27914.8
+           LDL   121.2    489.67   100.7    513.0
+          FEV1 11874.6   1958.39 10898.6   1795.0
+   HeartAttack  4615.5   6364.81  4495.4   7539.8
+        Angina  3017.1   8022.63  2772.5   7439.0
+        Height  6202.2    848.62  5985.0    971.9
+        Weight  9002.6   3650.95  8999.8   2857.3
+           BMI  9478.4   6276.38 10005.0   4906.3
+           DBP 11779.3   2057.02 11975.1   2074.4
+           FVC 10620.5   1590.25  9730.6   1704.3
+         Waist  8857.7   6477.51  9019.6   4088.9
+
+Pearson r: 0.9651
+RMSE: 2876.6 effective variants
+Traits with one or more diagnostic flags: 12 of 15
+Inspect $comparison$flags and $strata; signed estimates are retained.
+
+Height: pooled kurtosis and independent-variant conversion
+  trait source_variants excess_kurtosis independent_effective_count delta_se
+ Height         1719440          760.03                      6760.4   980.55
+                                                  interpretation
+ No LD adjustment; assumes a zero-mean Gaussian variance mixture
+
+Squared-effect input sensitivity
+Pearson r: 0.621
+RMSE: 7134.1 effective variants

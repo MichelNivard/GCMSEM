@@ -363,3 +363,7 @@ historical <- read_moments("tutorial-results/historical-panel/gcmsem")
 That separate reproduction preserves the original allele alignment. The main tutorial's console output and scatterplot use the normal harmonizer and freshly estimated 1,012,060-SNP analysis. Both analyses retain the score source universe of 1,719,440 variants across five MAF strata.
 
 GCMSEM's correlation describes centered SNP effects pooled over those strata. Standard LDSC uses its own published reference, weighting, effect assumptions and jackknife. Strong agreement is useful empirical evidence, while differences should be examined using each procedure's assumptions and uncertainty.
+
+## Extend the comparison to fourth moments
+
+The [kurtosis and polygenicity tutorial](Polygenicity.md) uses these same 15 GWAS datasets to estimate effective polygenicity, run original S-LD4M, and compare the results in R with scatterplots and uncertainty bars.

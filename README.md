@@ -79,6 +79,7 @@ Start R with that Python environment activated, or pass its executable to `estim
 | [Working with R results](https://github.com/MichelNivard/GCMSEM/wiki/R-results) | Inspect objects, assess Q and its approximate uncertainty, interpret warnings and save results. |
 | [Height/weight and BMI/SBP](https://github.com/MichelNivard/GCMSEM/wiki/Causal-examples) | Download GWAS files, estimate moments and compare illustrated causal models before interpreting paths. |
 | [Fifteen-trait correlations](https://github.com/MichelNivard/GCMSEM/wiki/Fifteen-trait-correlations) | Compute genetic correlations from summary statistics, run standard LDSC and compare 105 trait pairs in an R scatterplot. |
+| [Kurtosis and polygenicity](https://github.com/MichelNivard/GCMSEM/wiki/Polygenicity) | Estimate effective polygenicity for 15 traits, compare original S-LD4M with GCMSEM, and inspect the scatterplot and uncertainty. |
 | [Data and scores](https://github.com/MichelNivard/GCMSEM/wiki/Data-and-scores) | Understand the LD reference, score contents, source datasets and checksum-verified downloads. |
 | [Standard LDSC environment](https://github.com/MichelNivard/GCMSEM/wiki/Standard-LDSC-environment) | Install the original LDSC software and its standard reference and weights for the comparison. |
 | [Execution report](https://github.com/MichelNivard/GCMSEM/wiki/Execution-report) | Inspect the actual analyses, numerical checks and remaining validation limitations. |
