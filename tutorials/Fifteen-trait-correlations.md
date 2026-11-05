@@ -1,8 +1,8 @@
 # Genetic correlations for 15 traits in R
 
-This tutorial creates a 15 × 15 genetic-correlation matrix, reads the standard LDSC results into R, and plots the 105 distinct trait pairs. You will keep the GCMSEM moments, both correlation matrices, the pairwise results, and the comparison statistics as R objects.
+GCMSEM is new software, and genetic correlation provides a useful first comparison with an established method. In this tutorial you will compute a 15 × 15 genetic-correlation matrix from GWAS summary statistics, run standard LDSC on the same input traits, read its results into R, and compare all 105 distinct pairs in a scatterplot. The goal is to check empirical agreement between the procedures and learn the complete analysis workflow.
 
-The worked output below uses the completed GCMSEM analysis and **original, unmodified bulik/ldsc 1.0.1 with its published reference and weighting scores**. The last two sections show how to rerun each analysis from the summary statistics.
+The comparison uses **original, unmodified bulik/ldsc 1.0.1 with its published reference and weighting scores**. Agreement here checks the second-order estimates. It does not establish the validity of higher-order causal models. Both methods retain their own ordinary filtering, weighting and uncertainty calculations.
 
 ## 1. Install the software
 
@@ -20,24 +20,21 @@ R CMD INSTALL .
 
 Use Python 3.10 or newer for GCMSEM. Start R from this `GCMSEM` directory, or open it as your RStudio working directory. Terminal commands below also assume this directory.
 
-## 2. Get the scores, summary statistics, and completed results
+## 2. Get the scores and summary statistics
 
-**Data availability:** the empirical archives are prepared, but the Zenodo deposit is still unpublished. A public download URL is pending. The commands in this section work once the release is published, or immediately if you already have the three archives. The plot and printed results below were generated from the completed local analysis.
-
-After publication, this command will download and checksum the three archives and extract them into `tutorial-data`:
+The inputs are available from [Zenodo, DOI 10.5281/zenodo.23977299](https://zenodo.org/records/23977299). Download and verify the two input archives with:
 
 ```bash
 python tutorials/download_data.py \
-  --asset scores --asset panel --asset results --out tutorial-data
+  --asset scores --asset panel --out tutorial-data
 ```
 
-If you already have `gcmsem-scores-v1.zip`, `gcmsem-panel-v1.zip`, and `gcmsem-results-v1.zip`, put them in the working directory and extract them:
+If you already have `gcmsem-scores-v1.zip` and `gcmsem-panel-v1.zip`, put them in the working directory and extract them:
 
 ```bash
 mkdir -p tutorial-data
 unzip gcmsem-scores-v1.zip -d tutorial-data
 unzip gcmsem-panel-v1.zip -d tutorial-data
-unzip gcmsem-results-v1.zip -d tutorial-data
 ```
 
 The numerical data live in these external archives. The repository contains the analysis scripts and the tutorial figure.
@@ -47,12 +44,6 @@ The numerical data live in these external archives. The repository contains the 
 | `scores/eur_hm3.scores.npz` | GCMSEM's precomputed signed LD scores, SNP alleles, positions, MAF strata, and source-variant counts. The tag SNPs use the HM3 selection. |
 | `sumstats/*.tsv.gz` | One compressed, allele-aligned GWAS table per trait, with `SNP`, `A1`, `A2`, `BETA`, `SE`, `N`, `CHR`, `BP`, and `REF_AF`. |
 | `panel.npz` | The exact prealigned SNP-by-trait arrays used for the archived 15-trait GCMSEM run. |
-| `results/correlations/gcmsem.moments.tsv` | Estimated first- and second-order cumulants, with their names and standard errors. |
-| `results/correlations/gcmsem.sampling_cov.tsv` | The full sampling covariance matrix of those cumulant estimates. |
-| `results/correlations/gcmsem.metadata.json` | Trait names, SNP counts, estimation settings, and provenance needed by `read_moments()`. |
-| `results/standard_ldsc_verified/ldsc_standard_rg.tsv` | A symmetric 15 × 15 matrix of correlations read from stock LDSC's result summaries. |
-| `results/standard_ldsc_verified/ldsc_standard_rg_se.tsv` | The corresponding LDSC standard errors. |
-| `results/standard_ldsc_verified/munged/` and `fits/` | Stock LDSC munged inputs and logs for the completed runs. |
 
 `BETA` and `SE` in these prepared GWAS files are on the genotype-standardized scale; `A1` is the effect allele and `A2` the other allele. `REF_AF` is the reference-panel frequency of `A1`. `N` is the SNP-specific sample size. The score archive contains derived scores and metadata; reference genotypes are not distributed.
 
@@ -78,21 +69,49 @@ The 15 input files are:
 
 The numbered phenotypes come from the Neale Lab UK Biobank release. `_irnt` denotes an inverse-rank-normalized phenotype. This tutorial uses the IRNT BMI and SBP files; the causal tutorial uses their raw-phenotype files. See [Data and scores](Data-and-scores.md) for the source releases and preparation details.
 
-## 3. Load the GCMSEM analysis into R
+## 3. Compute genetic correlations in R
 
-Run the following in R:
+Start R with the GCMSEM Python environment activated. Load the R package and the plotting helper:
 
 ```r
 library(GCMSEM)
 options(digits = 6)
 source("tutorials/correlations.R")
 data_dir <- "tutorial-data"
+```
 
-gcmsem <- read_moments(file.path(data_dir, "results/correlations/gcmsem"))
+Create a manifest with one row per trait. The names below become the row and column names of your matrices; the codes identify the downloaded files.
+
+```r
+codes <- c(
+  DrinksPerWeek = "GSCAN_DrinksPerWeek", VitaminD = "30890_raw",
+  SBP = "4080_irnt", Insomnia = "1200", Depression = "20544_11",
+  LDL = "30780_raw", FEV1 = "3063_irnt", HeartAttack = "6150_1",
+  Angina = "6150_2", Height = "50_irnt", Weight = "21002_irnt",
+  BMI = "21001_irnt", DBP = "4079_irnt", FVC = "3062_irnt", Waist = "48_irnt"
+)
+manifest <- data.frame(
+  trait = names(codes),
+  path = file.path(data_dir, "sumstats", paste0(unname(codes), ".tsv.gz")),
+  effect_scale = "genotype_standardized"
+)
+stopifnot(all(file.exists(manifest$path)))
+
+python <- file.path(getwd(), ".venv", "bin", "python")
+gcmsem <- estimate_moments(
+  sumstats = manifest,
+  scores = file.path(data_dir, "scores/eur_hm3.scores.npz"),
+  max_order = 2,
+  n_blocks = 200,
+  python = python,
+  verbose = TRUE
+)
 gcmsem
 ```
 
-`read_moments()` reads the three files sharing the `gcmsem` prefix and returns one R object. Printing it shows the trait and SNP counts, the number of cumulants, and a preview of the correlations:
+This call performs the analysis. It reads and harmonizes every GWAS file, converts effects to the declared scale, estimates SNP-effect means and covariances using the supplied LD scores, and refits the calculation in 200 genomic deletions to estimate uncertainty. `max_order = 2` requests the moments needed for correlations. The result is an R object; no permanent output files are created unless requested.
+
+The normal harmonizer drops unresolved palindromic SNPs. `REF_AF` is a reference frequency and is not substituted for an observed GWAS frequency. In this 15-trait intersection the final common panel has 1,012,060 SNPs; the potentially affected tags were already absent from the intersection. The R reference run took about 14 minutes. The full reference source counts are preserved when tag SNPs are filtered. The reference run prints:
 
 ```text
 GCMSEM moments
@@ -112,13 +131,13 @@ LDL                 -0.0724  -0.1110 -0.1594  -0.0156     0.0463  1.0000
 Showing 6 of 15 traits; the full matrix is in $R.
 ```
 
-Extract the matrices with `$`. Each is an ordinary named R matrix:
+Extract complete matrices using `$`:
 
 ```r
 gcmsem_cov <- gcmsem$S       # SNP-effect covariances: 15 by 15
 gcmsem_rg <- gcmsem$R        # Correlations: 15 by 15
 gcmsem_rg_se <- gcmsem$R_SE  # Delta-method standard errors
-gcmsem_v <- gcmsem$V         # Sampling covariance of all 135 cumulants
+gcmsem_v <- gcmsem$V         # Joint sampling covariance of all 135 cumulants
 
 anthropometric <- c("Height", "Weight", "BMI")
 round(gcmsem_rg[anthropometric, anthropometric], 3)
@@ -131,14 +150,83 @@ Weight  0.470  1.000  0.783
 BMI    -0.181  0.783  1.000
 ```
 
-`summary(gcmsem)` prints the covariance, correlation, and standard-error matrices. Use `print(gcmsem, max.traits = Inf)` to display all 15 traits at once.
+The correlation between traits is their estimated covariance divided by the product of their estimated SNP-effect SDs. Its SE propagates uncertainty from those three quantities using the full `V`. `summary(gcmsem)` shows matrices with SEs; `print(gcmsem, max.traits = Inf)` displays every trait. The log remains in `gcmsem$log`, and the deletion estimates are in `gcmsem$jackknife`.
 
-## 4. Read the standard LDSC correlations into R
-
-The first column of each LDSC table holds trait names. `row.names = 1` uses those names as matrix row names. `check.names = FALSE` preserves the column names exactly.
+Save the completed R analysis before switching back to the terminal:
 
 ```r
-ldsc_dir <- file.path(data_dir, "results/standard_ldsc_verified")
+saveRDS(gcmsem, "gcmsem-correlations.rds")
+```
+
+## 4. Run standard LDSC
+
+Set up original Python 2.7 LDSC using [Standard LDSC environment](Standard-LDSC-environment.md). That page defines the shell variable `gcmsem_ldsc_python`. It is a separate environment from the Python 3 environment used by GCMSEM.
+
+In the terminal, fetch the pinned original LDSC checkout and its standard reference files:
+
+```bash
+python tutorials/setup_standard_ldsc.py \
+  --out external/standard-ldsc --python2 "$gcmsem_ldsc_python"
+python tutorials/download_standard_ldsc.py --out external/standard-reference
+```
+
+The software is bulik/ldsc commit `2fdeeb3b44379408794154993dbd6101b8946b7e`. `external/standard-reference/w_hm3.snplist` lists SNPs and alleles for the standard `--merge-alleles` step. `eur_w_ld_chr/` contains the published European LD scores, regression weights and source counts. The same published prefix is used for `--ref-ld-chr` and `--w-ld-chr`, following the [official LDSC tutorial](https://github.com/bulik/ldsc/wiki/Heritability-and-Genetic-Correlation).
+
+Prepare the ordinary LDSC input columns from the same downloaded GWAS files:
+
+```bash
+python tutorials/prepare_standard_ldsc_inputs.py \
+  --sumstats tutorial-data/sumstats --out tutorial-data/standard-inputs
+```
+
+Each output contains `SNP A1 A2 BETA P N`. The adapter computes a two-sided normal `P` from `BETA / SE`. Stock `munge_sumstats.py` then performs its usual filtering and allele checks. GCMSEM's existing HM3 SNP selection is retained in each trait input, as intended for this comparison. LDSC takes its ordinary pair-specific intersections.
+
+Run munging and all 105 regressions:
+
+```bash
+OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
+python tutorials/run_standard_ldsc.py \
+  --inputs tutorial-data/standard-inputs \
+  --hm3 external/standard-reference/w_hm3.snplist \
+  --ref-prefix external/standard-reference/eur_w_ld_chr \
+  --ldsc-dir external/standard-ldsc \
+  --python2 "$gcmsem_ldsc_python" \
+  --out tutorial-results/standard_ldsc
+```
+
+This runner invokes original `munge_sumstats.py` and `ldsc.py`, retaining their statistical defaults. Its only I/O tuning is a 500,000-row munging batch size, independently checked to leave the decompressed munged results identical. Every command and native LDSC log is retained under the output directory.
+
+For example, after munging, height/weight uses this ordinary LDSC command:
+
+```bash
+"$gcmsem_ldsc_python" external/standard-ldsc/ldsc.py \
+  --rg tutorial-results/standard_ldsc/munged/50_irnt.sumstats.gz,tutorial-results/standard_ldsc/munged/21002_irnt.sumstats.gz \
+  --ref-ld-chr external/standard-reference/eur_w_ld_chr/ \
+  --w-ld-chr external/standard-reference/eur_w_ld_chr/ \
+  --out tutorial-results/standard_ldsc/height_weight_example
+```
+
+The main runner creates:
+
+| Output | Contents |
+|---|---|
+| `ldsc_standard_rg.tsv` | The 15 × 15 genetic-correlation matrix collected from stock LDSC summaries. |
+| `ldsc_standard_rg_se.tsv` | The corresponding standard errors. |
+| `all_pairs.tsv` | One row per pair, including correlations, SEs and SNP counts. |
+| `munged/` | The formatted summary statistics and munging logs. |
+| `fits/` | Individual native LDSC regression outputs and logs. |
+| `run.log`, `configuration.json` | Commands, settings and source/reference checksums. |
+
+The reference run completes all 105 pairs, using 1,012,052–1,057,882 SNPs per pair. The matrices retain stock LDSC's printed four-decimal-place precision.
+
+## 5. Read the LDSC correlations into R
+
+Return to R. If you started a new session, reload the GCMSEM object with `gcmsem <- readRDS("gcmsem-correlations.rds")`, load `GCMSEM`, source `tutorials/correlations.R`, and set `gcmsem_rg <- gcmsem$R`.
+
+Read LDSC's two tables as named numeric matrices:
+
+```r
+ldsc_dir <- "tutorial-results/standard_ldsc"
 ldsc_rg <- as.matrix(read.delim(
   file.path(ldsc_dir, "ldsc_standard_rg.tsv"),
   row.names = 1, check.names = FALSE
@@ -156,6 +244,7 @@ stopifnot(setequal(traits, rownames(ldsc_rg)),
 ldsc_rg <- ldsc_rg[traits, traits]
 ldsc_rg_se <- ldsc_rg_se[traits, traits]
 
+anthropometric <- c("Height", "Weight", "BMI")
 round(ldsc_rg[anthropometric, anthropometric], 3)
 ```
 
@@ -166,9 +255,9 @@ Weight  0.428  1.000  0.818
 BMI    -0.169  0.818  1.000
 ```
 
-The name-based indexing puts both methods in the same trait order. Each matrix contains the same pair twice, above and below the diagonal; its diagonal is one. We will use the lower triangle to compare each distinct pair once.
+`row.names = 1` uses the first column as row names; `check.names = FALSE` preserves the trait names. Name-based indexing makes both methods use the same order. Each matrix contains every pair twice, so the comparison will take only one triangle and omit the diagonal.
 
-## 5. Compare all 105 pairs and draw the scatterplot
+## 6. Compare all 105 pairs and draw the scatterplot
 
 The functions in [`correlations.R`](https://github.com/MichelNivard/GCMSEM/blob/main/tutorials/correlations.R) create a comparison object and draw it using base R graphics:
 
@@ -246,123 +335,31 @@ comparison <- compare_correlations(
 )
 ```
 
-This writes `.pairs.tsv` and `.statistics.tsv`, and still returns `comparison`. The [executed console transcript](https://github.com/MichelNivard/GCMSEM/blob/main/tutorials/output/correlation-comparison.txt) records the values used in this figure.
+This writes `.pairs.tsv` and `.statistics.tsv`, and still returns `comparison`. The [executed console transcript](https://github.com/MichelNivard/GCMSEM/blob/main/tutorials/output/correlation-comparison.txt) records the recomputed values used in this figure.
 
-## 6. Estimate the moments from the GWAS files in R
+## 7. Optional archived results and exact historical reproduction
 
-For a new analysis, create a manifest: an R data frame with one row per trait. `path` names its GWAS file and `effect_scale` tells GCMSEM how to interpret `BETA` and `SE`. Here is the complete manifest for this panel:
+The primary workflow above estimates GCMSEM correlations from GWAS files and runs standard LDSC. To inspect the previously distributed numerical results, download the optional results archive:
+
+```bash
+python tutorials/download_data.py --asset results --out tutorial-data
+```
+
+`results/standard_ldsc_verified/` contains the completed stock LDSC run used as the reference here. To compare with those results while keeping your newly computed GCMSEM object, set `ldsc_dir <- "tutorial-data/results/standard_ldsc_verified"` and repeat sections 5–6.
+
+`results/correlations/gcmsem.*` contains the historical GCMSEM moment bundle. That archived analysis used a prealigned panel of 1,012,060 SNPs. The normal GWAS-file route above produced the same common intersection and reproduced the correlations in the executed check. You can load that specific historical result with `read_moments()` or recompute it from the archived `panel.npz`:
+
+```bash
+python tutorials/run_correlations.py \
+  --panel tutorial-data/panel.npz \
+  --scores tutorial-data/scores/eur_hm3.scores.npz \
+  --out tutorial-results/historical-panel --stage gcmsem
+```
 
 ```r
-codes <- c(
-  DrinksPerWeek = "GSCAN_DrinksPerWeek", VitaminD = "30890_raw",
-  SBP = "4080_irnt", Insomnia = "1200", Depression = "20544_11",
-  LDL = "30780_raw", FEV1 = "3063_irnt", HeartAttack = "6150_1",
-  Angina = "6150_2", Height = "50_irnt", Weight = "21002_irnt",
-  BMI = "21001_irnt", DBP = "4079_irnt", FVC = "3062_irnt", Waist = "48_irnt"
-)
-manifest <- data.frame(
-  trait = names(codes),
-  path = file.path(data_dir, "sumstats", paste0(unname(codes), ".tsv.gz")),
-  effect_scale = "genotype_standardized"
-)
-stopifnot(all(file.exists(manifest$path)))
-
-python <- file.path(getwd(), ".venv", "bin", "python")
-stopifnot(file.exists(python))
-gcmsem_new <- estimate_moments(
-  sumstats = manifest,
-  scores = file.path(data_dir, "scores/eur_hm3.scores.npz"),
-  max_order = 2,
-  n_blocks = 200,
-  python = python,
-  verbose = TRUE
-)
-gcmsem_new
-new_rg <- gcmsem_new$R
-new_comparison <- compare_correlations(gcmsem_new, ldsc_rg, ldsc_rg_se)
-plot(new_comparison)
+historical <- read_moments("tutorial-results/historical-panel/gcmsem")
 ```
 
-`max_order = 2` requests the means and covariances needed for correlations. `n_blocks = 200` requests 200 genomic jackknife groups. The function aligns the GWAS files to the scores, estimates the moments, and returns the complete R object. `verbose = TRUE` prints the engine log after estimation; the same log is available in `gcmsem_new$log`. The individual deletion estimates are in `gcmsem_new$jackknife`.
+That separate reproduction preserves the original allele alignment. The main tutorial's console output and scatterplot use the normal harmonizer and freshly estimated 1,012,060-SNP analysis. Both analyses retain the score source universe of 1,719,440 variants across five MAF strata.
 
-The standard file harmonizer drops palindromic SNPs when the GWAS allele frequencies needed to resolve them are absent. The archived prealigned panel retained three such SNPs based on its original alignment. Consequently this new run uses its own SNP count and estimates. The printed values and figure in sections 3–5 describe the archived panel; inspect `gcmsem_new` and `new_comparison` for your recomputed results.
-
-For ordinary per-allele GWAS coefficients, set `effect_scale = "allele"` in the manifest. The prepared files above already use `"genotype_standardized"`. See [Data and scores](Data-and-scores.md) for the input-column requirements.
-
-### Reproduce the exact archived GCMSEM panel
-
-The supplied `panel.npz` preserves the original allele alignment and the 1,012,060 common HM3 SNPs. This command reruns that exact panel with 200 genomic deletions, then brings the result back into R:
-
-```r
-status <- system2(python, shQuote(c(
-  "tutorials/run_correlations.py",
-  "--panel", file.path(data_dir, "panel.npz"),
-  "--scores", file.path(data_dir, "scores/eur_hm3.scores.npz"),
-  "--out", "tutorial-results/gcmsem", "--stage", "gcmsem"
-)))
-stopifnot(status == 0L)
-gcmsem_reproduced <- read_moments("tutorial-results/gcmsem/gcmsem")
-reproduced_comparison <- compare_correlations(gcmsem_reproduced, ldsc_rg, ldsc_rg_se)
-reproduced_comparison
-```
-
-The score source universe remains 1,719,440 variants across five MAF strata. Filtering the GWAS tag SNPs preserves those source counts. The comparison uses the estimated correlations directly, including their sampling variation.
-
-## 7. Rerun standard LDSC
-
-Set up the original Python 2.7 LDSC environment using [Standard LDSC environment](Standard-LDSC-environment.md). That page defines the shell variable `gcmsem_ldsc_python` as the path to its Python executable. GCMSEM continues to use its separate Python 3 environment.
-
-Fetch the pinned, unmodified LDSC checkout and its published reference files:
-
-```bash
-python tutorials/setup_standard_ldsc.py \
-  --out external/standard-ldsc --python2 "$gcmsem_ldsc_python"
-python tutorials/download_standard_ldsc.py --out external/standard-reference
-```
-
-The checkout is bulik/ldsc commit `2fdeeb3b44379408794154993dbd6101b8946b7e`. `external/standard-reference/w_hm3.snplist` is the LDSC merge-alleles list. `external/standard-reference/eur_w_ld_chr/` contains the published European LD scores and source counts. The runner uses this same prefix for `--ref-ld-chr` and `--w-ld-chr`, following the [official LDSC tutorial](https://github.com/bulik/ldsc/wiki/Heritability-and-Genetic-Correlation).
-
-First format the prepared GWAS files for stock LDSC munging:
-
-```bash
-python tutorials/prepare_standard_ldsc_inputs.py \
-  --sumstats tutorial-data/sumstats --out tutorial-data/standard-inputs
-```
-
-Each output has `SNP A1 A2 BETA P N`. The script calculates a two-sided normal `P` value from `BETA / SE`. Stock `munge_sumstats.py` then performs its usual filtering and allele checks. The upstream GCMSEM HM3 SNP selection is retained in each input trait; LDSC selects its ordinary pair-specific SNP intersections.
-
-Run munging and all 105 correlations:
-
-```bash
-OPENBLAS_NUM_THREADS=1 OMP_NUM_THREADS=1 \
-python tutorials/run_standard_ldsc.py \
-  --inputs tutorial-data/standard-inputs \
-  --hm3 external/standard-reference/w_hm3.snplist \
-  --ref-prefix external/standard-reference/eur_w_ld_chr \
-  --ldsc-dir external/standard-ldsc \
-  --python2 "$gcmsem_ldsc_python" \
-  --out tutorial-results/standard_ldsc \
-  --gcmsem-results tutorial-data/results/correlations
-```
-
-This wrapper calls the original `munge_sumstats.py` and `ldsc.py` with stock statistical defaults. The munging I/O batch size is 500,000 rows. The complete commands are recorded in `tutorial-results/standard_ldsc/run.log`; each munging and regression run has its own native LDSC log. The output directory also contains `all_pairs.tsv` (estimates, SEs, and SNP counts), `ldsc_standard_rg.tsv`, and `ldsc_standard_rg_se.tsv`.
-
-For example, the height/weight regression uses the following stock command after munging:
-
-```bash
-"$gcmsem_ldsc_python" external/standard-ldsc/ldsc.py \
-  --rg tutorial-results/standard_ldsc/munged/50_irnt.sumstats.gz,tutorial-results/standard_ldsc/munged/21002_irnt.sumstats.gz \
-  --ref-ld-chr external/standard-reference/eur_w_ld_chr/ \
-  --w-ld-chr external/standard-reference/eur_w_ld_chr/ \
-  --out tutorial-results/standard_ldsc/height_weight_example
-```
-
-The completed 105-pair run used 1,012,052–1,057,882 SNPs per LDSC pair. The matrices retain stock LDSC's printed four-decimal-place precision.
-
-To use your new LDSC results in the R workflow, change `ldsc_dir` and repeat sections 4–5:
-
-```r
-ldsc_dir <- "tutorial-results/standard_ldsc"
-```
-
-GCMSEM's correlation here describes centered SNP effects pooled over its MAF strata. LDSC uses its standard reference, weighting, effect assumptions, and jackknife. Both estimates and their own standard errors remain available for inspection in R.
+GCMSEM's correlation describes centered SNP effects pooled over those strata. Standard LDSC uses its own published reference, weighting, effect assumptions and jackknife. Strong agreement is useful empirical evidence, while differences should be examined using each procedure's assumptions and uncertainty.

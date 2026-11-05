@@ -251,7 +251,8 @@ def main():
     log = logging.getLogger("standard_ldsc")
     if args.stage in ("all", "munge"): run_munge(args, log)
     if args.stage in ("all", "fit"): run_fit(args, log)
-    if args.stage in ("all", "compare"): compare(args)
+    if args.stage == "compare" or (args.stage == "all" and args.gcmsem_results is not None):
+        compare(args)
 
 
 if __name__ == "__main__":

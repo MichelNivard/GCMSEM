@@ -1,6 +1,6 @@
 # Executed tutorial checks — 5 November 2026
 
-These are outputs from real summary statistics and actual GCMSEM and LDSC runs. Complete numerical files, input hashes, logs and figures are prepared for the external data release. Zenodo has reserved DOI `10.5281/zenodo.23977299`; the upload is incomplete and publication has not yet been verified.
+These are outputs from real summary statistics and actual GCMSEM and LDSC runs. The original numerical files, input hashes and logs are public at [Zenodo, DOI 10.5281/zenodo.23977299](https://zenodo.org/records/23977299). All eight deposited files are complete, including the four checksum-verified archives. The updated R 0.3.0 tutorials recompute moment estimates and add model-fit diagnostics.
 
 ## Standard LDSC comparison
 
@@ -26,33 +26,37 @@ Height/weight used **1,074,059 SNPs**; raw BMI/SBP used **1,074,057 SNPs**. Each
 
 All six fits converged with Jacobian rank **8/8** and computable formal sandwich SEs. Three Gaussian-common-source fits had a negative common-source variance. Their point estimates and formal SEs were retained, with explicit Heywood and inference flags.
 
-| Pair and model | Path | Estimate | Formal SE | Source-moment checks |
-|---|---|---:|---:|---|
-| Height/weight, forward + Gaussian common source | Height → Weight | 0.562988 | 0.036036 | Heywood flagged |
-| Height/weight, reverse + Gaussian common source | Weight → Height | 1.395764 | 0.185544 | Heywood flagged |
-| BMI/SBP, forward + Gaussian common source | BMI → SBP | 0.890515 | 0.239139 | Heywood flagged |
-| BMI/SBP, reverse + Gaussian common source | SBP → BMI | −0.029844 | 0.015606 | Passed local checks |
-| Height/weight, reciprocal without common source | Height → Weight | 0.488298 | 0.019744 | Passed local checks |
-| Height/weight, reciprocal without common source | Weight → Height | 0.050036 | 0.043276 | Passed local checks |
-| BMI/SBP, reciprocal without common source | BMI → SBP | 0.773266 | 0.148321 | Passed local checks |
-| BMI/SBP, reciprocal without common source | SBP → BMI | −0.042878 | 0.013153 | Passed local checks |
+The refitted models have the following Q diagnostics. Q SEs use the observed residuals as a plug-in estimate of misfit; the null reference projects the full moment covariance off the fitted model Jacobian.
 
-Height and weight are separately inverse-normal transformed. BMI→SBP uses mmHg per kg/m²; SBP→BMI uses kg/m² per mmHg. The Gaussian common-source equality is defined on the fixed SNP-effect-SD scale documented in the tutorial. Formal SEs condition on that scale. The reciprocal fits select the prespecified stable branch and assume no common source; the exactly source-swapped alternatives reproduce their implied cumulants within relative error `3.2e-16`.
+| Pair / model | Q | Approximate Q SE | Approximate null 95th percentile | Approximate tail probability | Source checks |
+|---|---:|---:|---:|---:|---|
+| Height/weight forward | 1.797 | 1.257 | 0.903 | 0.00331 | Heywood flagged |
+| Height/weight reverse | 5.456 | 4.881 | 4.230 | 0.02354 | Heywood flagged |
+| Height/weight reciprocal | 4.286 | 2.013 | 1.018 | 0.00000710 | Passed necessary checks |
+| BMI/SBP forward | 5.349 | 4.848 | 6.199 | 0.07704 | Heywood flagged |
+| BMI/SBP reverse | 16.389 | 10.801 | 10.545 | 0.00742 | Passed necessary checks |
+| BMI/SBP reciprocal | 4.193 | 3.037 | 4.810 | 0.07761 | Passed necessary checks |
 
-Passing local checks is not a claim of causal identification or calibrated higher-order coverage. Q remains an uncalibrated discrepancy, and source-assignment equivalence remains visible in the outputs.
+All three height/weight models and the reverse BMI/SBP model exceed their respective approximate reference thresholds. The tutorial therefore omits effect interpretation for those models. It illustrates conditional interpretation with the reciprocal BMI/SBP model: BMI → SBP = 0.773266 (formal SE 0.148321) mmHg per kg/m², and SBP → BMI = −0.042878 (formal SE 0.013153) kg/m² per mmHg. These estimates assume independent trait-specific sources and the selected stable branch.
+
+The approximate reference is diagnostic; calibrated higher-order GWAS fit inference is not established. The [Q derivation](R-results.md#how-the-approximate-se-is-calculated) explains its fixed-V, local-Gaussian assumptions. The external archives retain every original parameter estimate, including Heywood and poorly fitting models, for audit and simulation aggregation. Every refitted coefficient reproduced its archived value within `1e-10`; adding Q diagnostics does not alter the optimizer or discard estimates.
+
+The equal common-source loadings are defined on the fixed SNP-effect-SD scale. The reciprocal model omits the common source and requests a stable branch. Source-swapped reciprocal parameterizations retain identical implied cumulants within relative error `3.2e-16`. Fit and local rank checks do not resolve this causal-model equivalence.
 
 ## Scores and software
 
 All **21,481,240 signed LD-power entries** were independently rebuilt from checksum-verified reference genotypes and agreed within the documented numerical tolerance. Raw reference data are excluded from the release. All 17 exported GWAS gzip files passed complete CRC and row-count checks.
 
-The Python suite passed **49 tests**, including the original score and estimator checks and 15 tests of the Neale Lab tutorial adapter. The R 0.2.0 checks cover the original 73 fitting checks, 37 presentation/export checks, 25 R-to-Python integration checks, and moment-transformation/export regressions. The bridge checks include an independent three-trait covariance calculation and a real Python virtual environment.
+The Python suite passed **49 tests**, including the original score and estimator checks and 15 tests of the Neale Lab tutorial adapter. The R 0.3.0 checks cover the original 73 fitting checks, 37 presentation/export checks, 25 R-to-Python integration checks, moment-transformation/export regressions, and 14 new Q-uncertainty checks. The latter include independent Gaussian simulation with 80,000 refits, fixed-model cases, singular covariance and saturated models. The bridge checks include an independent three-trait covariance calculation and a real Python virtual environment.
 
-`R CMD check` of the built GCMSEM 0.2.0 source package completed with **0 errors, 0 warnings and 0 notes**. The Python engine was available during that check, so the R-to-Python tests executed. The [interface verification record](../validation/results/interactive_r_checks.json) records the checks and tested source hashes.
+`R CMD check` of the built GCMSEM 0.3.0 source package completed with **0 errors, 0 warnings and 0 notes**. The Python engine was available during that check, so the R-to-Python tests executed. The [current verification record](../validation/results/tutorial_q_checks.json) records the checks and tested source hashes.
 
 The R-native height/weight estimation was rerun from the prepared GWAS files: it retained 1,074,059 SNPs and reproduced every archived cumulant and the full sampling covariance within `1e-12`. All six fits from the new R tutorial scripts reproduced the archived coefficients and parameter covariance matrices within `1e-12`. The [causal transcript](output/causal-reference.txt) records the readable R output.
 
 Starting from the original Neale Lab height and weight downloads also retained 1,074,059 common tags. After the tutorial adapter and R estimation, the moment table, sampling covariance and correlation matrix were exactly identical to the prepared-file route. All three height/weight refits reproduced the reference results.
 
-The correlation tutorial's R code read the archived 15-trait moment bundle and standard LDSC matrices, aligned their trait names, and reproduced all 105 pairwise comparisons. Its [console transcript](output/correlation-comparison.txt) and [scatterplot](figures/correlation-scatterplot.png) were generated by the executed R code.
+The correlation tutorial now calls `estimate_moments()` on all 15 GWAS tables. This run took 858.7 seconds, retained 1,012,060 common SNPs and used 200 genomic deletions. Its correlation matrix was exactly equal to the archived matrix. The potentially affected palindromic tags were already absent from the 15-trait intersection; the earlier suggestion that the normal route necessarily uses three fewer common SNPs was incorrect. The [console transcript](output/correlation-comparison.txt) and [scatterplot](figures/correlation-scatterplot.png) now come from this executed estimation workflow.
 
-The external archives retain the original numerical results and provenance. The R 0.2.0 interface and tutorial checks accompany the updated repository.
+All six model diagrams are generated directly from the corresponding R model objects by [plot_models.R](plot_models.R). The updated [causal transcript](output/causal-reference.txt) reports fit diagnostics first and the conditional reciprocal BMI/SBP paths.
+
+The external release preserves the original numerical archives and provenance. New software, diagrams, transcripts and tests are versioned with R 0.3.0 in this repository.
