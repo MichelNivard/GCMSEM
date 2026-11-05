@@ -1,0 +1,24 @@
+GCMSEM versus S-LD4M with the author's reference inputs
+15 traits; S-LD4M: 75 annotations, 100 jackknife blocks
+Native baseline-category estimates; separate SNP selection and weights
+         trait   gcmsem  gcmsem_se     sld4m sld4m_se
+ DrinksPerWeek 15910.96   4375.655  6454.315 3917.312
+      VitaminD   273.40     99.255    50.712   26.578
+           SBP 11971.02   2022.819  8737.174  630.430
+      Insomnia 26836.94   6143.741 14450.802 1434.939
+    Depression 30796.43 108314.673  4735.252 1497.308
+           LDL   121.22    489.674    86.001   43.721
+          FEV1 11874.57   1958.386  7086.678 1625.868
+   HeartAttack  4615.55   6364.806  2125.719  582.328
+        Angina  3017.08   8022.627  1999.420  632.905
+        Height  6202.17    848.620  3612.232  229.116
+        Weight  9002.62   3650.955  6578.993 1191.541
+           BMI  9478.37   6276.382  7030.477 2026.151
+           DBP 11779.27   2057.020  9855.071  678.169
+           FVC 10620.47   1590.254  6439.964 1153.949
+         Waist  8857.68   6477.507  6913.366 1906.715
+
+Pearson r: 0.66682
+RMSE: 8190.36 effective variants
+Traits with diagnostic flags: 12 of 15
+Inspect $comparison$flags and $annotations; signed estimates are retained.

@@ -366,4 +366,4 @@ GCMSEM's correlation describes centered SNP effects pooled over those strata. St
 
 ## Extend the comparison to fourth moments
 
-The [kurtosis and polygenicity tutorial](Polygenicity.md) uses these same 15 GWAS datasets to estimate effective polygenicity, run original S-LD4M, and compare the results in R with scatterplots and uncertainty bars.
+The [kurtosis and polygenicity tutorial](Polygenicity.md) uses these same 15 GWAS datasets to estimate effective polygenicity, run S-LD4M with its author-supplied reference inputs, and compare the results in R with scatterplots and uncertainty bars.

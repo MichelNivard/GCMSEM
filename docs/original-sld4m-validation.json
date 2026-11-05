@@ -1,0 +1,2575 @@
+{
+  "reference": {
+    "reference_member": "baselineLD.1kg.l2l4.mat",
+    "reference_rows": 6227113,
+    "annotations": [
+      "base",
+      "Coding_UCSC",
+      "Coding_UCSC.extend.500",
+      "Conserved_LindbladToh",
+      "Conserved_LindbladToh.extend.500",
+      "CTCF_Hoffman",
+      "CTCF_Hoffman.extend.500",
+      "DGF_ENCODE",
+      "DGF_ENCODE.extend.500",
+      "DHS_peaks_Trynka",
+      "DHS_Trynka",
+      "DHS_Trynka.extend.500",
+      "Enhancer_Andersson",
+      "Enhancer_Andersson.extend.500",
+      "Enhancer_Hoffman",
+      "Enhancer_Hoffman.extend.500",
+      "FetalDHS_Trynka",
+      "FetalDHS_Trynka.extend.500",
+      "H3K27ac_Hnisz",
+      "H3K27ac_Hnisz.extend.500",
+      "H3K27ac_PGC2",
+      "H3K27ac_PGC2.extend.500",
+      "H3K4me1_peaks_Trynka",
+      "H3K4me1_Trynka",
+      "H3K4me1_Trynka.extend.500",
+      "H3K4me3_peaks_Trynka",
+      "H3K4me3_Trynka",
+      "H3K4me3_Trynka.extend.500",
+      "H3K9ac_peaks_Trynka",
+      "H3K9ac_Trynka",
+      "H3K9ac_Trynka.extend.500",
+      "Intron_UCSC",
+      "Intron_UCSC.extend.500",
+      "PromoterFlanking_Hoffman",
+      "PromoterFlanking_Hoffman.extend.500",
+      "Promoter_UCSC",
+      "Promoter_UCSC.extend.500",
+      "Repressed_Hoffman",
+      "Repressed_Hoffman.extend.500",
+      "SuperEnhancer_Hnisz",
+      "SuperEnhancer_Hnisz.extend.500",
+      "TFBS_ENCODE",
+      "TFBS_ENCODE.extend.500",
+      "Transcr_Hoffman",
+      "Transcr_Hoffman.extend.500",
+      "TSS_Hoffman",
+      "TSS_Hoffman.extend.500",
+      "UTR_3_UCSC",
+      "UTR_3_UCSC.extend.500",
+      "UTR_5_UCSC",
+      "UTR_5_UCSC.extend.500",
+      "WeakEnhancer_Hoffman",
+      "WeakEnhancer_Hoffman.extend.500",
+      "Super_Enhancer_Vahedi",
+      "Super_Enhancer_Vahedi.extend.500",
+      "Typical_Enhancer_Vahedi",
+      "Typical_Enhancer_Vahedi.extend.500",
+      "GERP.NS",
+      "GERP.RSsup4",
+      "MAFbin1",
+      "MAFbin2",
+      "MAFbin3",
+      "MAFbin4",
+      "MAFbin5",
+      "MAFbin6",
+      "MAFbin7",
+      "MAFbin8",
+      "MAFbin9",
+      "MAFbin10",
+      "MAF_Adj_Predicted_Allele_Age",
+      "MAF_Adj_LLD_AFR",
+      "Recomb_Rate_10kb",
+      "Nucleotide_Diversity_10kb",
+      "Backgrd_Selection_Stat",
+      "CpG_Content_50kb"
+    ],
+    "archive_sha256": "285219fc29a1305732b849a53a3372dfda4188d09a8b9ee89cf8267c990c7bfc",
+    "archive_bytes": 8474748641,
+    "storage": "Lossless original float64 values, original row/column order",
+    "no_blocks": 100,
+    "upstream_example": "\nload('BaselineLD.1kg.l2l4.mat')\n\nload('height_example.mat','chisq','sumstat_RSIDs_as_ints')\n\nno_blocks=100;\n\n% match SNPs between sumstats and reference\n[~,idx_ref,idx_sumstat]=intersect(RSIDs,sumstat_RSIDs_as_ints,'stable');\n\n[Ma_est,Ma_err]=SLD4M(chisq(idx_sumstat),ell2,ell4,idx_ref,annot,EW2(idx_ref),EW4(idx_ref),no_blocks);\n\ndisp([Ma_est(1), Ma_err(1)])\n",
+    "reference_download": "https://www.dropbox.com/sh/iiyftw01gdpt6un/AACU7AmWK45RxTmDJvRkdKhIa?dl=1"
+  },
+  "traits": [
+    {
+      "trait": "DrinksPerWeek",
+      "input_rows": 11916706,
+      "eligible_rows": 11907804,
+      "matched_snps": 6038152,
+      "blocks": 100,
+      "native_rows_used": 6038100,
+      "native_tail_rows_unused": 52,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "53cd9f6b9aae78665180b4b710054b5752b15c457050e8eb31bad87c5a83ed7c"
+    },
+    {
+      "trait": "VitaminD",
+      "input_rows": 13791467,
+      "eligible_rows": 12985267,
+      "matched_snps": 6065218,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 18,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "e18ea2965cfb205827e74b4ab855c3de21fc766049ccf63ca2ca4a8c6b1b7bd6"
+    },
+    {
+      "trait": "SBP",
+      "input_rows": 13791467,
+      "eligible_rows": 12984485,
+      "matched_snps": 6065283,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 83,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "b22f8df3594d5081fb2d11c3e7e68ff7a6e6ba979e956a18819a2d14247e3931"
+    },
+    {
+      "trait": "Insomnia",
+      "input_rows": 13791467,
+      "eligible_rows": 7598126,
+      "matched_snps": 5250533,
+      "blocks": 100,
+      "native_rows_used": 5250500,
+      "native_tail_rows_unused": 33,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "30a86890858b175853aff682a133c176d9a932e17ae1a2c37b675541451de88d"
+    },
+    {
+      "trait": "Depression",
+      "input_rows": 13791467,
+      "eligible_rows": 12971526,
+      "matched_snps": 6064670,
+      "blocks": 100,
+      "native_rows_used": 6064600,
+      "native_tail_rows_unused": 70,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "a231c12194c3fc921147d8d93e915dbff1105ee7ca7f4936139834927cda1b6f"
+    },
+    {
+      "trait": "LDL",
+      "input_rows": 13791467,
+      "eligible_rows": 12985497,
+      "matched_snps": 6065199,
+      "blocks": 100,
+      "native_rows_used": 6065100,
+      "native_tail_rows_unused": 99,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "8508dc32cc82b81e31975b09d3a127d5c4a60860220ba2fb16a8bbfb5ff56ce7"
+    },
+    {
+      "trait": "FEV1",
+      "input_rows": 13791467,
+      "eligible_rows": 12985353,
+      "matched_snps": 6065245,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 45,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "5ddc9e64d2fa6a8c67e9548f62d07afeef46faa0b8697b126559cf5e52f0ccc6"
+    },
+    {
+      "trait": "HeartAttack",
+      "input_rows": 13791467,
+      "eligible_rows": 12356122,
+      "matched_snps": 6026594,
+      "blocks": 100,
+      "native_rows_used": 6026500,
+      "native_tail_rows_unused": 94,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "048aa27674f30342fff35ce1c6f81cb97089f129a63ce914033103ba1ef18601"
+    },
+    {
+      "trait": "Angina",
+      "input_rows": 13791467,
+      "eligible_rows": 12887268,
+      "matched_snps": 6059263,
+      "blocks": 100,
+      "native_rows_used": 6059200,
+      "native_tail_rows_unused": 63,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "73c810e9e4e4b7b2dd8dfbcaac13106a60cc06ded5761ed464aded42d8805b35"
+    },
+    {
+      "trait": "Height",
+      "input_rows": 13791467,
+      "eligible_rows": 12986056,
+      "matched_snps": 6065267,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 67,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "4ef9ffb3c5f89a679d53d65ad2bf156d435009edef8e1e4fa317693734f1a69d"
+    },
+    {
+      "trait": "Weight",
+      "input_rows": 13791467,
+      "eligible_rows": 12986024,
+      "matched_snps": 6065258,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 58,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "c17fbf3c8b2aeabcdf20ee7b979e2cd316afcaffeece5b88aa40cf3c235755f7"
+    },
+    {
+      "trait": "BMI",
+      "input_rows": 13791467,
+      "eligible_rows": 12986036,
+      "matched_snps": 6065261,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 61,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "c26a9bfac15f7410959479bb081b48824fb6d3e047e2e35b01e92e4a334b55a9"
+    },
+    {
+      "trait": "DBP",
+      "input_rows": 13791467,
+      "eligible_rows": 12984486,
+      "matched_snps": 6065283,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 83,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "14a7ceaaa627826740358dd7b645c153cface8c6a8f1c70facb3e831097ea968"
+    },
+    {
+      "trait": "FVC",
+      "input_rows": 13791467,
+      "eligible_rows": 12985353,
+      "matched_snps": 6065245,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 45,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "2102fc1e9667993050d4f28ac83ce1eb8102232f7946e3972b386f253a984fe4"
+    },
+    {
+      "trait": "Waist",
+      "input_rows": 13791467,
+      "eligible_rows": 12986021,
+      "matched_snps": 6065261,
+      "blocks": 100,
+      "native_rows_used": 6065200,
+      "native_tail_rows_unused": 61,
+      "selection": "finite nonnegative chi-square, publisher low-confidence filter (Neale), own reference rsID intersection",
+      "chisq_sha256": "a95fe68a1b149588a2e9a29f4d0cbe6fa34e23652b25aba8bebbe499f45d92ae"
+    }
+  ],
+  "hashes": {
+    "DrinksPerWeek": {
+      "input_sha256": "f534a91b1864acc1651ae6994f53a3271f11082cb55ff6f313e941f414320efb",
+      "output_sha256": "1f30a2b43db53d7ae54e2e271918b918e607385dd28beec28eebaf6a4bb532d1"
+    },
+    "VitaminD": {
+      "input_sha256": "d35622eb431430623abd83f0c51dafad764bd6a1027da3f61dbc49df43225f73",
+      "output_sha256": "b305e7c274fead46e2fea8b1321ce4e3dd85c6bad840f61bc420730756e2f1ed"
+    },
+    "SBP": {
+      "input_sha256": "8326eed6b7e209b74b7ec0b7f83668543b377d59d7964b389ed22e9278758c97",
+      "output_sha256": "6e7db77ea1bd8ffc10cb8075bf182159e7157740bdb6a735cbaa9ab2ab176723"
+    },
+    "Insomnia": {
+      "input_sha256": "bf68234a11d9eccd7afd7de417d42dfee1654ecf16f80d76926ca63c01ea05aa",
+      "output_sha256": "45be111317e8fd740448cf1fb8f2bc25837efaa1620e195558faa09547fcf7a6"
+    },
+    "Depression": {
+      "input_sha256": "616556ba03c03cefd075c9d9af0d17628929cc76ba4f38aaf17a422f5f4bf510",
+      "output_sha256": "afea2c8a910ecb8a231de2bb79cb53adf6b97a627e6c54f58023d65af10173f7"
+    },
+    "LDL": {
+      "input_sha256": "40fc6fb4a19de6d4bff6b8d61100f402ce648335be3ef2c6df4d1f9e0a85b479",
+      "output_sha256": "b32fd1c72adca0ccdf00fcfddccd9b569fe582a013dd44fb1cffde69fa33b65e"
+    },
+    "FEV1": {
+      "input_sha256": "f672d292f35d5bf706fb7b2537905f2fe2beed11f50eaf033b6581ec34669e1a",
+      "output_sha256": "ad782bc4516d6fb2019a2e21a0d702f60b4be45db27c60b3d653be3c6a1f58a9"
+    },
+    "HeartAttack": {
+      "input_sha256": "d00b3e314b1b193e58db83f46ee56659d2cac97847858255dfb090ecb703cf03",
+      "output_sha256": "57195396deab9578d40b7d3dd8d363e4baa47f8a029d9d3049584fe4d8318df2"
+    },
+    "Angina": {
+      "input_sha256": "957a31f00a137e813fdf4fc434e9109e7c8169324de28ed9d054de2af5fa758c",
+      "output_sha256": "9878a1c8b95e57ee693d531318b5f1961c21722bca199f21d9890fde00576c3d"
+    },
+    "Height": {
+      "input_sha256": "baefb5c34877a5779d3e38915d1c166b5f4ab5974aba395701a6108c9b4df075",
+      "output_sha256": "1c2d206fac366139849348b04be215272da86a78a041ddc3887c65ddaa1c1b50"
+    },
+    "Weight": {
+      "input_sha256": "25a8aa9dd807d1cd11e0d38e1f4326bf4104ff47c55a7e2585ad15c09040a1aa",
+      "output_sha256": "214a39287bc92a76b9a33fa610dd376fba383b10c5f55477b703deec7654186d"
+    },
+    "BMI": {
+      "input_sha256": "0b800fcb4e2be9a775357e8975ffc2e8e34bc3e621f61782d0d7cf2277a0c88b",
+      "output_sha256": "ab8149a3269f90ac49333ce7e16d228f67f5be56835e2eebc9c90a0785f423da"
+    },
+    "DBP": {
+      "input_sha256": "f5bf1bb39295ea9cfc39adf384b1f85ee56faa60fbb28cd84852c27409dc0efa",
+      "output_sha256": "2e03417dae76d8b9b37625d93477137f4d30bb83cb6778ca83c2b4e991439b3f"
+    },
+    "FVC": {
+      "input_sha256": "76800019189a8cde712ba0e2a5acff06f9019efa9cc61c0cef24ac09fe6194f3",
+      "output_sha256": "ff6dd2621405629eb6496d3d0123ca3c4526e3c76ae616472500ba9e726d04af"
+    },
+    "Waist": {
+      "input_sha256": "1c423c65180a3065d96374fde9af65ef6c898f4654032f62b25fde8ead4271e0",
+      "output_sha256": "2136bebd389261a5360fac3e8d7d2df16835660572998edbe3ae632294bd1bc7"
+    }
+  },
+  "gcmsem_analysis": {
+    "traits": [
+      "DrinksPerWeek",
+      "VitaminD",
+      "SBP",
+      "Insomnia",
+      "Depression",
+      "LDL",
+      "FEV1",
+      "HeartAttack",
+      "Angina",
+      "Height",
+      "Weight",
+      "BMI",
+      "DBP",
+      "FVC",
+      "Waist"
+    ],
+    "n_tags_before_tail_removal": 1012060,
+    "n_tags": 1012000,
+    "removed_tail": 60,
+    "source_counts": [
+      464696,
+      205404,
+      314059,
+      261563,
+      473718
+    ],
+    "tag_counts": [
+      49128,
+      126493,
+      238142,
+      209843,
+      388394
+    ],
+    "maf_edges": [
+      0.0,
+      0.05,
+      0.1,
+      0.2,
+      0.3,
+      0.5
+    ],
+    "n_blocks": 200,
+    "qc": {
+      "trait_qc": [
+        {
+          "trait": "DrinksPerWeek",
+          "rows": 1071124,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 0,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1071124,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "VitaminD",
+          "rows": 1074058,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074055,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "SBP",
+          "rows": 1074060,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074057,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "Insomnia",
+          "rows": 1014794,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1014791,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "Depression",
+          "rows": 1074029,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074026,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "LDL",
+          "rows": 1074060,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074057,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "FEV1",
+          "rows": 1074056,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074053,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "HeartAttack",
+          "rows": 1072674,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1072671,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "Angina",
+          "rows": 1073811,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1073808,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "Height",
+          "rows": 1074062,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074059,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "Weight",
+          "rows": 1074062,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074059,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "BMI",
+          "rows": 1074062,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074059,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "DBP",
+          "rows": 1074060,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074057,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "FVC",
+          "rows": 1074056,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074053,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        },
+        {
+          "trait": "Waist",
+          "rows": 1074062,
+          "not_in_reference": 0,
+          "invalid_numeric": 0,
+          "invalid_alleles": 0,
+          "allele_mismatch": 0,
+          "palindromic": 3,
+          "frequency_mismatch": 0,
+          "low_info": 0,
+          "low_n": 0,
+          "retained": 1074059,
+          "sign_flipped": 0,
+          "strand_flipped": 0
+        }
+      ],
+      "input_files": [
+        {
+          "trait": "DrinksPerWeek",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/GSCAN_DrinksPerWeek.tsv.gz",
+          "sha256": "31e654003f01a33a1f542b95cab74a62063b0676a1243f5d97c55ececa68ba5c",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "VitaminD",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/30890_raw.tsv.gz",
+          "sha256": "e6a0f250ebaf7d10f44cabd8ae8689f2dfe0688c61881c504fadc6b2fe194d04",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "SBP",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/4080_irnt.tsv.gz",
+          "sha256": "0904a1fef0f8fb6305607e65554a927dd777cda1631204de5e7210c6a4dcdb7f",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "Insomnia",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/1200.tsv.gz",
+          "sha256": "fcb1d1eb0646f21a15426973501cd7fbe8022ad1e33117d10d8b6162b01aa069",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "Depression",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/20544_11.tsv.gz",
+          "sha256": "b84236baccd45d84f7260d9397c6112fe0d30417c2682f3b64369c393c374a60",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "LDL",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/30780_raw.tsv.gz",
+          "sha256": "34688329eddc05846cd156250b1a69ac7329e80e14ff4ccbbfd1848772004131",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "FEV1",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/3063_irnt.tsv.gz",
+          "sha256": "74c0f6dc0ecd6b718a2959ccf2a9defc243041effc64a91718c36ce774ed3831",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "HeartAttack",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/6150_1.tsv.gz",
+          "sha256": "4edb9ec894f9ae5e9859155ebff134f5190660cba32a97cae3718d67a7f0e523",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "Angina",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/6150_2.tsv.gz",
+          "sha256": "2f0de21763cea98f5c0aadff7566fd2b9d8749f5e3d94e546cc5ab72983b1b02",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "Height",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/50_irnt.tsv.gz",
+          "sha256": "bd7495a563cdc92a9b55fbd4696064aae67440a68973dc232d4ecbee73e9de1d",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "Weight",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/21002_irnt.tsv.gz",
+          "sha256": "1e1acc39afd98eea5893a3643e20974531b0fd9117be4945d06d79f9cd0d1510",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "BMI",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/21001_irnt.tsv.gz",
+          "sha256": "60c2f232ea0cb6f987cf462d49b2c51f3be89b41f0bdee9a6109143141643732",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "DBP",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/4079_irnt.tsv.gz",
+          "sha256": "13b4ecf7a49d1052102cfa636a965d6a0e6de9e362023446150cbf97f83c9cc1",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "FVC",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/3062_irnt.tsv.gz",
+          "sha256": "e0f66dfca6d99147cb8bf92ca1d969dcfd904c07aa682c02f8b3a27552258e86",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        },
+        {
+          "trait": "Waist",
+          "path": "/workspace/scratch/637d2324a143/external-data/sumstats/48_irnt.tsv.gz",
+          "sha256": "fd193d1653cefff6f950935c0898aded8a4702202d7535c6cb16c885a2533dba",
+          "input_effect_scale": "genotype_standardized",
+          "phenotype_unit": "unspecified"
+        }
+      ],
+      "n_tags_before_qc": 1074062,
+      "n_tags_after_qc": 1012060,
+      "af_tolerance": 0.1,
+      "allow_strand_flips": false,
+      "keep_palindromic": false,
+      "source_counts_unchanged": true,
+      "common_tag_complete_case": true,
+      "genome_build_check": "User must ensure shared genome build; matching IDs alone does not verify build"
+    },
+    "score_sha256": "4520204e59b56c3a30af9818a48288376949d23d5d2796df7ed8e5ebb516127c",
+    "score_metadata": {
+      "allele_orientation": "minor_allele",
+      "block_semantics": "Legacy 200 chromosome-respecting genomic deletion groups; not independent LD truncation blocks.",
+      "blocks": [
+        {
+          "chrom": "1",
+          "end_row_exclusive": 5264,
+          "id": "chr1:delete001",
+          "start_row": 0,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 10528,
+          "id": "chr1:delete002",
+          "start_row": 5264,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 15792,
+          "id": "chr1:delete003",
+          "start_row": 10528,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 21056,
+          "id": "chr1:delete004",
+          "start_row": 15792,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 26320,
+          "id": "chr1:delete005",
+          "start_row": 21056,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 31584,
+          "id": "chr1:delete006",
+          "start_row": 26320,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 36848,
+          "id": "chr1:delete007",
+          "start_row": 31584,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 42112,
+          "id": "chr1:delete008",
+          "start_row": 36848,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 47376,
+          "id": "chr1:delete009",
+          "start_row": 42112,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 52640,
+          "id": "chr1:delete010",
+          "start_row": 47376,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 57904,
+          "id": "chr1:delete011",
+          "start_row": 52640,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 63168,
+          "id": "chr1:delete012",
+          "start_row": 57904,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 68432,
+          "id": "chr1:delete013",
+          "start_row": 63168,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 73696,
+          "id": "chr1:delete014",
+          "start_row": 68432,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 78960,
+          "id": "chr1:delete015",
+          "start_row": 73696,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 84224,
+          "id": "chr1:delete016",
+          "start_row": 78960,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "1",
+          "end_row_exclusive": 89488,
+          "id": "chr1:delete017",
+          "start_row": 84224,
+          "tag_variants": 5264
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 94775,
+          "id": "chr2:delete018",
+          "start_row": 89488,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 100062,
+          "id": "chr2:delete019",
+          "start_row": 94775,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 105349,
+          "id": "chr2:delete020",
+          "start_row": 100062,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 110636,
+          "id": "chr2:delete021",
+          "start_row": 105349,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 115923,
+          "id": "chr2:delete022",
+          "start_row": 110636,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 121210,
+          "id": "chr2:delete023",
+          "start_row": 115923,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 126497,
+          "id": "chr2:delete024",
+          "start_row": 121210,
+          "tag_variants": 5287
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 131783,
+          "id": "chr2:delete025",
+          "start_row": 126497,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 137069,
+          "id": "chr2:delete026",
+          "start_row": 131783,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 142355,
+          "id": "chr2:delete027",
+          "start_row": 137069,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 147641,
+          "id": "chr2:delete028",
+          "start_row": 142355,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 152927,
+          "id": "chr2:delete029",
+          "start_row": 147641,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 158213,
+          "id": "chr2:delete030",
+          "start_row": 152927,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 163499,
+          "id": "chr2:delete031",
+          "start_row": 158213,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 168785,
+          "id": "chr2:delete032",
+          "start_row": 163499,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 174071,
+          "id": "chr2:delete033",
+          "start_row": 168785,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "2",
+          "end_row_exclusive": 179357,
+          "id": "chr2:delete034",
+          "start_row": 174071,
+          "tag_variants": 5286
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 184741,
+          "id": "chr3:delete035",
+          "start_row": 179357,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 190125,
+          "id": "chr3:delete036",
+          "start_row": 184741,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 195509,
+          "id": "chr3:delete037",
+          "start_row": 190125,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 200893,
+          "id": "chr3:delete038",
+          "start_row": 195509,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 206277,
+          "id": "chr3:delete039",
+          "start_row": 200893,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 211661,
+          "id": "chr3:delete040",
+          "start_row": 206277,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 217045,
+          "id": "chr3:delete041",
+          "start_row": 211661,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 222429,
+          "id": "chr3:delete042",
+          "start_row": 217045,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 227813,
+          "id": "chr3:delete043",
+          "start_row": 222429,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 233197,
+          "id": "chr3:delete044",
+          "start_row": 227813,
+          "tag_variants": 5384
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 238580,
+          "id": "chr3:delete045",
+          "start_row": 233197,
+          "tag_variants": 5383
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 243963,
+          "id": "chr3:delete046",
+          "start_row": 238580,
+          "tag_variants": 5383
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 249346,
+          "id": "chr3:delete047",
+          "start_row": 243963,
+          "tag_variants": 5383
+        },
+        {
+          "chrom": "3",
+          "end_row_exclusive": 254729,
+          "id": "chr3:delete048",
+          "start_row": 249346,
+          "tag_variants": 5383
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 260323,
+          "id": "chr4:delete049",
+          "start_row": 254729,
+          "tag_variants": 5594
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 265917,
+          "id": "chr4:delete050",
+          "start_row": 260323,
+          "tag_variants": 5594
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 271511,
+          "id": "chr4:delete051",
+          "start_row": 265917,
+          "tag_variants": 5594
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 277105,
+          "id": "chr4:delete052",
+          "start_row": 271511,
+          "tag_variants": 5594
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 282699,
+          "id": "chr4:delete053",
+          "start_row": 277105,
+          "tag_variants": 5594
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 288292,
+          "id": "chr4:delete054",
+          "start_row": 282699,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 293885,
+          "id": "chr4:delete055",
+          "start_row": 288292,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 299478,
+          "id": "chr4:delete056",
+          "start_row": 293885,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 305071,
+          "id": "chr4:delete057",
+          "start_row": 299478,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 310664,
+          "id": "chr4:delete058",
+          "start_row": 305071,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 316257,
+          "id": "chr4:delete059",
+          "start_row": 310664,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "4",
+          "end_row_exclusive": 321850,
+          "id": "chr4:delete060",
+          "start_row": 316257,
+          "tag_variants": 5593
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 327082,
+          "id": "chr5:delete061",
+          "start_row": 321850,
+          "tag_variants": 5232
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 332314,
+          "id": "chr5:delete062",
+          "start_row": 327082,
+          "tag_variants": 5232
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 337546,
+          "id": "chr5:delete063",
+          "start_row": 332314,
+          "tag_variants": 5232
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 342777,
+          "id": "chr5:delete064",
+          "start_row": 337546,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 348008,
+          "id": "chr5:delete065",
+          "start_row": 342777,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 353239,
+          "id": "chr5:delete066",
+          "start_row": 348008,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 358470,
+          "id": "chr5:delete067",
+          "start_row": 353239,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 363701,
+          "id": "chr5:delete068",
+          "start_row": 358470,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 368932,
+          "id": "chr5:delete069",
+          "start_row": 363701,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 374163,
+          "id": "chr5:delete070",
+          "start_row": 368932,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 379394,
+          "id": "chr5:delete071",
+          "start_row": 374163,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 384625,
+          "id": "chr5:delete072",
+          "start_row": 379394,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "5",
+          "end_row_exclusive": 389856,
+          "id": "chr5:delete073",
+          "start_row": 384625,
+          "tag_variants": 5231
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 395306,
+          "id": "chr6:delete074",
+          "start_row": 389856,
+          "tag_variants": 5450
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 400756,
+          "id": "chr6:delete075",
+          "start_row": 395306,
+          "tag_variants": 5450
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 406206,
+          "id": "chr6:delete076",
+          "start_row": 400756,
+          "tag_variants": 5450
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 411655,
+          "id": "chr6:delete077",
+          "start_row": 406206,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 417104,
+          "id": "chr6:delete078",
+          "start_row": 411655,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 422553,
+          "id": "chr6:delete079",
+          "start_row": 417104,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 428002,
+          "id": "chr6:delete080",
+          "start_row": 422553,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 433451,
+          "id": "chr6:delete081",
+          "start_row": 428002,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 438900,
+          "id": "chr6:delete082",
+          "start_row": 433451,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 444349,
+          "id": "chr6:delete083",
+          "start_row": 438900,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 449798,
+          "id": "chr6:delete084",
+          "start_row": 444349,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "6",
+          "end_row_exclusive": 455247,
+          "id": "chr6:delete085",
+          "start_row": 449798,
+          "tag_variants": 5449
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 460659,
+          "id": "chr7:delete086",
+          "start_row": 455247,
+          "tag_variants": 5412
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 466071,
+          "id": "chr7:delete087",
+          "start_row": 460659,
+          "tag_variants": 5412
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 471483,
+          "id": "chr7:delete088",
+          "start_row": 466071,
+          "tag_variants": 5412
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 476895,
+          "id": "chr7:delete089",
+          "start_row": 471483,
+          "tag_variants": 5412
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 482306,
+          "id": "chr7:delete090",
+          "start_row": 476895,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 487717,
+          "id": "chr7:delete091",
+          "start_row": 482306,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 493128,
+          "id": "chr7:delete092",
+          "start_row": 487717,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 498539,
+          "id": "chr7:delete093",
+          "start_row": 493128,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 503950,
+          "id": "chr7:delete094",
+          "start_row": 498539,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 509361,
+          "id": "chr7:delete095",
+          "start_row": 503950,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "7",
+          "end_row_exclusive": 514772,
+          "id": "chr7:delete096",
+          "start_row": 509361,
+          "tag_variants": 5411
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 520084,
+          "id": "chr8:delete097",
+          "start_row": 514772,
+          "tag_variants": 5312
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 525396,
+          "id": "chr8:delete098",
+          "start_row": 520084,
+          "tag_variants": 5312
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 530708,
+          "id": "chr8:delete099",
+          "start_row": 525396,
+          "tag_variants": 5312
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 536020,
+          "id": "chr8:delete100",
+          "start_row": 530708,
+          "tag_variants": 5312
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 541331,
+          "id": "chr8:delete101",
+          "start_row": 536020,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 546642,
+          "id": "chr8:delete102",
+          "start_row": 541331,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 551953,
+          "id": "chr8:delete103",
+          "start_row": 546642,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 557264,
+          "id": "chr8:delete104",
+          "start_row": 551953,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 562575,
+          "id": "chr8:delete105",
+          "start_row": 557264,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 567886,
+          "id": "chr8:delete106",
+          "start_row": 562575,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "8",
+          "end_row_exclusive": 573197,
+          "id": "chr8:delete107",
+          "start_row": 567886,
+          "tag_variants": 5311
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 578769,
+          "id": "chr9:delete108",
+          "start_row": 573197,
+          "tag_variants": 5572
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 584341,
+          "id": "chr9:delete109",
+          "start_row": 578769,
+          "tag_variants": 5572
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 589912,
+          "id": "chr9:delete110",
+          "start_row": 584341,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 595483,
+          "id": "chr9:delete111",
+          "start_row": 589912,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 601054,
+          "id": "chr9:delete112",
+          "start_row": 595483,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 606625,
+          "id": "chr9:delete113",
+          "start_row": 601054,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 612196,
+          "id": "chr9:delete114",
+          "start_row": 606625,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 617767,
+          "id": "chr9:delete115",
+          "start_row": 612196,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "9",
+          "end_row_exclusive": 623338,
+          "id": "chr9:delete116",
+          "start_row": 617767,
+          "tag_variants": 5571
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 628623,
+          "id": "chr10:delete117",
+          "start_row": 623338,
+          "tag_variants": 5285
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 633908,
+          "id": "chr10:delete118",
+          "start_row": 628623,
+          "tag_variants": 5285
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 639193,
+          "id": "chr10:delete119",
+          "start_row": 633908,
+          "tag_variants": 5285
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 644478,
+          "id": "chr10:delete120",
+          "start_row": 639193,
+          "tag_variants": 5285
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 649762,
+          "id": "chr10:delete121",
+          "start_row": 644478,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 655046,
+          "id": "chr10:delete122",
+          "start_row": 649762,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 660330,
+          "id": "chr10:delete123",
+          "start_row": 655046,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 665614,
+          "id": "chr10:delete124",
+          "start_row": 660330,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 670898,
+          "id": "chr10:delete125",
+          "start_row": 665614,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 676182,
+          "id": "chr10:delete126",
+          "start_row": 670898,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "10",
+          "end_row_exclusive": 681466,
+          "id": "chr10:delete127",
+          "start_row": 676182,
+          "tag_variants": 5284
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 687006,
+          "id": "chr11:delete128",
+          "start_row": 681466,
+          "tag_variants": 5540
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 692546,
+          "id": "chr11:delete129",
+          "start_row": 687006,
+          "tag_variants": 5540
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 698086,
+          "id": "chr11:delete130",
+          "start_row": 692546,
+          "tag_variants": 5540
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 703625,
+          "id": "chr11:delete131",
+          "start_row": 698086,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 709164,
+          "id": "chr11:delete132",
+          "start_row": 703625,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 714703,
+          "id": "chr11:delete133",
+          "start_row": 709164,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 720242,
+          "id": "chr11:delete134",
+          "start_row": 714703,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 725781,
+          "id": "chr11:delete135",
+          "start_row": 720242,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 731320,
+          "id": "chr11:delete136",
+          "start_row": 725781,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "11",
+          "end_row_exclusive": 736859,
+          "id": "chr11:delete137",
+          "start_row": 731320,
+          "tag_variants": 5539
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 742137,
+          "id": "chr12:delete138",
+          "start_row": 736859,
+          "tag_variants": 5278
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 747415,
+          "id": "chr12:delete139",
+          "start_row": 742137,
+          "tag_variants": 5278
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 752692,
+          "id": "chr12:delete140",
+          "start_row": 747415,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 757969,
+          "id": "chr12:delete141",
+          "start_row": 752692,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 763246,
+          "id": "chr12:delete142",
+          "start_row": 757969,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 768523,
+          "id": "chr12:delete143",
+          "start_row": 763246,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 773800,
+          "id": "chr12:delete144",
+          "start_row": 768523,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 779077,
+          "id": "chr12:delete145",
+          "start_row": 773800,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 784354,
+          "id": "chr12:delete146",
+          "start_row": 779077,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "12",
+          "end_row_exclusive": 789631,
+          "id": "chr12:delete147",
+          "start_row": 784354,
+          "tag_variants": 5277
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 794768,
+          "id": "chr13:delete148",
+          "start_row": 789631,
+          "tag_variants": 5137
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 799905,
+          "id": "chr13:delete149",
+          "start_row": 794768,
+          "tag_variants": 5137
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 805042,
+          "id": "chr13:delete150",
+          "start_row": 799905,
+          "tag_variants": 5137
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 810179,
+          "id": "chr13:delete151",
+          "start_row": 805042,
+          "tag_variants": 5137
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 815316,
+          "id": "chr13:delete152",
+          "start_row": 810179,
+          "tag_variants": 5137
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 820453,
+          "id": "chr13:delete153",
+          "start_row": 815316,
+          "tag_variants": 5137
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 825589,
+          "id": "chr13:delete154",
+          "start_row": 820453,
+          "tag_variants": 5136
+        },
+        {
+          "chrom": "13",
+          "end_row_exclusive": 830725,
+          "id": "chr13:delete155",
+          "start_row": 825589,
+          "tag_variants": 5136
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 835868,
+          "id": "chr14:delete156",
+          "start_row": 830725,
+          "tag_variants": 5143
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 841011,
+          "id": "chr14:delete157",
+          "start_row": 835868,
+          "tag_variants": 5143
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 846153,
+          "id": "chr14:delete158",
+          "start_row": 841011,
+          "tag_variants": 5142
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 851295,
+          "id": "chr14:delete159",
+          "start_row": 846153,
+          "tag_variants": 5142
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 856437,
+          "id": "chr14:delete160",
+          "start_row": 851295,
+          "tag_variants": 5142
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 861579,
+          "id": "chr14:delete161",
+          "start_row": 856437,
+          "tag_variants": 5142
+        },
+        {
+          "chrom": "14",
+          "end_row_exclusive": 866721,
+          "id": "chr14:delete162",
+          "start_row": 861579,
+          "tag_variants": 5142
+        },
+        {
+          "chrom": "15",
+          "end_row_exclusive": 872144,
+          "id": "chr15:delete163",
+          "start_row": 866721,
+          "tag_variants": 5423
+        },
+        {
+          "chrom": "15",
+          "end_row_exclusive": 877567,
+          "id": "chr15:delete164",
+          "start_row": 872144,
+          "tag_variants": 5423
+        },
+        {
+          "chrom": "15",
+          "end_row_exclusive": 882989,
+          "id": "chr15:delete165",
+          "start_row": 877567,
+          "tag_variants": 5422
+        },
+        {
+          "chrom": "15",
+          "end_row_exclusive": 888411,
+          "id": "chr15:delete166",
+          "start_row": 882989,
+          "tag_variants": 5422
+        },
+        {
+          "chrom": "15",
+          "end_row_exclusive": 893833,
+          "id": "chr15:delete167",
+          "start_row": 888411,
+          "tag_variants": 5422
+        },
+        {
+          "chrom": "15",
+          "end_row_exclusive": 899255,
+          "id": "chr15:delete168",
+          "start_row": 893833,
+          "tag_variants": 5422
+        },
+        {
+          "chrom": "16",
+          "end_row_exclusive": 904796,
+          "id": "chr16:delete169",
+          "start_row": 899255,
+          "tag_variants": 5541
+        },
+        {
+          "chrom": "16",
+          "end_row_exclusive": 910337,
+          "id": "chr16:delete170",
+          "start_row": 904796,
+          "tag_variants": 5541
+        },
+        {
+          "chrom": "16",
+          "end_row_exclusive": 915878,
+          "id": "chr16:delete171",
+          "start_row": 910337,
+          "tag_variants": 5541
+        },
+        {
+          "chrom": "16",
+          "end_row_exclusive": 921419,
+          "id": "chr16:delete172",
+          "start_row": 915878,
+          "tag_variants": 5541
+        },
+        {
+          "chrom": "16",
+          "end_row_exclusive": 926959,
+          "id": "chr16:delete173",
+          "start_row": 921419,
+          "tag_variants": 5540
+        },
+        {
+          "chrom": "16",
+          "end_row_exclusive": 932499,
+          "id": "chr16:delete174",
+          "start_row": 926959,
+          "tag_variants": 5540
+        },
+        {
+          "chrom": "17",
+          "end_row_exclusive": 938368,
+          "id": "chr17:delete175",
+          "start_row": 932499,
+          "tag_variants": 5869
+        },
+        {
+          "chrom": "17",
+          "end_row_exclusive": 944237,
+          "id": "chr17:delete176",
+          "start_row": 938368,
+          "tag_variants": 5869
+        },
+        {
+          "chrom": "17",
+          "end_row_exclusive": 950105,
+          "id": "chr17:delete177",
+          "start_row": 944237,
+          "tag_variants": 5868
+        },
+        {
+          "chrom": "17",
+          "end_row_exclusive": 955973,
+          "id": "chr17:delete178",
+          "start_row": 950105,
+          "tag_variants": 5868
+        },
+        {
+          "chrom": "17",
+          "end_row_exclusive": 961841,
+          "id": "chr17:delete179",
+          "start_row": 955973,
+          "tag_variants": 5868
+        },
+        {
+          "chrom": "18",
+          "end_row_exclusive": 967193,
+          "id": "chr18:delete180",
+          "start_row": 961841,
+          "tag_variants": 5352
+        },
+        {
+          "chrom": "18",
+          "end_row_exclusive": 972545,
+          "id": "chr18:delete181",
+          "start_row": 967193,
+          "tag_variants": 5352
+        },
+        {
+          "chrom": "18",
+          "end_row_exclusive": 977897,
+          "id": "chr18:delete182",
+          "start_row": 972545,
+          "tag_variants": 5352
+        },
+        {
+          "chrom": "18",
+          "end_row_exclusive": 983249,
+          "id": "chr18:delete183",
+          "start_row": 977897,
+          "tag_variants": 5352
+        },
+        {
+          "chrom": "18",
+          "end_row_exclusive": 988600,
+          "id": "chr18:delete184",
+          "start_row": 983249,
+          "tag_variants": 5351
+        },
+        {
+          "chrom": "18",
+          "end_row_exclusive": 993951,
+          "id": "chr18:delete185",
+          "start_row": 988600,
+          "tag_variants": 5351
+        },
+        {
+          "chrom": "19",
+          "end_row_exclusive": 999059,
+          "id": "chr19:delete186",
+          "start_row": 993951,
+          "tag_variants": 5108
+        },
+        {
+          "chrom": "19",
+          "end_row_exclusive": 1004167,
+          "id": "chr19:delete187",
+          "start_row": 999059,
+          "tag_variants": 5108
+        },
+        {
+          "chrom": "19",
+          "end_row_exclusive": 1009275,
+          "id": "chr19:delete188",
+          "start_row": 1004167,
+          "tag_variants": 5108
+        },
+        {
+          "chrom": "19",
+          "end_row_exclusive": 1014382,
+          "id": "chr19:delete189",
+          "start_row": 1009275,
+          "tag_variants": 5107
+        },
+        {
+          "chrom": "20",
+          "end_row_exclusive": 1020063,
+          "id": "chr20:delete190",
+          "start_row": 1014382,
+          "tag_variants": 5681
+        },
+        {
+          "chrom": "20",
+          "end_row_exclusive": 1025744,
+          "id": "chr20:delete191",
+          "start_row": 1020063,
+          "tag_variants": 5681
+        },
+        {
+          "chrom": "20",
+          "end_row_exclusive": 1031424,
+          "id": "chr20:delete192",
+          "start_row": 1025744,
+          "tag_variants": 5680
+        },
+        {
+          "chrom": "20",
+          "end_row_exclusive": 1037104,
+          "id": "chr20:delete193",
+          "start_row": 1031424,
+          "tag_variants": 5680
+        },
+        {
+          "chrom": "20",
+          "end_row_exclusive": 1042784,
+          "id": "chr20:delete194",
+          "start_row": 1037104,
+          "tag_variants": 5680
+        },
+        {
+          "chrom": "21",
+          "end_row_exclusive": 1047935,
+          "id": "chr21:delete195",
+          "start_row": 1042784,
+          "tag_variants": 5151
+        },
+        {
+          "chrom": "21",
+          "end_row_exclusive": 1053086,
+          "id": "chr21:delete196",
+          "start_row": 1047935,
+          "tag_variants": 5151
+        },
+        {
+          "chrom": "21",
+          "end_row_exclusive": 1058236,
+          "id": "chr21:delete197",
+          "start_row": 1053086,
+          "tag_variants": 5150
+        },
+        {
+          "chrom": "22",
+          "end_row_exclusive": 1063512,
+          "id": "chr22:delete198",
+          "start_row": 1058236,
+          "tag_variants": 5276
+        },
+        {
+          "chrom": "22",
+          "end_row_exclusive": 1068787,
+          "id": "chr22:delete199",
+          "start_row": 1063512,
+          "tag_variants": 5275
+        },
+        {
+          "chrom": "22",
+          "end_row_exclusive": 1074062,
+          "id": "chr22:delete200",
+          "start_row": 1068787,
+          "tag_variants": 5275
+        }
+      ],
+      "cross_block_ld_assumed_zero": false,
+      "effect_scale": "genotype_standardized",
+      "genome_build": "GRCh37",
+      "kind": "signed_ld_power_scores",
+      "l1_l3_l4_finite_reference_correction": false,
+      "l2_finite_reference_correction": true,
+      "ld_model": "sliding_window",
+      "maf_edges": [
+        0,
+        0.05,
+        0.1,
+        0.2,
+        0.3,
+        0.5
+      ],
+      "migration": "Exact archived L1,L2,L3,L4 arrays imported into GCMSEM schema; L2 correction is already applied once.",
+      "original_score_metadata": {
+        "chromosomes": [
+          {
+            "chr": 1,
+            "mean_q2": 26.302052743471208,
+            "mean_q3": 10.691904390888388,
+            "mean_q4": 11.111927615993572,
+            "rows": 89488,
+            "seconds": 4.172100067138672,
+            "targets": 142634
+          },
+          {
+            "chr": 2,
+            "mean_q2": 27.091985322373414,
+            "mean_q3": 10.698643352847107,
+            "mean_q4": 11.106301990303821,
+            "rows": 89869,
+            "seconds": 4.236621379852295,
+            "targets": 143561
+          },
+          {
+            "chr": 3,
+            "mean_q2": 27.81577944827633,
+            "mean_q3": 11.208325236419084,
+            "mean_q4": 11.65759517305203,
+            "rows": 75372,
+            "seconds": 3.4108712673187256,
+            "targets": 120847
+          },
+          {
+            "chr": 4,
+            "mean_q2": 25.561501424617003,
+            "mean_q3": 10.409151405605892,
+            "mean_q4": 10.693144825300728,
+            "rows": 67121,
+            "seconds": 3.0412025451660156,
+            "targets": 109412
+          },
+          {
+            "chr": 5,
+            "mean_q2": 26.430300290157547,
+            "mean_q3": 10.723466868504232,
+            "mean_q4": 10.85784197021714,
+            "rows": 68006,
+            "seconds": 2.943814992904663,
+            "targets": 107097
+          },
+          {
+            "chr": 6,
+            "mean_q2": 26.19477472300311,
+            "mean_q3": 10.064807814344269,
+            "mean_q4": 10.601155062654895,
+            "rows": 65391,
+            "seconds": 2.8771612644195557,
+            "targets": 101615
+          },
+          {
+            "chr": 7,
+            "mean_q2": 25.526430084855477,
+            "mean_q3": 9.983168334944759,
+            "mean_q4": 10.425839750578918,
+            "rows": 59525,
+            "seconds": 2.4492218494415283,
+            "targets": 95734
+          },
+          {
+            "chr": 8,
+            "mean_q2": 28.687667636324523,
+            "mean_q3": 10.929897299684201,
+            "mean_q4": 11.206538087832094,
+            "rows": 58425,
+            "seconds": 2.56889271736145,
+            "targets": 93430
+          },
+          {
+            "chr": 9,
+            "mean_q2": 24.971191518794512,
+            "mean_q3": 9.316970149397875,
+            "mean_q4": 9.744375017528187,
+            "rows": 50141,
+            "seconds": 2.230117082595825,
+            "targets": 79406
+          },
+          {
+            "chr": 10,
+            "mean_q2": 26.275030237418427,
+            "mean_q3": 10.50720949721405,
+            "mean_q4": 10.732628802443573,
+            "rows": 58128,
+            "seconds": 2.3598215579986572,
+            "targets": 91288
+          },
+          {
+            "chr": 11,
+            "mean_q2": 27.91072723313962,
+            "mean_q3": 11.19978995226558,
+            "mean_q4": 11.61756782745568,
+            "rows": 55393,
+            "seconds": 2.4763355255126953,
+            "targets": 88151
+          },
+          {
+            "chr": 12,
+            "mean_q2": 25.443811042171056,
+            "mean_q3": 9.819612845780556,
+            "mean_q4": 10.277726731330057,
+            "rows": 52772,
+            "seconds": 2.323453903198242,
+            "targets": 82916
+          },
+          {
+            "chr": 13,
+            "mean_q2": 24.474674099824405,
+            "mean_q3": 9.447324675321171,
+            "mean_q4": 9.74709520762864,
+            "rows": 41094,
+            "seconds": 2.0523204803466797,
+            "targets": 63560
+          },
+          {
+            "chr": 14,
+            "mean_q2": 26.014939002275447,
+            "mean_q3": 10.885059950957006,
+            "mean_q4": 10.78884796682331,
+            "rows": 35996,
+            "seconds": 1.6260817050933838,
+            "targets": 57021
+          },
+          {
+            "chr": 15,
+            "mean_q2": 24.919996092867883,
+            "mean_q3": 10.152371266071919,
+            "mean_q4": 10.279170087679983,
+            "rows": 32534,
+            "seconds": 1.4065043926239014,
+            "targets": 53167
+          },
+          {
+            "chr": 16,
+            "mean_q2": 23.790324928530882,
+            "mean_q3": 9.313167773185109,
+            "mean_q4": 9.449886201559638,
+            "rows": 33244,
+            "seconds": 1.5834062099456787,
+            "targets": 57119
+          },
+          {
+            "chr": 17,
+            "mean_q2": 24.204959242612038,
+            "mean_q3": 9.924442205566162,
+            "mean_q4": 10.785144994239403,
+            "rows": 29342,
+            "seconds": 1.3031258583068848,
+            "targets": 49628
+          },
+          {
+            "chr": 18,
+            "mean_q2": 23.513737972482495,
+            "mean_q3": 9.179963400023537,
+            "mean_q4": 9.436927558904472,
+            "rows": 32110,
+            "seconds": 1.6169259548187256,
+            "targets": 51404
+          },
+          {
+            "chr": 19,
+            "mean_q2": 20.206678734937594,
+            "mean_q3": 8.24477980066615,
+            "mean_q4": 8.446518986247137,
+            "rows": 20431,
+            "seconds": 0.9021973609924316,
+            "targets": 36229
+          },
+          {
+            "chr": 20,
+            "mean_q2": 23.682325529817334,
+            "mean_q3": 9.389900520528483,
+            "mean_q4": 9.653438188758114,
+            "rows": 28402,
+            "seconds": 1.3270745277404785,
+            "targets": 44678
+          },
+          {
+            "chr": 21,
+            "mean_q2": 22.193256544788134,
+            "mean_q3": 8.484965628885357,
+            "mean_q4": 8.8512739248247,
+            "rows": 15452,
+            "seconds": 0.6458292007446289,
+            "targets": 24985
+          },
+          {
+            "chr": 22,
+            "mean_q2": 23.049819687850068,
+            "mean_q3": 8.778813383276317,
+            "mean_q4": 9.35039099596564,
+            "rows": 15826,
+            "seconds": 0.60211181640625,
+            "targets": 25558
+          }
+        ],
+        "definition": "L[q,j,b]=sum over all eligible reference targets k inbinb, samechr andabs(bp_j-bp_k)<=1Mb of minor-allele-oriented R_jk**q; HM3 rows and broader reference targets.",
+        "limitations": [
+          "Fixed503EUR LD uncertainty not propagated.",
+          "Target universe is limited to1.84M distributed reference panel variants, not all human variation.",
+          "Reference MAF bins/orientation and HWE genotype standardization derived from503individuals."
+        ],
+        "maf_bin_counts": [
+          108432,
+          126846,
+          238746,
+          210484,
+          389554
+        ],
+        "maf_bin_edges": [
+          0.0,
+          0.05,
+          0.1,
+          0.2,
+          0.3,
+          0.500000001
+        ],
+        "mean_scores_by_bin": {
+          "q1": [
+            1.6764882793231854,
+            1.8056643442297342,
+            3.5423723655190456,
+            2.9209235663112545,
+            3.8721666927543485
+          ],
+          "q2": [
+            2.5081074549795996,
+            2.484991575174703,
+            5.211951858942257,
+            5.16881386119769,
+            10.48775970564392
+          ],
+          "q3": [
+            0.8540045875146621,
+            1.1706686474692367,
+            2.5267958606124163,
+            2.3257442374875206,
+            3.373217472371636
+          ],
+          "q4": [
+            0.6700170084037214,
+            0.9681982021335673,
+            2.1893871253565944,
+            2.212091547601684,
+            4.558078353685673
+          ]
+        },
+        "n_reference": 503,
+        "n_rows": 1074062,
+        "n_targets": 1719440,
+        "n_variants": 1074062,
+        "normalization": "Mean-impute, center, minor-allele-orient, empirical Euclidean norm1. Diagonal fixed1.",
+        "q2_diagnostic": "(503*L2-windowcounts)/502; diagonal preserved, not a genotype-specific unbiased estimator; diagnostic only",
+        "q2_ldsc": {
+          "definition": "L2 - (window_counts-L2)/(N-2) = ((N-1)*L2-window_counts)/(N-2), N=503",
+          "file": "q2_ldsc.npy",
+          "mean_by_bin": [
+            1.7852799728425435,
+            2.1596602610106665,
+            4.713621981565114,
+            4.75551923687305,
+            9.742631827929948
+          ],
+          "mean_total": 23.156713280221716,
+          "note": "Standard LDSC finite-reference r\u00b2 correction. Orders3 and4 remain raw plug-in powers; this does not solve their reference sampling error.",
+          "source": "https://github.com/bulik/ldsc/blob/master/ldscore/ldscore.py method __l2_unbiased__"
+        },
+        "runtime_seconds": 52.90148448944092,
+        "sha256_bed_indices": "570438deb04c521d8c87f0fe9fdfeb299c9fe1339f44d70affb8a69cc4ecf30f",
+        "sha256_target_bed_indices": "bd0b589191c78284cb1c98236ab7e14b7d9d7b34ab6e1d2810958b254d93c1c6",
+        "sum_scores_by_bin": {
+          "q1": [
+            1800652.3542664193,
+            1939395.4568920769,
+            3804727.547654117,
+            3137253.0074793985,
+            4158947.102353121
+          ],
+          "q2": [
+            2693862.909310299,
+            2669035.0212152917,
+            5597959.437519238,
+            5551626.553385713,
+            11264504.16496332
+          ],
+          "q3": [
+            917253.875275173,
+            1257370.7088381033,
+            2713935.415641093,
+            2497993.507204321,
+            3623044.7048104242
+          ],
+          "q4": [
+            719639.8080801178,
+            1039904.8973799836,
+            2351537.5146347545,
+            2375923.47180016,
+            4895658.752716341
+          ]
+        },
+        "target_maf_bin_counts": [
+          464696,
+          205404,
+          314059,
+          261563,
+          473718
+        ],
+        "targets": "All autosomal single-nucleotide polymorphic503EUR reference variants; excludes MHCchr6:25-34Mb and286known UKB/reference frequency-discrepancy variants.",
+        "window_bp": 1000000
+      },
+      "reference_ancestry": "EUR",
+      "reference_license": "CC-BY-4.0",
+      "reference_sample_size": 503,
+      "reference_source": "https://zenodo.org/records/6614170",
+      "schema_version": "1.0",
+      "source_hashes": {
+        "LD_moments_15_trait_cache.npz": "8e025cbf20fcd3676b1bdcc2005f26f32d0d6aecddf0cbdc962ea088430968fa",
+        "height_weight_HM3_aligned.npz": "1b053723d450c50020a12b01c3373e7fffd2e2b017e373bda776326e61f9d52b",
+        "height_weight_LD_scores.npz": "d1c2789ca978a3068d94777487e79baf92079d0902a2481903ac7f2751ba4382"
+      },
+      "source_variants": 1719440,
+      "tag_variants": 1074062,
+      "warnings": [
+        "Scores were computed earlier from signed 503-person EUR reference LD using a 1 Mb rolling window, not the block-truncated GCMSEM score command.",
+        "Deletion boundaries can cut LD neighborhoods; jackknife uncertainty is approximate and conditions on the reference.",
+        "Finite-reference correction applies to L2 only; higher-order reference uncertainty is not propagated."
+      ],
+      "window_bp": 1000000
+    },
+    "trait_results": [
+      {
+        "trait": "DrinksPerWeek",
+        "noise_intercept": 0.902893075459393
+      },
+      {
+        "trait": "VitaminD",
+        "noise_intercept": 0.9637362935079676
+      },
+      {
+        "trait": "SBP",
+        "noise_intercept": 1.029900128856941
+      },
+      {
+        "trait": "Insomnia",
+        "noise_intercept": 1.010675469660185
+      },
+      {
+        "trait": "Depression",
+        "noise_intercept": 1.0058124253709022
+      },
+      {
+        "trait": "LDL",
+        "noise_intercept": 1.206934928566963
+      },
+      {
+        "trait": "FEV1",
+        "noise_intercept": 1.0298996066747523
+      },
+      {
+        "trait": "HeartAttack",
+        "noise_intercept": 1.0109726899288183
+      },
+      {
+        "trait": "Angina",
+        "noise_intercept": 1.0306396422392485
+      },
+      {
+        "trait": "Height",
+        "noise_intercept": 0.9773303712300239
+      },
+      {
+        "trait": "Weight",
+        "noise_intercept": 1.0919862817317396
+      },
+      {
+        "trait": "BMI",
+        "noise_intercept": 1.0746218757177206
+      },
+      {
+        "trait": "DBP",
+        "noise_intercept": 1.0280220800124125
+      },
+      {
+        "trait": "FVC",
+        "noise_intercept": 1.0584425429103406
+      },
+      {
+        "trait": "Waist",
+        "noise_intercept": 1.1041313170558802
+      }
+    ],
+    "python": "3.12.14",
+    "elapsed_seconds": 911.4491897539992,
+    "comparison": "same tags, source counts, L2/L4 and fixed inverse-L2 weights",
+    "source_ld_average": "HM3-tag mean L2 within each MAF bin; representative-tag approximation"
+  },
+  "sld4m_commit": "dd947104cb3cb86bb8a651bf3b5abf5e5cbf46f3",
+  "sld4m_sha256": "d8ca72212d1618abfa0a9695d27fa49f45f851cd9641674809fe6a3ed4b5917a",
+  "comparison": {
+    "n_traits": 15,
+    "pearson": 0.66682476361542,
+    "rmse": 8190.362251880026,
+    "mean_difference": 5013.438393869622,
+    "sld4m_input": "Raw GWAS chi-square",
+    "sld4m_reporting": "Native ma(1), ma_se(1); no custom aggregation",
+    "reference": "Author-released 1000 Genomes baselineLD.1kg.l2l4.mat",
+    "reference_rows": 6227113,
+    "n_annotations": 75,
+    "n_blocks": 100,
+    "source_modified": false,
+    "sld4m_sha256": "d8ca72212d1618abfa0a9695d27fa49f45f851cd9641674809fe6a3ed4b5917a",
+    "prior_matched_input_pearson": 0.9651203420917207,
+    "interpretation": "Independent pipeline comparison with different reference SNP universes; descriptive agreement, not a truth validation"
+  },
+  "checks": {
+    "python_tests_passed": 57,
+    "storage_native_outputs_compared": 14,
+    "storage_max_absolute_difference": 0,
+    "real_reference_cells_bitwise_checked": 1350,
+    "R_moment_objects_read": 15,
+    "native_annotation_estimates_retained": 1125,
+    "portable_raw_adapters": "Height and GSCAN reproduced every cached chi-square and QC flag",
+    "gcmsem_results_unchanged": true
+  },
+  "software": {
+    "Octave": "8.4.0",
+    "OpenBLAS": "0.3.26",
+    "R_package": "0.3.0",
+    "Python_engine": "0.1.0"
+  },
+  "author_example": {
+    "ma": 3635.1949354378908,
+    "se": 422.1460724909663,
+    "matched_snps": 1006040
+  },
+  "limitations": [
+    "Author-released 1000 Genomes example configuration; the 2019 main empirical analysis used UK10K",
+    "Different reference SNP universes and annotation models; correlation is descriptive, not accuracy against truth",
+    "GCMSEM conversion uses a Gaussian variance-mixture assumption and an HM3-tag approximation to source LD averages",
+    "Method-specific jackknife SEs condition on scores; errors across methods share GWAS information",
+    "Earlier matched-input r=0.9651 is not the independent-pipeline result"
+  ]
+}
