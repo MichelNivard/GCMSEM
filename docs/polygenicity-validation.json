@@ -1,0 +1,135 @@
+{
+  "gcmsem_base_commit": "b13bf62f5f720decf7b57e6e6141e6559140ddee",
+  "sld4m_commit": "dd947104cb3cb86bb8a651bf3b5abf5e5cbf46f3",
+  "polygenicity_scripts_commit": "393292076b3fdabb218fa1ba8db386b0d2d5b1b6",
+  "software": {
+    "R_package": "0.3.0",
+    "Python_engine": "0.1.0",
+    "Octave": "8.4.0"
+  },
+  "data_release": "https://doi.org/10.5281/zenodo.23977299",
+  "empirical": {
+    "traits": [
+      "DrinksPerWeek",
+      "VitaminD",
+      "SBP",
+      "Insomnia",
+      "Depression",
+      "LDL",
+      "FEV1",
+      "HeartAttack",
+      "Angina",
+      "Height",
+      "Weight",
+      "BMI",
+      "DBP",
+      "FVC",
+      "Waist"
+    ],
+    "n_tags_before_tail_removal": 1012060,
+    "n_tags": 1012000,
+    "removed_tail": 60,
+    "source_counts": [
+      464696,
+      205404,
+      314059,
+      261563,
+      473718
+    ],
+    "tag_counts": [
+      49128,
+      126493,
+      238142,
+      209843,
+      388394
+    ],
+    "n_blocks": 200,
+    "score_sha256": "4520204e59b56c3a30af9818a48288376949d23d5d2796df7ed8e5ebb516127c"
+  },
+  "comparison": {
+    "n_traits": 15,
+    "pearson": 0.9651203420917207,
+    "rmse": 2876.555442365643,
+    "mean_difference": 1020.7664404760455,
+    "sld4m_input": "Z squared",
+    "beta_input_pearson": 0.6210247273775913,
+    "beta_input_rmse": 7134.10431949365,
+    "sld4m_sha256": "d8ca72212d1618abfa0a9695d27fa49f45f851cd9641674809fe6a3ed4b5917a",
+    "upstream": "https://github.com/lukejoconnor/SLD4M",
+    "estimand": "LD-adjusted Gaussian-mixture effective count; source-weighted bin aggregation; tag LD proxy",
+    "uncertainty": "method-specific block jackknife; conditional on scores and source counts"
+  },
+  "simulation_design": {
+    "traits": [
+      "Sparse",
+      "Polygenic"
+    ],
+    "n_blocks": 159,
+    "n_tags": 84111,
+    "source_counts": [
+      84111
+    ],
+    "n_samples": 200000,
+    "seed": 20261105,
+    "generating_ld_blocks": 1200,
+    "block_length_min": 20,
+    "block_length_max": 120,
+    "probabilities": [
+      0.02,
+      0.2
+    ],
+    "true_effective_counts": [
+      1627.5867710743548,
+      13099.932607240797
+    ],
+    "true_genetic_variances": [
+      0.39638097276217943,
+      0.4047508649284867
+    ],
+    "ld_reference": "exact generating LD; all source SNPs are tags"
+  },
+  "equation15_check": {
+    "sigma2": [
+      0.0001,
+      0.0003
+    ],
+    "heritability_weights": [
+      0.14285714285714285,
+      0.8571428571428571
+    ],
+    "h2": 0.7,
+    "original_helper_result": 2578.947368421053
+  },
+  "checks": {
+    "python_tests_passed": 55,
+    "R_objects_read": 17,
+    "R_figures_rendered": 6,
+    "upstream_source_modified": false
+  },
+  "output_hashes": {
+    "empirical": {
+      "sld4m_input.mat": "4a03ef49a529ba1007a7c502c88e63cead42aa4ca7bbdfbc948e670ecba1f564",
+      "sld4m.mat": "bdffb499fbfc394736fd750a1cf88e8eadccd1299e47511bcde101997d7332c2",
+      "comparison.tsv": "41e8e7cedb0d894371353e157982a8c1eefcde530e81de84212c053a506a9b80",
+      "strata.tsv": "5457f4fb065e1c6d56c30dec2a653e8666df0433287bb8811b1328b3dab29c30",
+      "analysis.json": "1f9679d6c275aa261051cce8034c999a0f356d2a6928ff3393e5e211466eb505",
+      "sld4m_zscore.mat": "193b9c5a7aae2b3e2e8f3509e9e34129332b74470f96b48d454a694531f44716"
+    },
+    "simulation": {
+      "sld4m_input.mat": "83016ce9f7fadee426dc691488ff1550d3386397c8b91e8088a551dce19210d8",
+      "sld4m.mat": "55d1e55495205af6a7c82f330bdaa139e2359f013ff621460f785d68fe8652ad",
+      "comparison.tsv": "589dcea2858e0c7fb4b1b51d32f7c3c0f972bdde32860397b89ca08b331acf8a",
+      "strata.tsv": "85baad2e62997edd2eb5552e9d6288ecc3aec9211301e7f9d63aad605c5a592a",
+      "analysis.json": "5710d96e6992b38106e21a49fafa13d8e5ee1a3ef7ae5ca01cfd8a1573fa7055"
+    }
+  },
+  "limitations": [
+    "Gaussian variance-mixture interpretation",
+    "Empirical HM3 tags approximate source LD averages within MAF bins",
+    "Shared reference and correlated estimation errors",
+    "Finite-reference higher-order score uncertainty omitted",
+    "Original software run on matched GCMSEM scores and weights, not a reproduction of the 2019 reference pipeline",
+    "Two simulation architectures at one seed; no interval-coverage claim",
+    "FMR was not fitted to empirical GWAS"
+  ]
+}
