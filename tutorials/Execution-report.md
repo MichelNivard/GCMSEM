@@ -60,3 +60,7 @@ The correlation tutorial now calls `estimate_moments()` on all 15 GWAS tables. T
 All six model diagrams are generated directly from the corresponding R model objects by [plot_models.R](plot_models.R). The updated [causal transcript](output/causal-reference.txt) reports fit diagnostics first and the conditional reciprocal BMI/SBP paths.
 
 The external release preserves the original numerical archives and provenance. New software, diagrams, transcripts and tests are versioned with R 0.3.0 in this repository.
+
+## Kurtosis and effective polygenicity
+
+The [polygenicity tutorial](Polygenicity.md) executes GCMSEM and unmodified original S-LD4M on the same 15 traits and 1,012,000 common HM3 tags. The Z-squared input comparison has Pearson r = 0.9651; the supported BETA-squared sensitivity run has r = 0.6210. Full one-SE plots and diagnostic flags accompany the point estimates. A separate known-LD simulation checks two Gaussian-mixture architectures; this is not an interval-coverage experiment. See the [execution record](../docs/polygenicity-validation.json) for counts, hashes and limitations.
