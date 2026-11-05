@@ -33,13 +33,13 @@ jobs:
         with:
           python-version: '3.12'
       - run: Rscript -e 'install.packages("jsonlite", repos="https://cloud.r-project.org")'
+      - run: python -m pip install .
       - run: R CMD build . --no-build-vignettes --no-manual
       - run: R CMD check GCMSEM_*.tar.gz --no-manual --no-vignettes
         env:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
           _R_CHECK_FORCE_SUGGESTS_: false
       - run: R CMD INSTALL GCMSEM_*.tar.gz
-      - run: python -m pip install .
       - name: Python to R integration
         run: |
           python examples/make_toy_inputs.py --out validation/work/ci
