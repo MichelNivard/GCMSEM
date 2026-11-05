@@ -1,4 +1,5 @@
 import csv
+import gzip
 import json
 from pathlib import Path
 
@@ -9,6 +10,20 @@ from gcmsem.cli import main
 from gcmsem.io import _rows, harmonize_sumstats, read_manifest, write_results
 from gcmsem.moments import estimate_moments
 from gcmsem.scores import build_scores, save_scores
+
+
+def test_cli_logs_truncated_gzip_without_completed_bundle(tmp_path):
+    score, _ = make_fixture(tmp_path)
+    save_scores(score, tmp_path / 'score.npz')
+    compressed = gzip.compress((tmp_path / 'A.tsv').read_bytes())
+    (tmp_path / 'broken.tsv.gz').write_bytes(compressed[:-8])
+    table(tmp_path / 'broken_manifest.tsv', ['trait', 'path', 'effect_scale'],
+          [['A', 'broken.tsv.gz', 'allele'], ['B', 'B.tsv', 'allele']])
+    result = main(['estimate', '--sumstats', str(tmp_path / 'broken_manifest.tsv'),
+                   '--scores', str(tmp_path / 'score.npz'), '--out', str(tmp_path / 'failed')])
+    assert result == 2
+    assert 'FAILED EOFError' in (tmp_path / 'failed.log').read_text()
+    assert not (tmp_path / 'failed.metadata.json').exists()
 
 
 def table(path, header, rows):
