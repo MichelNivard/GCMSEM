@@ -30,7 +30,7 @@ R CMD INSTALL .
 
 This installs R package version 0.3.0 and Python engine version 0.1.0. `estimate_moments()` uses the Python engine and requires `jsonlite`. Keep the environment activated when starting R. If starting R elsewhere, provide the environment's executable through the function's `python` argument.
 
-The [small worked example](Quickstart.md) generates three synthetic GWAS tables and scores locally. Run it immediately after installation to try `estimate_moments()` → `standardize_moments()` → `gcmsem()` without waiting for the empirical data release.
+The [small worked example](Quickstart.md) generates three synthetic GWAS tables and scores locally. Run it immediately after installation to try `estimate_moments()` → `standardize_moments()` → `gcmsem()` without downloading the empirical datasets.
 
 The standard LDSC comparison uses a separate Python 2.7 environment for original `bulik/ldsc`. Follow [Standard-LDSC-environment.md](Standard-LDSC-environment.md), then the [15-trait tutorial](Fifteen-trait-correlations.md). GCMSEM uses the Python 3 environment above.
 
