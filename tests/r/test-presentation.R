@@ -34,13 +34,13 @@ local({
   check(!length(list.files(all.files=TRUE, no..=TRUE)), "invalid export options do not create files")
 
   paths <- export_gcmsem(fit, "fit/result")
-  check(length(paths) == 8L && all(file.exists(paths)), "explicit fit export creates declared files")
+  check(length(paths) == 9L && all(file.exists(paths)), "explicit fit export creates declared files")
   exported <- utils::read.delim("fit/result.parameters.tsv", check.names=FALSE)
   check(near(exported$estimate, coef(fit)), "fit parameter export retains precision")
   hashes <- tools::md5sum(paths)
   check(fails(export_gcmsem(fit, "fit/result")), "fit export refuses accidental overwrite")
   check(identical(hashes, tools::md5sum(paths)), "refused export leaves files unchanged")
-  check(length(export_gcmsem(fit, "fit/result", overwrite=TRUE)) == 8L, "explicit overwrite works")
+  check(length(export_gcmsem(fit, "fit/result", overwrite=TRUE)) == 9L, "explicit overwrite works")
   output <- capture.output(written <- gcmsem(model, values, V, n_starts=1,
     write.to.tsv=TRUE, out="written/result"))
   check(inherits(written, "gcmsem_fit") && all(file.exists(written$output_files)) &&

@@ -1,10 +1,7 @@
 {
   "schema_version": "1.0",
   "release": "empirical-v1",
-  "zenodo_record_id": null,
-  "publication_status": "prepared; authorized Zenodo draft, upload incomplete and not published",
-  "zenodo_draft_id": "23977299",
-  "reserved_doi": "10.5281/zenodo.23977299",
+  "zenodo_record_id": "23977299",
   "raw_reference_included": false,
   "assets": [
     {
@@ -39,5 +36,6 @@
       "sha256": "40e7d3facf7d132dae73389f133fa61df6696eee804b3a259600e8ba946e04cc",
       "file_count": 324
     }
-  ]
+  ],
+  "doi": "10.5281/zenodo.23977299"
 }

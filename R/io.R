@@ -161,6 +161,14 @@ as.data.frame.gcmsem_moments <- function(x,row.names=NULL,optional=FALSE,...) {
   cat("Moments: ",d$n_moments,"   Free parameters: ",d$n_parameters,
       "   Jacobian rank: ",d$jacobian_rank,"/",d$n_parameters,"\n",sep="")
   cat("Converged: ",.yes_no(d$converged),"   Uncalibrated Q: ",.display_number(x$objective,digits),"\n",sep="")
+  q<-x$fit_measures
+  if(!is.null(q)) {
+    cat("Q approximate SE: ",.display_number(q$Q_se,digits),
+      "   Approximate null mean (SD): ",.display_number(q$Q_null_mean,digits),
+      " (",.display_number(q$Q_null_sd,digits),")\n",sep="")
+    cat("Q moment-matched p (approximate): ",.display_number(q$Q_p_approx,digits),
+      "   Status: ",q$Q_status,"\n",sep="")
+  }
   cat("Formal sandwich SEs: ",if(isTRUE(d$formal_se_available))"available" else "unavailable",
       "   Inference checks: ",if(isTRUE(d$inference_valid))"passed" else "flagged","\n",sep="")
   if(isTRUE(d$stability_required))cat("Stable branch: ",.yes_no(d$stable),"\n",sep="")
@@ -191,7 +199,7 @@ summary.gcmsem_fit <- function(object,digits=4L,...) {
   terms<-.parameter_terms(object$model)
   table<-data.frame(term=unname(terms[table$parameter]),table,check.names=FALSE,stringsAsFactors=FALSE)
   structure(list(call=object$call,model=object$model,estimator=object$estimator,
-    objective=object$objective,parameters=table,diagnostics=object$diagnostics,
+    objective=object$objective,fit_measures=object$fit_measures,parameters=table,diagnostics=object$diagnostics,
     starts=object$starts,digits=digits),class="summary_gcmsem_fit")
 }
 #' @export

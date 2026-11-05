@@ -1,6 +1,6 @@
 # Height/weight and BMI/blood-pressure SEMs in R
 
-This tutorial starts with SNP-level GWAS summary statistics, estimates their genetic cumulants, and fits an SEM in R. You will first fit a height-to-weight model, inspect its parameters and diagnostics, and then repeat the analysis for BMI and systolic blood pressure (SBP). The complete R scripts also fit the reverse direction and a reciprocal sensitivity model.
+This tutorial starts with SNP-level GWAS summary statistics, estimates their genetic cumulants, and fits an SEM in R. You will draw and fit three candidate models for height/weight, inspect how well each reproduces the estimated moments, and repeat the analysis for BMI and systolic blood pressure (SBP). We assess fit before interpreting any path. The height/weight analysis illustrates why convergence alone is insufficient: all three candidate models show lack of fit under the approximate Q diagnostic introduced below.
 
 The examples use Neale Lab UK Biobank round-2 GWAS results:
 
@@ -15,18 +15,18 @@ The examples use Neale Lab UK Biobank round-2 GWAS results:
 
 Follow the [installation commands](README.md#install), then run the terminal commands below from the `GCMSEM` repository directory. Keep the Python environment activated when starting R so that `estimate_moments()` can find the installed Python engine.
 
-**Data availability:** the numerical archives are prepared, but public deposition is still pending. The [data release page](README.md#data-release-status) records the current status. If you have the supplied archives, extract them now:
+Download the precomputed scores and four prepared GWAS tables from the [public Zenodo release](https://zenodo.org/records/23977299):
+
+```bash
+python tutorials/download_data.py --asset scores --asset causal --out tutorial-data
+```
+
+This verifies each archive's size and SHA-256, then extracts it into `tutorial-data/`. If you downloaded the ZIP files manually, use:
 
 ```bash
 mkdir -p tutorial-data
 unzip gcmsem-scores-v1.zip -d tutorial-data
 unzip gcmsem-causal-v1.zip -d tutorial-data
-```
-
-Once the data release is published, this command downloads, verifies and extracts the same two archives:
-
-```bash
-python tutorials/download_data.py --asset scores --asset causal --out tutorial-data
 ```
 
 Here are the files used in this tutorial:
@@ -167,6 +167,17 @@ hw_model <- gcmsem_model(
 )
 ```
 
+Draw the model from the R specification:
+
+```r
+source("tutorials/plot_models.R")
+plot_causal_model(hw_model, "Height to weight with a common source")
+```
+
+![Height-to-weight model with Gaussian common source and independent trait-specific sources](https://raw.githubusercontent.com/MichelNivard/GCMSEM/main/tutorials/figures/hw-forward.png)
+
+Rectangles are the two traits' SNP-effect variables. The latent source `F` contributes to both. The trait-specific sources `u_Height` and `u_Weight` have free variances, third cumulants and fourth cumulants. Their cross-source cumulants are fixed to zero. The arrow labeled `forward` carries height-associated genetic effects into weight; the two arrows labeled `1` impose equal direct common-source loadings on the chosen scale. Labels show the specification, not estimated effects.
+
 Read the syntax line by line:
 
 - `Weight ~ forward*Height` estimates a directed path named `forward`.
@@ -179,94 +190,61 @@ Read the syntax line by line:
 Fit the model with 32 starting points and retain the result in `hw_fit`:
 
 ```r
+fit_control <- list(iter.max = 5000, eval.max = 10000, rel.tol = 1e-11)
+
 hw_fit <- gcmsem(
   hw_model, hw_scaled,
   orders = 2:4,
   n_starts = 32,
   seed = 20261105,
   feasibility = "check",
-  control = list(iter.max = 5000, eval.max = 10000, rel.tol = 1e-11)
+  control = fit_control
 )
 
-summary(hw_fit)
+hw_fit
+fit_measures(hw_fit)
 ```
 
-The reference data produce a negative common-source variance. GCMSEM emits a prominent Heywood warning and retains the estimate and its computable formal SE. The actual summary is:
+The fit returns an R object and prints a prominent warning because the common-source variance is negative. Its overview is:
 
 ```text
 GCMSEM DWLS fit
 Observed traits: Height, Weight
 Moments: 12   Free parameters: 8   Jacobian rank: 8/8
 Converged: yes   Uncalibrated Q: 1.797
+Q approximate SE: 1.257   Approximate null mean (SD): 0.2811 (0.31)
+Q moment-matched p (approximate): 0.003311   Status: formal_only_flagged
 Formal sandwich SEs: available   Inference checks: flagged
 *** HEYWOOD CASE: source moment checks failed ***
 Negative source variance: F
 Estimates and available formal SEs retained.
 Flags: source moment feasibility checks failed
-
-Parameter estimates
-                               term           label estimate formal SE           se_status      z  p
-                   Height ~~ Height      variance_x    1.183    0.1095 formal_only_flagged   10.8 NA
-         k3(Height, Height, Height)          skew_x    3.887     2.777 formal_only_flagged    1.4 NA
- k4(Height, Height, Height, Height)        excess_x    735.6     171.2 formal_only_flagged  4.296 NA
-                   Weight ~~ Weight      variance_y   0.9935   0.09489 formal_only_flagged  10.47 NA
-         k3(Weight, Weight, Weight)          skew_y    4.599     2.446 formal_only_flagged   1.88 NA
- k4(Weight, Weight, Weight, Weight)        excess_y    406.8     185.5 formal_only_flagged  2.193 NA
-                             F ~~ F shared_variance  -0.1829    0.0438 formal_only_flagged -4.175 NA
-                    Weight ~ Height         forward   0.6549   0.04192 formal_only_flagged  15.62 NA
 ```
 
-The fit converged with a full-rank parameter Jacobian. Its source-moment checks failed, as the summary states. The `forward` path describes the specified model for genetic effect distributions; a causal interpretation requires the assumed source structure and homogeneous effects. `Q` is an uncalibrated discrepancy. The formal SEs are conditional on this model, the fixed scales and the selected solution; see the [execution report](Execution-report.md) for the higher-order coverage validation.
+`Q` measures the weighted mismatch between observed and predicted moments. A raw Q of 1.797 may look small, but its approximate null mean here is only 0.2811. The correlations among moment errors and the moments absorbed by fitted parameters determine that reference. The approximate tail probability is 0.0033, and the estimated common-source variance is inadmissible. We therefore keep this fitted object for diagnosis and do not interpret its path as a supported effect.
 
-## 5. Work with the fitted R object
-
-`summary()` returns an inspectable summary object, and the usual R extractors return vectors, matrices and data frames:
+## 5. Inspect the residuals and keep the result in R
 
 ```r
-hw_summary <- summary(hw_fit)
-hw_summary$diagnostics
+hw_fit$diagnostics
+hw_q <- fit_measures(hw_fit)
 
-parameters <- parameter_estimates(hw_fit)
-parameters[parameters$parameter == "forward", ]
-coef(hw_fit)
-vcov(hw_fit)
-fitted(hw_fit)
-```
-
-To express the forward path in the original phenotype units, multiply its estimate and SE by the outcome-to-predictor scale ratio:
-
-```r
-forward <- parameters[parameters$parameter == "forward", ]
-scale_ratio <- hw_scaled$scaling$scale["Weight"] /
-               hw_scaled$scaling$scale["Height"]
-
-data.frame(
-  path = "Height to Weight",
-  estimate = forward$estimate * unname(scale_ratio),
-  formal_se = forward$se * unname(scale_ratio)
+hw_residuals <- data.frame(
+  moment = names(hw_fit$observed),
+  observed = unname(hw_fit$observed),
+  predicted = unname(fitted(hw_fit)),
+  residual_in_SEs = unname(hw_fit$residuals / sqrt(diag(hw_fit$V)))
 )
+hw_residuals[order(-abs(hw_residuals$residual_in_SEs)), ]
 ```
 
-```text
-              path  estimate  formal_se
-1 Height to Weight 0.5629883 0.03603639
-```
+Each residual is a moment the model needs to explain. Dividing by its SE makes different orders easier to inspect. The residuals are correlated, so this column is a descriptive check rather than a collection of independent tests.
 
-These units are inverse-normal-transformed weight per unit of inverse-normal-transformed height. The [recorded R output](output/causal-reference.txt) includes all six fits and the software session information.
+`parameter_estimates(hw_fit)` and `vcov(hw_fit)` retain the full estimates and formal parameter covariance for auditing or simulation summaries, including Heywood cases. We omit the path-effect table here because the model does not adequately reproduce these moments. See [Working with R results](R-results.md) for the complete extractor and saving interface.
 
-## 6. Repeat for BMI and systolic blood pressure
+## 6. Estimate moments and specify the BMI-to-SBP model
 
-The [BMI/SBP script](bmi_sbp.R) contains the complete model and all three fits. Sourcing the file defines a function; calling it returns the analysis as a named list of R objects:
-
-```r
-source("tutorials/bmi_sbp.R")
-bs <- bmi_sbp_example(data_dir = "tutorial-data")
-
-bs$moments
-summary(bs$forward)
-```
-
-The function builds this manifest internally:
+Now repeat the workflow for BMI and systolic blood pressure. These input files retain physical phenotype units: kg/m² and mmHg.
 
 ```r
 bs_files <- data.frame(
@@ -275,98 +253,227 @@ bs_files <- data.frame(
            "tutorial-data/sumstats/4080_raw.tsv.gz"),
   effect_scale = "genotype_standardized"
 )
+bs_moments <- estimate_moments(
+  bs_files,
+  scores = "tutorial-data/scores/eur_hm3.scores.npz",
+  max_order = 4, n_blocks = 200
+)
+bs_scaled <- standardize_moments(bs_moments)
+
+bmi_to_sbp <- '
+  SBP ~ forward*BMI
+  F =~ 1*BMI + 1*SBP
+  F ~~ shared_variance*F
+  k3(F, F, F) = 0
+  k4(F, F, F, F) = 0
+  BMI ~~ variance_x*BMI
+  SBP ~~ variance_y*SBP
+  k3(BMI, BMI, BMI) = free("skew_x")
+  k3(SBP, SBP, SBP) = free("skew_y")
+  k4(BMI, BMI, BMI, BMI) = free("excess_x")
+  k4(SBP, SBP, SBP, SBP) = free("excess_y")
+'
+bs_model <- gcmsem_model(
+  bmi_to_sbp, observed = c("BMI", "SBP"),
+  gaussian_observed = FALSE, gaussian_latent = TRUE
+)
+plot_causal_model(bs_model, "BMI to SBP with a common source")
+bs_fit <- gcmsem(
+  bs_model, bs_scaled, n_starts = 32, seed = 20261105,
+  feasibility = "check", control = fit_control
+)
+bs_fit
 ```
 
-Its forward model uses `SBP ~ forward*BMI`, with the same common-source and trait-specific cumulant specifications as above. The actual forward summary is:
+![BMI-to-SBP model with a Gaussian common source](https://raw.githubusercontent.com/MichelNivard/GCMSEM/main/tutorials/figures/bs-forward.png)
 
-```text
-GCMSEM DWLS fit
-Observed traits: BMI, SBP
-Moments: 12   Free parameters: 8   Jacobian rank: 8/8
-Converged: yes   Uncalibrated Q: 5.349
-Formal sandwich SEs: available   Inference checks: flagged
-*** HEYWOOD CASE: source moment checks failed ***
-Negative source variance: F
-Estimates and available formal SEs retained.
-Flags: source moment feasibility checks failed
+The moment analysis retains 1,074,057 SNPs and returns 14 cumulants and a 14 × 14 `V`. The SEM uses the same 12 centered moments as the height/weight example. It converges with Q = 5.349, approximate Q SE = 4.848 and approximate tail probability 0.0770. The common-source variance is again negative. Its moment discrepancy is less concerning than the height/weight model's relative to its own reference, but its source-distribution warning remains. We keep both diagnostics visible and examine alternative structures next.
 
-Parameter estimates
-                   term           label estimate formal SE           se_status      z  p
-             BMI ~~ BMI      variance_x    1.204    0.1059 formal_only_flagged  11.37 NA
-      k3(BMI, BMI, BMI)          skew_x    2.481     2.514 formal_only_flagged 0.9867 NA
- k4(BMI, BMI, BMI, BMI)        excess_x    440.9     270.8 formal_only_flagged  1.628 NA
-             SBP ~~ SBP      variance_y    1.233    0.1431 formal_only_flagged  8.615 NA
-      k3(SBP, SBP, SBP)          skew_y   -1.759     1.775 formal_only_flagged -0.991 NA
- k4(SBP, SBP, SBP, SBP)        excess_y    414.3     79.36 formal_only_flagged   5.22 NA
-                 F ~~ F shared_variance  -0.2044   0.09672 formal_only_flagged -2.113 NA
-              SBP ~ BMI         forward    0.319   0.08567 formal_only_flagged  3.724 NA
-```
+## 7. Compare forward, reverse and reciprocal models
 
-Inspect the path estimates on the original phenotype scale:
+There are three substantive hypotheses for each pair:
+
+| Model | Directed paths | Source assumptions |
+|---|---|---|
+| Forward with common source | First trait influences the second | A Gaussian common source has equal direct loadings on the standardized SNP-effect scale; trait-specific sources have free higher cumulants. |
+| Reverse with common source | Second trait influences the first | The same common-source and trait-specific restrictions are retained. |
+| Reciprocal sensitivity model | Both traits influence each other | Trait-specific sources are independent, with free higher cumulants. There is no common source. A stable solution branch is requested. |
+
+The reciprocal model changes the confounding assumption as well as the paths. It has the same eight free parameters here: it replaces the common-source variance with a second directed path. It is a separate sensitivity model, not a generalization containing both directional models.
+
+### Reverse height/weight model
+
+Replace the directed path while retaining every other line of the forward specification:
 
 ```r
-bs$paths[, c("model", "from", "to", "original_estimate", "original_formal_se")]
+weight_to_height <- sub(
+  "Weight ~ forward*Height", "Height ~ reverse*Weight",
+  height_to_weight, fixed = TRUE
+)
+hw_reverse_model <- gcmsem_model(
+  weight_to_height, observed = c("Height", "Weight"),
+  gaussian_observed = FALSE, gaussian_latent = TRUE
+)
+plot_causal_model(hw_reverse_model, "Weight to height with a common source")
+hw_reverse <- gcmsem(
+  hw_reverse_model, hw_scaled, n_starts = 32, seed = 20261106,
+  feasibility = "check", control = fit_control
+)
 ```
 
-```text
-       model from  to original_estimate original_formal_se
-1    forward  BMI SBP        0.89051544         0.23913901
-2    reverse  SBP BMI       -0.02984400         0.01560565
-3 reciprocal  BMI SBP        0.77326628         0.14832094
-4 reciprocal  SBP BMI       -0.04287837         0.01315318
-```
+![Reverse height/weight model](https://raw.githubusercontent.com/MichelNivard/GCMSEM/main/tutorials/figures/hw-reverse.png)
 
-BMI-to-SBP paths are in mmHg per kg/m²; reverse paths are in kg/m² per mmHg. The forward common-source fit retains a negative variance and flags inference. The reverse and reciprocal fits pass the implemented necessary source-moment checks.
+### Reciprocal height/weight model
 
-## 7. Fit the reverse and reciprocal height/weight models
-
-The [height/weight script](height_weight.R) can reuse the moments already held in R:
+Specify both paths and omit `F`. The trait-specific source definitions stay explicit:
 
 ```r
-source("tutorials/height_weight.R")
-hw <- height_weight_example(moments = hw_moments)
+hw_reciprocal_model <- gcmsem_model('
+  Weight ~ forward*Height
+  Height ~ reverse*Weight
+  Height ~~ variance_x*Height
+  Weight ~~ variance_y*Weight
+  k3(Height, Height, Height) = free("skew_x")
+  k3(Weight, Weight, Weight) = free("skew_y")
+  k4(Height, Height, Height, Height) = free("excess_x")
+  k4(Weight, Weight, Weight, Weight) = free("excess_y")
+', observed = c("Height", "Weight"), gaussian_observed = FALSE)
+plot_causal_model(hw_reciprocal_model, "Reciprocal height and weight")
+hw_reciprocal <- gcmsem(
+  hw_reciprocal_model, hw_scaled, n_starts = 32, seed = 20261107,
+  stable = TRUE, feasibility = "check", control = fit_control
+)
+```
 
-summary(hw$reverse)
-summary(hw$reciprocal)
-hw$paths[, c("model", "from", "to", "original_estimate", "original_formal_se")]
+![Reciprocal height/weight model with independent sources](https://raw.githubusercontent.com/MichelNivard/GCMSEM/main/tutorials/figures/hw-reciprocal.png)
+
+`stable = TRUE` selects solutions whose path matrix has spectral radius below one. For these two reciprocal paths, that requires the absolute product of the path coefficients to be below one. This is a modeling restriction. Swapping the source assignment can produce another parameterization with identical implied moments; stability selects a branch rather than proving a unique causal model.
+
+### Reverse BMI/SBP model
+
+```r
+sbp_to_bmi <- sub(
+  "SBP ~ forward*BMI", "BMI ~ reverse*SBP", bmi_to_sbp, fixed = TRUE
+)
+bs_reverse_model <- gcmsem_model(
+  sbp_to_bmi, observed = c("BMI", "SBP"),
+  gaussian_observed = FALSE, gaussian_latent = TRUE
+)
+plot_causal_model(bs_reverse_model, "SBP to BMI with a common source")
+bs_reverse <- gcmsem(
+  bs_reverse_model, bs_scaled, n_starts = 32, seed = 20261106,
+  feasibility = "check", control = fit_control
+)
+```
+
+![Reverse BMI/SBP model](https://raw.githubusercontent.com/MichelNivard/GCMSEM/main/tutorials/figures/bs-reverse.png)
+
+### Reciprocal BMI/SBP model
+
+```r
+bs_reciprocal_model <- gcmsem_model('
+  SBP ~ forward*BMI
+  BMI ~ reverse*SBP
+  BMI ~~ variance_x*BMI
+  SBP ~~ variance_y*SBP
+  k3(BMI, BMI, BMI) = free("skew_x")
+  k3(SBP, SBP, SBP) = free("skew_y")
+  k4(BMI, BMI, BMI, BMI) = free("excess_x")
+  k4(SBP, SBP, SBP, SBP) = free("excess_y")
+', observed = c("BMI", "SBP"), gaussian_observed = FALSE)
+plot_causal_model(bs_reciprocal_model, "Reciprocal BMI and SBP")
+bs_reciprocal <- gcmsem(
+  bs_reciprocal_model, bs_scaled, n_starts = 32, seed = 20261107,
+  stable = TRUE, feasibility = "check", control = fit_control
+)
+```
+
+![Reciprocal BMI/SBP model with independent sources](https://raw.githubusercontent.com/MichelNivard/GCMSEM/main/tutorials/figures/bs-reciprocal.png)
+
+### Read the model-fit comparison
+
+Collect the fits in an ordinary named R list, then create a data frame of their Q diagnostics:
+
+```r
+fits <- list(
+  HW_forward = hw_fit, HW_reverse = hw_reverse, HW_reciprocal = hw_reciprocal,
+  BS_forward = bs_fit, BS_reverse = bs_reverse, BS_reciprocal = bs_reciprocal
+)
+fit_table <- do.call(rbind, lapply(names(fits), function(name) {
+  f <- fits[[name]]
+  q <- fit_measures(f)
+  data.frame(model = name,
+             q[, c("Q", "Q_se", "Q_null_mean", "Q_null_95", "Q_p_approx")],
+             source_checks = f$diagnostics$source_admissible)
+}))
+print(fit_table, digits = 4, row.names = FALSE)
 ```
 
 ```text
-       model   from     to original_estimate original_formal_se
-1    forward Height Weight         0.5629883         0.03603639
-2    reverse Weight Height         1.3957638         0.18554352
-3 reciprocal Height Weight         0.4882977         0.01974383
-4 reciprocal Weight Height         0.0500362         0.04327605
+        model      Q   Q_se Q_null_mean Q_null_95 Q_p_approx source_checks
+   HW_forward  1.797  1.257      0.2811    0.9028  3.311e-03         FALSE
+   HW_reverse  5.456  4.881      1.2474    4.2299  2.354e-02         FALSE
+HW_reciprocal  4.286  2.013      0.3210    1.0179  7.096e-06          TRUE
+   BS_forward  5.349  4.848      2.1743    6.1987  7.704e-02         FALSE
+   BS_reverse 16.389 10.801      3.9340   10.5448  7.420e-03          TRUE
+BS_reciprocal  4.193  3.037      1.8199    4.8104  7.761e-02          TRUE
 ```
 
-For the reverse model, the script changes the directed path to `Height ~ reverse*Weight` and keeps the same common-source specification. The reciprocal sensitivity model estimates both paths with independent trait-specific sources. It requests `stable = TRUE`, selecting the dynamically stable solution branch. Swapping the source assignment yields an alternative reciprocal parameterization with identical implied moments; this equivalence is examined in the [execution report](Execution-report.md).
+All six models converge with local Jacobian rank 8/8. They each use 12 moments and eight free parameters. Compare the three models **within** each pair; the two trait pairs have different moments and weights.
 
-You can inspect any fit, including a Heywood case, using the same extractors. Both scripts return `moments`, `standardized`, `forward`, `reverse`, `reciprocal` and the `paths` data frame. Passing `moments = ...` reuses an existing R object; omitting it runs moment estimation first.
+For height/weight, every candidate exceeds its approximate 95th-percentile Q reference. The forward model has the smallest raw discrepancy, but it still shows lack of fit and a Heywood case. This analysis does not support reporting a height/weight causal path from these specifications. The next scientific step would be to examine source restrictions, conditional MAF-stratum moments and possible misspecification.
 
-## 8. Keep logs or save results when you need them
+For BMI/SBP, the reverse model has a substantially larger discrepancy and exceeds its reference threshold. We do not interpret its path estimate. The forward and reciprocal models fall below their respective approximate thresholds. The forward model retains a negative common-source variance, while the reciprocal model passes the implemented source-moment checks. We use the reciprocal fit to illustrate conditional parameter interpretation below, while retaining the other fits and their diagnostics in `fits`.
 
-Logs remain available in the R objects:
+These probabilities are **exploratory approximations**, not a validated higher-order GWAS fit test. They use the full `V`, remove variation absorbed by fitted parameters, and match the first two moments of a local Gaussian quadratic form. `Q_se` is a rough sampling SD incorporating estimated misfit; it is not a threshold for accepting a model. The models share moment estimates, so separate Q SEs do not give the SE of a Q difference. The forward/reverse comparison is nonnested, and a difference in Q is not a causal-direction p-value. [Working with R results](R-results.md#assess-model-fit-before-interpreting-paths) gives the derivation and limitations.
+
+### Interpret paths only after the fit checks
+
+Extract the reciprocal BMI/SBP paths and transform them from standardized SNP-effect units to the original phenotype scale:
+
+```r
+paths <- parameter_estimates(bs_reciprocal)
+paths <- paths[paths$parameter %in% c("forward", "reverse"), ]
+from <- ifelse(paths$parameter == "forward", "BMI", "SBP")
+to <- ifelse(paths$parameter == "forward", "SBP", "BMI")
+ratio <- unname(bs_scaled$scaling$scale[to] / bs_scaled$scaling$scale[from])
+interpreted <- data.frame(
+  from, to,
+  estimate = paths$estimate * ratio,
+  formal_se = paths$se * ratio
+)
+print(interpreted, digits = 6, row.names = FALSE)
+```
+
+```text
+ from  to   estimate formal_se
+  BMI SBP  0.7732663 0.1483209
+  SBP BMI -0.0428784 0.0131532
+```
+
+The first path is in mmHg per kg/m²; the second is in kg/m² per mmHg. Both estimates condition on the reciprocal, independent-source model, the fixed scaling constants and the stable solution branch. Their interpretation as causal effects requires those assumptions to be credible. Passing this approximate fit check does not establish them, and selecting a model before reporting its paths adds uncertainty not included in these formal SEs.
+
+The complete [height/weight](height_weight.R) and [BMI/SBP](bmi_sbp.R) scripts perform the same fits and return all results. For example, `hw <- height_weight_example(moments = hw_moments)` reuses your moments. Their `paths` tables retain every model for auditing; the tutorial's interpretation follows the fit assessment above.
+
+## 8. Keep logs or save results
 
 ```r
 cat(tail(hw_moments$log, 8), sep = "\n")
 cat(tail(hw_fit$log, 8), sep = "\n")
+saveRDS(fits, "candidate-models.rds")
+saveRDS(list(height_weight = hw_moments, bmi_sbp = bs_moments), "moments.rds")
 ```
 
-Use `verbose = TRUE` in `estimate_moments()` to print its timestamped estimation log when it completes. In `gcmsem()`, the same argument displays the optimization log as the fit runs. Save an R object with ordinary R functions:
+Logs record QC, estimation settings, optimizer starts, Q, its approximate uncertainty and model diagnostics. `verbose = TRUE` in `estimate_moments()` prints the engine log after estimation; in `gcmsem()` it displays the fitting log as optimization proceeds.
 
-```r
-saveRDS(hw_fit, "height-weight-fit.rds")
-hw_fit <- readRDS("height-weight-fit.rds")
-```
-
-For tab-separated files, export explicitly:
+If you need tables, export explicitly:
 
 ```r
 export_gcmsem(hw_moments, "tutorial-results/height-weight-moments")
-export_gcmsem(hw_fit, "tutorial-results/height-weight-fit")
+export_gcmsem(bs_reciprocal, "tutorial-results/bmi-sbp-reciprocal")
 ```
 
-You can also request export during estimation or fitting with `write.to.tsv = TRUE, out = "path/prefix"`. The function still returns its R object. Export paths must be new unless you explicitly request `overwrite = TRUE`.
+The fit export includes `.fit_measures.tsv`. Both estimation and fitting also accept `write.to.tsv = TRUE, out = "path/prefix"` and still return R objects. Existing files are replaced only with `overwrite = TRUE`.
 
 ## 9. Start from the original Neale Lab downloads
 
@@ -434,16 +541,18 @@ hw_original_files <- data.frame(
   effect_scale = "allele"
 )
 
+source("tutorials/height_weight.R")
 hw_original <- height_weight_example(sumstats = hw_original_files)
-summary(hw_original$forward)
+fit_measures(hw_original$forward)
 
 bs_original_files <- data.frame(
   trait = c("BMI", "SBP"),
   path = c("prepared-gwas/bmi.tsv.gz", "prepared-gwas/sbp.tsv.gz"),
   effect_scale = "allele"
 )
+source("tutorials/bmi_sbp.R")
 bs_original <- bmi_sbp_example(sumstats = bs_original_files)
-summary(bs_original$forward)
+fit_measures(bs_original$forward)
 ```
 
 The executed original-source height/weight analysis took about three minutes for estimation and all three SEM fits. It retained 1,074,059 common SNPs after excluding three ambiguous palindromic SNPs, with zero allele or frequency mismatches. Every estimated cumulant, the full sampling covariance `V`, and the correlation matrix `R` were numerically identical to the prepared-file run above. All three fits reproduced the displayed path estimates and SEs. The adapter preserves original GWAS allele frequencies; the returned object's logs and QC metadata record how each SNP was handled.

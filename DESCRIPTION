@@ -1,7 +1,7 @@
 Package: GCMSEM
 Type: Package
 Title: Genomic Comoment Structural Equation Models
-Version: 0.2.0
+Version: 0.3.0
 Authors@R: person("Michel G.", "Nivard", role = c("aut", "cre"), email = "m.g.nivard@bristol.ac.uk")
 Description: Defines linear structural equation models for genomic covariance,
     third cumulants and fourth cumulants. Propagates sparse source cumulants

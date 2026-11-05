@@ -46,10 +46,11 @@ make formal SEs unavailable. The optional penalty estimator uses exact-gradient
 squared negative-eigenvalue penalties for necessary source moment conditions and
 is explicitly labelled as a different estimator. Raw Q and penalized objective are
 distinct. Numerical penalty enforcement does not guarantee exact feasibility or
-global optimality. Q is uncalibrated: no WLSMV correction or chi-square
-fit p-value is supplied. Inference is local and conditional on the model and solution.}
+global optimality. The Q discrepancy has local quadratic-form uncertainty and
+an exploratory moment-matched reference available through \code{\link{fit_measures}}.
+This is not a validated WLSMV correction or calibrated higher-order fit test. Inference is local and conditional on the model and solution.}
 \value{A \code{gcmsem_fit} with coefficients, parameter table, sandwich covariance,
-fitted/observed cumulants, residuals, discrepancy, per-start results, diagnostics
+fitted/observed cumulants, residuals, discrepancy, approximate Q diagnostics, per-start results, diagnostics
 and a character vector of timestamped log lines. \code{summary(fit)} returns a
 structured summary with a readable print method; \code{coef()}, \code{vcov()},
 \code{fitted()} and \code{as.data.frame()} extract ordinary R objects.}

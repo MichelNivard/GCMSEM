@@ -1,3 +1,11 @@
+# GCMSEM 0.3.0
+
+* Added `fit_measures()` with an approximate SE for the minimized DWLS discrepancy Q, a first-order component, and a local Gaussian moment-matched null reference. Calculations use the full moment sampling covariance and project out fitted parameters. Approximate p-values are explicitly labeled; penalized or numerically irregular fits return unavailable uncertainty. Unconstrained Heywood fits retain formal diagnostics with warnings.
+* Fit summaries, in-memory logs and optional TSV exports include the new Q diagnostics. The fitting objective and parameter estimates are unchanged.
+* Reworked the README and Wiki for first-time users, added model diagrams beside all six causal specifications, and moved detailed R syntax and result handling to dedicated pages. Model-fit assessment precedes effect interpretation.
+* The correlation tutorial now estimates the full 15-trait matrix from GWAS files, runs original standard LDSC, reads its results into R, and renders the comparison. The standard LDSC runner can complete munging and fitting without requiring a precomputed GCMSEM result bundle.
+* Published the numerical data at Zenodo DOI 10.5281/zenodo.23977299 and activated checksum-verified downloads.
+
 # GCMSEM 0.2.0
 
 - `estimate_moments()` runs the Python summary-statistics engine from R and
