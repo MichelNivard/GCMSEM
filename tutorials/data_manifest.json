@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "release": "empirical-v1",
+  "zenodo_record_id": null,
+  "publication_status": "prepared; authorized Zenodo draft, upload incomplete and not published",
+  "zenodo_draft_id": "23977299",
+  "reserved_doi": "10.5281/zenodo.23977299",
+  "raw_reference_included": false,
+  "assets": [
+    {
+      "id": "scores",
+      "filename": "gcmsem-scores-v1.zip",
+      "format": "zip",
+      "size_bytes": 207532622,
+      "sha256": "1aff0f5325d9728bf6978224db9fb948684e720a840399af7e15547ae60da84c",
+      "file_count": 38
+    },
+    {
+      "id": "causal",
+      "filename": "gcmsem-causal-v1.zip",
+      "format": "zip",
+      "size_bytes": 139197123,
+      "sha256": "438870b98ca08a9a7e36c40b18d6285c920cef5a8ebb9e14cff6be1ad5472b31",
+      "file_count": 40
+    },
+    {
+      "id": "panel",
+      "filename": "gcmsem-panel-v1.zip",
+      "format": "zip",
+      "size_bytes": 760370263,
+      "sha256": "f45dbdbca81d190683fe07becf6a01a40d057421972b73a11a12d78e2841e5c6",
+      "file_count": 52
+    },
+    {
+      "id": "results",
+      "filename": "gcmsem-results-v1.zip",
+      "format": "zip",
+      "size_bytes": 132543165,
+      "sha256": "40e7d3facf7d132dae73389f133fa61df6696eee804b3a259600e8ba946e04cc",
+      "file_count": 324
+    }
+  ]
+}

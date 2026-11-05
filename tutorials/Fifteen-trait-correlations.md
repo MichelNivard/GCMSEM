@@ -1,6 +1,6 @@
 # Reproduce a 15 × 15 correlation matrix with LDSC and GCMSEM
 
-This tutorial runs all 105 distinct pairs using the same ordered common set of real GWAS SNPs. It compares the current GCMSEM package with the actual pinned LDSC regression implementation, with an independent LDSC command-line check for height/weight.
+This tutorial runs all 105 distinct pairs from real GWAS, retaining GCMSEM's HM3 SNP selection upstream for both methods. GCMSEM uses its 15-trait common panel. Original, unmodified LDSC uses its published reference and weights and applies ordinary munging and pair-specific QC to the per-trait inputs.
 
 ## Panel
 
@@ -22,7 +22,7 @@ This tutorial runs all 105 distinct pairs using the same ordered common set of r
 | 14 | FVC | Neale `3062_irnt` |
 | 15 | Waist circumference | Neale `48_irnt` |
 
-The panel contains **1,012,060 common SNPs**, while the LD source universe remains **1,719,440 variants**. The causal BMI/SBP tutorial uses raw phenotypes; this matrix uses their IRNT versions to match the previous panel. The two analyses must not be described as the same phenotype definition.
+The GCMSEM panel contains **1,012,060 common SNPs**, while GCMSEM's LD source universe remains **1,719,440 variants**. The causal BMI/SBP tutorial uses raw phenotypes; this matrix uses their IRNT versions to match the previous panel. The two analyses must not be described as the same phenotype definition.
 
 ## Run GCMSEM
 

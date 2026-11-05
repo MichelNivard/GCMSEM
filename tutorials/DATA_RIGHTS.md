@@ -1,7 +1,8 @@
 # Tutorial data: rights and provenance
 
-**GCMSEM empirical data release 1.0.0:** DOI `10.5281/zenodo.23977299`.
-The data record hosts the numerical archives separately from GitHub.
+**GCMSEM empirical data release 1.0.0:** reserved DOI `10.5281/zenodo.23977299`.
+The Zenodo draft is authorized but not yet published; its archive upload is incomplete.
+The numerical archives are intended to be hosted separately from GitHub.
 The source DOIs below identify the upstream datasets.
 
 The tutorial archive contains derived LD scores, harmonized public GWAS summary
