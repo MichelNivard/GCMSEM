@@ -26,9 +26,11 @@ Its tests cover the point-normal effective-count identity, phenotype-scale
 invariance, joint cross-stratum covariance, nonlinear jackknife SEs, singular
 ratios, signed estimates and R object/export methods. On the historical shared
 depression inputs, the production implementation reproduces the earlier count,
-jackknife SE and delta SE to relative tolerance `1e-12`. The standalone R run
-uses all 1,074,026 eligible depression tags and returns 20,269 (SE 35,513), with
-source-moment and weak-denominator flags. This reproduction checks implementation;
+jackknife SE and delta SE to relative tolerance `1e-12`. The standalone height
+run uses 1,074,059 eligible tags and returns 5,756 (SE 725), relative SE 12.6%,
+with no diagnostic flags. The tutorial then runs depression: all 1,074,026
+eligible tags, count 20,269 (SE 35,513), relative SE 175.2%, with source-moment
+and weak-denominator flags. This reproduction checks implementation;
 it does not establish interval coverage. See the
 [worked example](../tutorials/Polygenicity.md#3-run-a-standalone-gcmsem-analysis-in-r).
 
