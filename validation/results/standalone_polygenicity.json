@@ -151,6 +151,141 @@
     "python/gcmsem/cli.py": "c1e01536dbb4316a3bcd2c82f2bd0c352a65591e90b76b1c94612fcb4314a446",
     "tests/python/test_polygenicity.py": "37603857a642e2e4f737daef13e56f82f6547192a1d2b372f01b600e1ff706ff",
     "tests/r/test-estimation.R": "f7d9b95ebe949014d589de3baa107505b5cb7d21670b6b982e95e3291d98cfc6",
-    "tutorials/standalone_polygenicity.R": "38971acf6d533ea76a064fb2bb36c4f8aa49e49a4432b82be6c2205c2e3fce06"
+    "tutorials/standalone_polygenicity.R": "0f2ac1225b63e4b466642bb7bd890de1783def381f3a99ddb966e7f6294f58d9"
+  },
+  "standalone_height": [
+    {
+      "trait": "Height",
+      "effective_count": 5755.99466739037,
+      "se": 725.080908132881,
+      "delta_se": 706.575382335073,
+      "inverse_count": 0.000173731919118225,
+      "inverse_count_se": 2.17483979204354e-05,
+      "no_ld_count": 6258.65137133744,
+      "no_ld_se": 846.874362422354,
+      "n_tags": 1074059,
+      "n_sources": 1719440,
+      "n_blocks": 200,
+      "flags": "none"
+    }
+  ],
+  "standalone_height_stages": [
+    {
+      "quantity": "genetic_variance",
+      "estimate": 0.329673731500579,
+      "se": 0.0329800735009746
+    },
+    {
+      "quantity": "fourth_cumulant_sum",
+      "estimate": 5.18930275456587e-05,
+      "se": 1.07831086550385e-05
+    },
+    {
+      "quantity": "ld_term",
+      "estimate": 4.75301307209119e-06,
+      "se": 7.12750714220112e-07
+    },
+    {
+      "quantity": "numerator",
+      "estimate": 0.326054307724547,
+      "se": 0.0636380541684854
+    },
+    {
+      "quantity": "denominator",
+      "estimate": 5.66460406177499e-05,
+      "se": 1.13627981009064e-05
+    },
+    {
+      "quantity": "effective_count",
+      "estimate": 5755.99466739037,
+      "se": 725.080908132881
+    },
+    {
+      "quantity": "no_ld_denominator",
+      "estimate": 5.20965761438267e-05,
+      "se": 1.08089655495193e-05
+    },
+    {
+      "quantity": "no_ld_count",
+      "estimate": 6258.65137133744,
+      "se": 846.874362422354
+    },
+    {
+      "quantity": "excess_kurtosis",
+      "estimate": 821.190339730921,
+      "se": 110.57329357915
+    },
+    {
+      "quantity": "inverse_count",
+      "estimate": 0.000173731919118225,
+      "se": 2.17483979204354e-05
+    }
+  ],
+  "standalone_height_QC": {
+    "trait_qc": [
+      {
+        "trait": "Height",
+        "rows": 1074062,
+        "not_in_reference": 0,
+        "invalid_numeric": 0,
+        "invalid_alleles": 0,
+        "allele_mismatch": 0,
+        "palindromic": 3,
+        "frequency_mismatch": 0,
+        "low_info": 0,
+        "low_n": 0,
+        "retained": 1074059,
+        "sign_flipped": 0,
+        "strand_flipped": 0
+      }
+    ],
+    "input_files": [
+      {
+        "trait": "Height",
+        "path": "/workspace/scratch/637d2324a143/tutorial-data/sumstats/50_irnt.tsv.gz",
+        "sha256": "bd7495a563cdc92a9b55fbd4696064aae67440a68973dc232d4ecbee73e9de1d",
+        "input_effect_scale": "genotype_standardized",
+        "phenotype_unit": "unspecified"
+      }
+    ],
+    "n_tags_before_qc": 1074062,
+    "n_tags_after_qc": 1074059,
+    "af_tolerance": 0.1,
+    "allow_strand_flips": false,
+    "keep_palindromic": false,
+    "source_counts_unchanged": true,
+    "common_tag_complete_case": true,
+    "genome_build_check": "User must ensure shared genome build; matching IDs alone does not verify build"
+  },
+  "teaching_contrast": {
+    "selection": "Height had the lowest relative SE in the prior 15-trait shared-SNP analysis; rerun independently with all eligible tags.",
+    "Height": {
+      "relative_se_percent": 12.5969697685911,
+      "denominator_over_se": 4.98521931963497,
+      "max_deletion_variance_fraction": 0.171298864119464,
+      "deletion_count_range": [
+        5514.46007316239,
+        6057.78942692925
+      ],
+      "deletion_denominator_range": [
+        4.72046867926634e-05,
+        5.72171984569904e-05
+      ]
+    },
+    "Depression": {
+      "relative_se_percent": 175.211745851283,
+      "denominator_over_se": 0.688974918403242,
+      "max_deletion_variance_fraction": 0.154350916163547,
+      "deletion_count_range": [
+        15852.1218024941,
+        34312.7115543537
+      ],
+      "deletion_denominator_range": [
+        7.34037841573225e-09,
+        1.66417492536363e-08
+      ]
+    },
+    "validation": "Executed revised standalone_polygenicity.R for both traits; estimates match the separate runs to relative tolerance 1e-12; all 200 deletions retained.",
+    "transcript_sha256": "b5fb205f569ceeafaf4aaf1fdf1a442b70cacf622cc6b93ef04b30ab97b58e76"
   }
 }

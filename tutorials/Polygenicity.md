@@ -1,6 +1,6 @@
 # Effective polygenicity in R: standalone analysis and S-LD4M validation
 
-Start with `GCMSEM::estimate_polygenicity()` to analyse your own GWAS and inspect the results in R. Section 3 runs a complete standalone depression example. It needs the R package, its Python engine and GCMSEM scores.
+Start with `GCMSEM::estimate_polygenicity()` to analyse your own GWAS and inspect the results in R. Section 3 starts with a relatively precise height estimate, then uses depression to show how to diagnose a less stable result. It needs the R package, its Python engine and GCMSEM scores.
 
 The later validation uses the same 15 GWAS studies as the [genetic-correlation tutorial](Fifteen-trait-correlations.md) to estimate effective polygenicity with each pipeline and compare the results in R. S-LD4M receives the reference scores, annotations and regression weights distributed by its author. GCMSEM keeps its HapMap3 score workflow.
 
@@ -59,6 +59,8 @@ We estimate $a_c$ using the mean second-order score among retained **HM3 tags in
 
 ## 3. Run a standalone GCMSEM analysis in R
 
+We start with height to learn the workflow with a relatively precise estimate. Height had the lowest relative SE among the 15 traits in the earlier shared-SNP comparison. We rerun it here with the standalone function and its own eligible SNPs. We then apply exactly the same settings to depression to understand a harder case.
+
 Install R package **0.4.0** and Python engine **0.2.0** using the [installation instructions](README.md#install). If updating an existing checkout, reinstall both packages. Keep the Python environment activated when starting R, or set the `python` argument below to its executable.
 
 Download the checksum-verified scores and GWAS panel from Zenodo, from the repository root:
@@ -67,34 +69,116 @@ Download the checksum-verified scores and GWAS panel from Zenodo, from the repos
 python tutorials/download_data.py --asset scores --asset panel --out tutorial-data
 ```
 
-We use two files from those archives:
+We use three files from those archives:
 
 | File | Contents and purpose |
 |---|---|
 | `tutorial-data/scores/eur_hm3.scores.npz` | Signed LD-power scores of orders one through four, HM3 tag IDs and alleles, genomic coordinates and deletion blocks, five MAF strata and their source SNP counts. The function uses these scores to separate SNP-effect moments from LD and sampling noise. |
-| `tutorial-data/sumstats/20544_11.tsv.gz` | Prepared depression GWAS summary statistics: `SNP`, `A1`, `A2`, `BETA`, `SE` and `N`, aligned to the release's reference. These effects and SEs are already in standardized-genotype units. |
+| `tutorial-data/sumstats/50_irnt.tsv.gz` | Prepared GWAS of inverse-normal-transformed height. Columns include `SNP`, `A1`, `A2`, `BETA`, `SE` and `N`. Effects and SEs are already in standardized-genotype units and aligned to the release's reference. |
+| `tutorial-data/sumstats/20544_11.tsv.gz` | Prepared depression GWAS with the same columns and standardized-genotype effect scale. This is the second, less precise example. |
+
+### Start with height
 
 Open R in the repository directory:
 
 ```r
 library(GCMSEM)
 
-p <- estimate_polygenicity(
+height <- estimate_polygenicity(
+  sumstats = c(Height = "tutorial-data/sumstats/50_irnt.tsv.gz"),
+  scores = "tutorial-data/scores/eur_hm3.scores.npz",
+  effect_scale = "genotype_standardized",
+  n_blocks = 200L
+)
+height
+```
+
+`Height` names the trait in the returned object. For your own GWAS reported as an effect per additional effect allele, use `effect_scale = "allele"`; GCMSEM converts both BETA and SE using the reference genotype SD. Ensure that your GWAS and scores use the same genome build. SNP IDs alone cannot verify that.
+
+The function checks and harmonizes the GWAS, estimates all four conditional cumulants in each source stratum, recalculates the polygenicity transformation in every genomic deletion, and returns a `gcmsem_polygenicity` object. It retains every eligible tag for this trait and does not trim a tail. With several traits, each is processed independently; adding another trait does not change this trait's SNP set.
+
+The executed height analysis prints:
+
+```text
+GCMSEM effective polygenicity
+LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
+  trait effective_count     se delta_se  n_tags n_sources n_blocks
+ Height            5756 725.08   706.58 1074059   1719440      200
+Signed estimates retained. Reference-panel uncertainty is not included.
+```
+
+Height gives an effective count of **5,756 with SE 725**, or a relative SE of **12.6%**. No diagnostic flags are raised. All five estimated source variances and fourth cumulants are positive, the moment-inequality checks pass, and the estimated denominator is about **5.0 SEs above zero**. These features make height a useful first example of a reasonably precise estimate. They do not establish general confidence-interval coverage or the literal number of causal variants.
+
+`se` is the block-jackknife SE of the complete nonlinear ratio. `delta_se` is a local linear approximation from the joint variance/fourth-cumulant covariance, holding mean LD fixed. For height they are close: 725 and 707. The returned object also contains the reciprocal count and its SE.
+
+### Inspect the height result in R
+
+```r
+summary(height, trait = "Height")
+print(height$details$Height$stages, row.names = FALSE, digits = 5)
+```
+
+`summary()` prints the estimate, all intermediate stages, the four cumulants and SEs for each MAF stratum, the five most influential deletions, and the assumptions. The second command selects just the intermediate table:
+
+```text
+            quantity   estimate         se
+    genetic_variance 3.2967e-01 3.2980e-02
+ fourth_cumulant_sum 5.1893e-05 1.0783e-05
+             ld_term 4.7530e-06 7.1275e-07
+           numerator 3.2605e-01 6.3638e-02
+         denominator 5.6646e-05 1.1363e-05
+     effective_count 5.7560e+03 7.2508e+02
+   no_ld_denominator 5.2097e-05 1.0809e-05
+         no_ld_count 6.2587e+03 8.4687e+02
+     excess_kurtosis 8.2119e+02 1.1057e+02
+       inverse_count 1.7373e-04 2.1748e-05
+```
+
+The numerator is $3H^2$; the denominator is the fourth-cumulant sum plus the LD term defined above. `genetic_variance` is in squared GWAS phenotype units; it is a proportion of phenotypic variance only when the phenotype has unit variance. `no_ld_count` is the conversion before accounting for LD; `inverse_count` is `1/effective_count`. Every stage SE comes from its own deletion estimates and includes covariance between the fitted components.
+
+These are ordinary R objects:
+
+```r
+as.data.frame(height)                    # One summary row per trait
+coef(height)                             # Named effective counts
+height$details$Height$strata              # Source counts, cumulants and SEs
+height$details$Height$conditional_covariance # Joint variance/fourth-cumulant covariance
+height$details$Height$covariance          # Joint covariance of the intermediate stages
+height$details$Height$ld_mean             # Tag-based mean L2, by source stratum
+height$moments$Height                     # Full GCMSEM moment object
+height$moments$Height$metadata$qc         # Harmonization counts and input hashes
+height$moments$Height$metadata$noise_intercept # Estimated sampling-noise calibration
+height$log                               # Estimation and diagnostic log
+```
+
+Inspect the genomic deletions and draw their sensitivity plot:
+
+```r
+blocks <- height$details$Height$jackknife
+head(blocks[order(blocks$variance_fraction, decreasing = TRUE),
+            c("chrom", "start_bp", "end_bp", "effective_count", "variance_fraction")])
+plot(height, trait = "Height")
+```
+
+Each row is one leave-block-out calculation. `variance_fraction` is that deletion's contribution to the estimated jackknife variance of the count; it is not a proportion of genetic variance. In the plot, each open point represents a deletion and the red point is the full-data estimate. Height's largest single contribution is **17.1%** of the estimated count variance. Deletion estimates are concentrated near the full-data count.
+
+![Standalone height analysis: denominator and effective count after each genomic deletion.](figures/standalone-height-deletions.png)
+
+### Now try depression: a harder example
+
+Use the same function, reference scores, settings and 200-block maximum:
+
+```r
+depression <- estimate_polygenicity(
   sumstats = c(Depression = "tutorial-data/sumstats/20544_11.tsv.gz"),
   scores = "tutorial-data/scores/eur_hm3.scores.npz",
   effect_scale = "genotype_standardized",
   n_blocks = 200L
 )
-p
+depression
 ```
 
-`Depression` names the trait in the returned object. For your own GWAS reported as an effect per additional effect allele, use `effect_scale = "allele"`; GCMSEM converts both BETA and SE using the reference genotype SD. Ensure that your GWAS and scores use the same genome build. SNP IDs alone cannot verify that.
-
-The function checks and harmonizes the GWAS, estimates all four conditional cumulants in each source stratum, recalculates the polygenicity transformation in every genomic deletion, and returns a `gcmsem_polygenicity` object. It retains every eligible tag for this trait and does not trim a tail. With several traits, each is processed independently; adding another trait does not change this trait's SNP set.
-
-### What you should see
-
-The executed standalone analysis prints:
+The executed analysis prints:
 
 ```text
 GCMSEM effective polygenicity
@@ -106,18 +190,14 @@ Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_
 Signed estimates retained. Reference-panel uncertainty is not included.
 ```
 
-An R warning reports those same diagnostic flags when the function returns. Here the estimated count is about 20,269 with SE 35,513. The first MAF bin has a negative estimated variance, some fourth cumulants are negative, and the denominator is poorly separated from zero. These values remain available for inspection. This example illustrates a weakly determined count; the flags should accompany any report of its estimate.
+An R warning reports those same flags when the function returns. The point estimate is **20,269**, but its SE is **35,513**, or **175.2%** of the estimate. The first MAF bin has a negative estimated variance, some fourth cumulants are negative, and the estimated denominator is only **0.69 SEs above zero**. The signed estimates and all 200 deletions remain available for inspection.
 
-`se` is the block-jackknife SE of the complete nonlinear ratio. `delta_se` is a local linear approximation from the joint variance/fourth-cumulant covariance, holding mean LD fixed. Large differences between them indicate sensitivity to ratio curvature. The function also reports the reciprocal count and its SE; it does not attach a symmetric confidence interval to a potentially unstable ratio.
-
-### Trace the estimate and uncertainty
+Trace where the uncertainty enters:
 
 ```r
-summary(p, trait = "Depression")
-p$details$Depression$stages
+summary(depression, trait = "Depression")
+print(depression$details$Depression$stages, row.names = FALSE, digits = 5)
 ```
-
-`summary()` prints the estimate, all intermediate stages, the four cumulants and SEs for each MAF stratum, the five most influential deletions, and the assumptions. The second command selects just the intermediate table:
 
 ```text
             quantity   estimate         se
@@ -133,35 +213,34 @@ p$details$Depression$stages
        inverse_count 4.9337e-05 7.2323e-05
 ```
 
-The numerator is $3H^2$; the denominator is the fourth-cumulant sum plus the LD term defined above. The fourth-cumulant sum is especially uncertain in this example. `genetic_variance` is in squared GWAS phenotype units; it is a proportion of phenotypic variance only when the phenotype has unit variance. `no_ld_count` is the conversion before accounting for LD; `inverse_count` is `1/effective_count`. Every stage SE comes from its own deletion estimates and includes covariance between the fitted components.
-
-These are ordinary R objects:
+The fourth-cumulant sum is especially uncertain: its SE is about 2.7 times its estimate. Adding the LD term gives a denominator whose SE still exceeds its estimate. Dividing by this uncertain denominator produces an unstable count. The full nonlinear jackknife SE is 35,513; the local delta approximation is 29,999. Both indicate weak precision. The function avoids attaching a symmetric confidence interval to this potentially unstable ratio.
 
 ```r
-as.data.frame(p)                         # One summary row per trait
-coef(p)                                 # Named effective counts
-p$details$Depression$strata              # Source counts, cumulants and SEs
-p$details$Depression$conditional_covariance # Joint variance/fourth-cumulant covariance
-p$details$Depression$covariance          # Joint covariance of the intermediate stages
-p$details$Depression$ld_mean             # Tag-based mean L2, by source stratum
-p$moments$Depression                     # Full GCMSEM moment object
-p$moments$Depression$metadata$qc         # Harmonization counts and input hashes
-p$moments$Depression$metadata$noise_intercept # Estimated sampling-noise calibration
-p$log                                   # Estimation and diagnostic log
+plot(depression, trait = "Depression")
 ```
-
-Inspect the genomic deletions and draw their sensitivity plot:
-
-```r
-blocks <- p$details$Depression$jackknife
-head(blocks[order(blocks$variance_fraction, decreasing = TRUE),
-            c("chrom", "start_bp", "end_bp", "effective_count", "variance_fraction")])
-plot(p, trait = "Depression")
-```
-
-Each row is one leave-block-out calculation. `variance_fraction` is that deletion's contribution to the estimated jackknife variance of the count; it is not a proportion of genetic variance. In the plot, each open point represents a deletion and the red point is the full-data estimate.
 
 ![Standalone depression analysis: denominator and effective count after each genomic deletion.](figures/standalone-polygenicity-deletions.png)
+
+The two plots use different axis ranges. Compare the **relative** movement around each full-data estimate: depression's deletions span a much larger fraction of its count. All deletion denominators happen to remain positive in this run; that alone does not establish precision. Their jackknife variation still leaves the full-data denominator poorly separated from zero.
+
+### Compare precision, then decide what to report
+
+Build a small comparison table directly from the returned R objects:
+
+```r
+comparison <- rbind(as.data.frame(height), as.data.frame(depression))
+comparison$relative_se_percent <- 100 * comparison$se / abs(comparison$effective_count)
+comparison[, c("trait", "effective_count", "se", "delta_se", "relative_se_percent")]
+```
+
+Rounded results:
+
+| Trait | Effective count | Jackknife SE | Delta SE | Relative SE |
+|---|---:|---:|---:|---:|
+| Height | 5,756.0 | 725.1 | 706.6 | 12.6% |
+| Depression | 20,268.7 | 35,513.2 | 29,999.4 | 175.2% |
+
+Height supplies a reasonably precise point estimate for this reference and model. Depression illustrates why a returned count must be read together with its SE, denominator and source-moment diagnostics. Its uncertainty is too large to draw a firm conclusion about how its effective polygenicity compares with height. This is a deliberately chosen teaching contrast; both trait analyses retain their usual inputs and every deletion.
 
 ### Arguments and their defaults
 
@@ -186,9 +265,9 @@ Run `?estimate_polygenicity` in R for the installed help page.
 | `write.to.tsv` | `FALSE` | Also export tables, covariance matrices, moments, metadata and logs when TRUE. The primary return value remains the R object. |
 | `out` | `NULL` | Output filename prefix, required only when requesting TSV export. |
 | `overwrite` | `FALSE` | Permit replacement of the export's existing files. |
-| `verbose` | `FALSE` | Display the captured QC and estimation log. The log is always returned in `p$log`. |
+| `verbose` | `FALSE` | Display the captured QC and estimation log. The log is always returned in `height$log`. |
 
-`print(p, digits = 5)` controls display precision. `summary(p, trait = NULL, digits = 5)` prints all traits, or a selected subset. `plot(p, trait = "Depression")` selects one trait; additional graphics arguments such as `pch` and `cex` can be passed to `plot()`.
+`print(height, digits = 5)` controls display precision. `summary(height, trait = NULL, digits = 5)` prints all traits, or a selected subset. `plot(height, trait = "Height")` selects one trait; additional graphics arguments such as `pch` and `cex` can be passed to `plot()`.
 
 ### Several traits and saving results
 
@@ -196,7 +275,7 @@ Run `?estimate_polygenicity` in R for the installed help page.
 panel <- estimate_polygenicity(
   sumstats = "tutorial-data/manifests/panel.tsv",
   scores = "tutorial-data/scores/eur_hm3.scores.npz",
-  traits = c("Depression", "Height")
+  traits = c("Height", "Depression")
 )
 panel
 summary(panel, trait = "Height")
@@ -205,20 +284,21 @@ summary(panel, trait = "Height")
 The manifest supplies effect scales and paths. The function returns per-trait results, without estimating a between-trait covariance matrix for the counts. To retain the entire object:
 
 ```r
-saveRDS(p, "depression-polygenicity.rds")
-p <- readRDS("depression-polygenicity.rds")
+saveRDS(height, "height-polygenicity.rds")
+saveRDS(depression, "depression-polygenicity.rds")
+height <- readRDS("height-polygenicity.rds")
 
 # Optional readable exports from an already computed result:
-export_gcmsem(p, "results/depression-polygenicity")
+export_gcmsem(height, "results/height-polygenicity")
 ```
 
-Alternatively set `write.to.tsv = TRUE, out = "results/depression-polygenicity"` in the original call. The export includes a summary TSV, per-trait stages, strata, deletions, covariance and LD-mean tables, complete moment bundles, metadata and logs. `saveRDS()` preserves the complete object for a later R session.
+Alternatively set `write.to.tsv = TRUE, out = "results/height-polygenicity"` in the original call. The export includes a summary TSV, per-trait stages, strata, deletions, covariance and LD-mean tables, complete moment bundles, metadata and logs. `saveRDS()` preserves the complete object for a later R session.
 
-The executable [standalone script](standalone_polygenicity.R) runs this analysis, saves its R object and draws the figure. Its [console transcript](output/standalone-polygenicity.txt) contains the full executed output.
+The executable [standalone script](standalone_polygenicity.R) runs height first and depression second, saves both R objects and draws both figures. Its [console transcript](output/standalone-polygenicity.txt) contains the full executed output.
 
 ### How this connects to the comparison below
 
-This standalone result uses **1,074,026 depression tags**. The historical 15-trait comparison below used **1,012,000 tags shared across all 15 studies**, including its documented removal of 60 final rows. That subset yields depression's earlier 30,796 (SE 108,315). SNP selection matters particularly for the rarest MAF stratum. The new package implementation reproduces the historical count and SE on those same inputs; its ordinary standalone default uses the full trait-specific eligible set. The comparison remains frozen so the S-LD4M reference correction can be evaluated against unchanged GCMSEM results.
+The standalone analyses use **1,074,059 height tags** and **1,074,026 depression tags**. The historical 15-trait comparison below used **1,012,000 tags shared across all 15 studies**, including its documented removal of 60 final rows. That subset yields height's earlier 6,202 (SE 849) and depression's 30,796 (SE 108,315). SNP selection matters particularly for the rarest MAF stratum. The package implementation reproduces the historical depression count and SE on those same inputs; its ordinary standalone default uses the full trait-specific eligible set. The comparison remains frozen so the S-LD4M reference correction can be evaluated against unchanged GCMSEM results.
 
 ## 4. Understand the two inputs
 

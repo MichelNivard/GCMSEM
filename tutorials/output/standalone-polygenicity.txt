@@ -1,3 +1,62 @@
+GCMSEM effective polygenicity
+LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
+  trait effective_count     se delta_se  n_tags n_sources n_blocks
+ Height            5756 725.08   706.58 1074059   1719440      200
+Signed estimates retained. Reference-panel uncertainty is not included.
+GCMSEM effective polygenicity
+LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
+  trait effective_count     se delta_se  n_tags n_sources n_blocks
+ Height            5756 725.08   706.58 1074059   1719440      200
+Signed estimates retained. Reference-panel uncertainty is not included.
+
+Height: intermediate estimates and jackknife SEs
+            quantity   estimate         se
+    genetic_variance 3.2967e-01 3.2980e-02
+ fourth_cumulant_sum 5.1893e-05 1.0783e-05
+             ld_term 4.7530e-06 7.1275e-07
+           numerator 3.2605e-01 6.3638e-02
+         denominator 5.6646e-05 1.1363e-05
+     effective_count 5.7560e+03 7.2508e+02
+   no_ld_denominator 5.2097e-05 1.0809e-05
+         no_ld_count 6.2587e+03 8.4687e+02
+     excess_kurtosis 8.2119e+02 1.1057e+02
+       inverse_count 1.7373e-04 2.1748e-05
+
+Source strata: cumulants and SEs
+ stratum maf_min maf_max source_snps tag_snps        mean    mean_se   variance
+       1    0.00    0.05      464696   108432 -8.3673e-07 1.6923e-06 1.2570e-07
+       2    0.05    0.10      205404   126846  2.5362e-06 2.5724e-06 1.6390e-07
+       3    0.10    0.20      314059   238746 -1.9937e-07 2.5849e-06 1.7586e-07
+       4    0.20    0.30      261563   210482 -1.3577e-06 2.8302e-06 2.5868e-07
+       5    0.30    0.50      473718   389553 -1.1938e-06 2.2744e-06 2.4213e-07
+ variance_se third_cumulant third_cumulant_se fourth_cumulant
+  3.2370e-08    -4.8715e-11        1.4916e-10      7.0684e-12
+  2.7326e-08     4.2093e-11        2.6463e-10      1.2376e-11
+  4.0898e-08     3.9592e-10        7.0692e-10      3.2247e-11
+  3.1594e-08     5.4542e-10        6.8106e-10      5.4660e-11
+  1.7673e-08     4.9161e-11        5.5675e-10      4.5685e-11
+ fourth_cumulant_se
+         2.4360e-12
+         3.3208e-12
+         1.6340e-11
+         1.3692e-11
+         1.0982e-11
+
+Most influential deletions (share of estimated count variance)
+ block chrom  start_bp    end_bp denominator effective_count variance_fraction
+    45     3 139611309 153713874  5.3251e-05          6057.8          0.171299
+    76     6  21331907  41568064  5.5088e-05          5514.5          0.109322
+    50     4  13002341  26132361  5.3202e-05          5996.8          0.104801
+    39     3  48293078  61252469  5.6991e-05          5599.1          0.046853
+    33     2 218334534 231130887  5.6488e-05          5632.4          0.029664
+
+Assumptions:
+Zero-mean independent-source Gaussian variance mixture interpretation
+Mean L2 among tags in each MAF bin approximates the mean among all source variants
+Reference scores and source counts are treated as fixed; LD-reference uncertainty is not propagated
+Unequal-group block jackknife; nonlinear-ratio coverage remains uncalibrated
+Signed estimates retained without clipping or dropping deletions
+delta_se uses the joint conditional cumulant covariance with mean LD held fixed
 Warning message:
 Polygenicity Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero. Signed estimates and all deletions retained. 
 GCMSEM effective polygenicity
@@ -7,17 +66,6 @@ LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
 *** POLYGENICITY DIAGNOSTICS: interpret flagged counts and SEs with care ***
 Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero
 Signed estimates retained. Reference-panel uncertainty is not included.
-              quantity     estimate           se
-1     genetic_variance 9.092928e-03 2.153113e-03
-2  fourth_cumulant_sum 6.518533e-09 1.764235e-08
-3              ld_term 5.719251e-09 1.327452e-09
-4            numerator 2.480440e-04 1.189081e-04
-5          denominator 1.223778e-08 1.776231e-08
-6      effective_count 2.026871e+04 3.551316e+04
-7    no_ld_denominator 6.761244e-09 1.764497e-08
-8          no_ld_count 3.668615e+04 1.873621e+05
-9      excess_kurtosis 1.376067e+02 3.675190e+02
-10       inverse_count 4.933714e-05 7.232350e-05
 GCMSEM effective polygenicity
 LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
       trait effective_count    se delta_se  n_tags n_sources n_blocks
@@ -74,3 +122,6 @@ Reference scores and source counts are treated as fixed; LD-reference uncertaint
 Unequal-group block jackknife; nonlinear-ratio coverage remains uncalibrated
 Signed estimates retained without clipping or dropping deletions
 delta_se uses the joint conditional cumulant covariance with mean LD held fixed
+       trait effective_count         se   delta_se relative_se_percent
+1     Height        5755.995   725.0809   706.5754            12.59697
+2 Depression       20268.707 35513.1554 29999.3971           175.21175
