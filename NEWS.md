@@ -1,3 +1,15 @@
+# GCMSEM 0.4.0
+
+- Added `estimate_polygenicity()` for standalone, per-trait GWAS analyses with
+  independent SNP selection, R-native results, print/summary/plot methods and
+  optional `export_gcmsem()` tables.
+- Retains source cumulants, joint covariance, LD averages, intermediate estimates,
+  every genomic deletion and variance-influence diagnostics. Reports nonlinear
+  jackknife SEs, a delta-method diagnostic, reciprocal concentration and the
+  count without LD. Signed estimates are retained with explicit warnings.
+- The polygenicity tutorial now starts with an executed standalone R analysis
+  and documents every argument before the historical independent S-LD4M comparison.
+
 # GCMSEM 0.3.0
 
 * Added `fit_measures()` with an approximate SE for the minimized DWLS discrepancy Q, a first-order component, and a local Gaussian moment-matched null reference. Calculations use the full moment sampling covariance and project out fitted parameters. Approximate p-values are explicitly labeled; penalized or numerically irregular fits return unavailable uncertainty. Unconstrained Heywood fits retain formal diagnostics with warnings.

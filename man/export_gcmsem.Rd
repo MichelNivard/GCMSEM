@@ -3,7 +3,7 @@
 \title{Export a GCMSEM R object to files}
 \usage{export_gcmsem(x, prefix, overwrite = FALSE)}
 \arguments{
-\item{x}{A \code{gcmsem_fit} or \code{gcmsem_moments} object.}
+\item{x}{A \code{gcmsem_fit}, \code{gcmsem_moments}, or \code{gcmsem_polygenicity} object.}
 \item{prefix}{Output path prefix, for example \code{"results/height_weight"}. Parent directories are created as needed.}
 \item{overwrite}{Allow replacement of existing export files. Obsolete optional
 jackknife or log files at the exported prefixes are removed. The default refuses
@@ -17,6 +17,9 @@ additional prefix suffixes. The primary bundle can be read again using
 \code{read_moments(prefix)}; conditional bundles can be read by their respective
 prefixes. Structured metadata export, including updated trait scaling metadata,
 uses \pkg{jsonlite}.
+Polygenicity objects export the summary, intermediate estimates, source strata,
+full stage and conditional covariance, LD averages, deletion influences,
+logs, metadata and complete per-trait moment bundles.
 Fit objects export parameter estimates, observed and fitted moments, residuals,
 sampling covariance, parameter covariance, restart results, diagnostics,
 model syntax and any stored log. Numerical tables retain seventeen significant

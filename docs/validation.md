@@ -18,6 +18,20 @@ is separate from the original software-check snapshot. This parser and
 documentation change does not alter the estimator or the simulation results
 reported below.
 
+## Standalone polygenicity
+
+The standalone polygenicity interface added in R 0.4.0 / Python 0.2.0 has a
+[separate execution record](../validation/results/standalone_polygenicity.json).
+Its tests cover the point-normal effective-count identity, phenotype-scale
+invariance, joint cross-stratum covariance, nonlinear jackknife SEs, singular
+ratios, signed estimates and R object/export methods. On the historical shared
+depression inputs, the production implementation reproduces the earlier count,
+jackknife SE and delta SE to relative tolerance `1e-12`. The standalone R run
+uses all 1,074,026 eligible depression tags and returns 20,269 (SE 35,513), with
+source-moment and weak-denominator flags. This reproduction checks implementation;
+it does not establish interval coverage. See the
+[worked example](../tutorials/Polygenicity.md#3-run-a-standalone-gcmsem-analysis-in-r).
+
 ## Design
 
 The experiment calls **GWASBrewer 0.3.0.0259** directly. Its bundled HapMap3

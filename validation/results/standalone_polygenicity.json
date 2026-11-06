@@ -1,0 +1,156 @@
+{
+  "historical_same_input_reproduction": {
+    "trait": "Depression",
+    "effective_count": 30796.4307174326,
+    "se": 108314.672984696,
+    "delta_se": 43448.592758959,
+    "inverse_count": 3.24712954295038e-05,
+    "inverse_count_se": 4.7405647791304e-05,
+    "no_ld_count": 72641.0529448804,
+    "no_ld_se": 433787.029108332,
+    "n_tags": 1012000,
+    "n_sources": 1719440,
+    "n_blocks": 200,
+    "flags": "negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero; single_block_dominates_jackknife_variance"
+  },
+  "max_fractional_error_count_and_se": 1.11022302462516e-16,
+  "input_reference_commit": "f2c065df238b94b3c981da5af292b431ffb1dfad",
+  "input_archives": [
+    {
+      "id": "scores",
+      "filename": "gcmsem-scores-v1.zip",
+      "format": "zip",
+      "size_bytes": 207532622,
+      "sha256": "1aff0f5325d9728bf6978224db9fb948684e720a840399af7e15547ae60da84c",
+      "file_count": 38
+    }
+  ],
+  "standalone_depression": [
+    {
+      "trait": "Depression",
+      "effective_count": 20268.7070037786,
+      "se": 35513.1554028017,
+      "delta_se": 29999.397140744,
+      "inverse_count": 4.93371382700226e-05,
+      "inverse_count_se": 7.23234967287642e-05,
+      "no_ld_count": 36686.1536726294,
+      "no_ld_se": 187362.082747391,
+      "n_tags": 1074026,
+      "n_sources": 1719440,
+      "n_blocks": 200,
+      "flags": "nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero"
+    }
+  ],
+  "standalone_stages": [
+    {
+      "quantity": "genetic_variance",
+      "estimate": 0.00909292848995777,
+      "se": 0.00215311331196796
+    },
+    {
+      "quantity": "fourth_cumulant_sum",
+      "estimate": 6.51853272319165e-09,
+      "se": 1.76423482274154e-08
+    },
+    {
+      "quantity": "ld_term",
+      "estimate": 5.71925065017378e-09,
+      "se": 1.32745224179017e-09
+    },
+    {
+      "quantity": "numerator",
+      "estimate": 0.000248044045570457,
+      "se": 0.000118908110037283
+    },
+    {
+      "quantity": "denominator",
+      "estimate": 1.22377833733654e-08,
+      "se": 1.77623060672913e-08
+    },
+    {
+      "quantity": "effective_count",
+      "estimate": 20268.7070037786,
+      "se": 35513.1554028017
+    },
+    {
+      "quantity": "no_ld_denominator",
+      "estimate": 6.7612442499121e-09,
+      "se": 1.76449741392207e-08
+    },
+    {
+      "quantity": "no_ld_count",
+      "estimate": 36686.1536726294,
+      "se": 187362.082747391
+    },
+    {
+      "quantity": "excess_kurtosis",
+      "estimate": 137.606727160075,
+      "se": 367.518954413739
+    },
+    {
+      "quantity": "inverse_count",
+      "estimate": 4.93371382700226e-05,
+      "se": 7.23234967287642e-05
+    }
+  ],
+  "standalone_QC": {
+    "trait_qc": [
+      {
+        "trait": "Depression",
+        "rows": 1074029,
+        "not_in_reference": 0,
+        "invalid_numeric": 0,
+        "invalid_alleles": 0,
+        "allele_mismatch": 0,
+        "palindromic": 3,
+        "frequency_mismatch": 0,
+        "low_info": 0,
+        "low_n": 0,
+        "retained": 1074026,
+        "sign_flipped": 0,
+        "strand_flipped": 0
+      }
+    ],
+    "input_files": [
+      {
+        "trait": "Depression",
+        "path": "/workspace/scratch/637d2324a143/tutorial-data/sumstats/20544_11.tsv.gz",
+        "sha256": "b84236baccd45d84f7260d9397c6112fe0d30417c2682f3b64369c393c374a60",
+        "input_effect_scale": "genotype_standardized",
+        "phenotype_unit": "unspecified"
+      }
+    ],
+    "n_tags_before_qc": 1074062,
+    "n_tags_after_qc": 1074026,
+    "af_tolerance": 0.1,
+    "allow_strand_flips": false,
+    "keep_palindromic": false,
+    "source_counts_unchanged": true,
+    "common_tag_complete_case": true,
+    "genome_build_check": "User must ensure shared genome build; matching IDs alone does not verify build"
+  },
+  "software": {
+    "R": "R version 4.5.0 (2025-04-11)",
+    "R_package": "0.4.0",
+    "Python_package": "0.2.0"
+  },
+  "validation": {
+    "python_tests": 62,
+    "R_estimation_bridge_checks": 41,
+    "R_CMD_check": {
+      "errors": 0,
+      "warnings": 0,
+      "notes": 0
+    }
+  },
+  "source_sha256": {
+    "R/polygenicity.R": "0c6f94966142daa251d7d1b869282914b15eded1afaf0b4e69657d32c4e3e686",
+    "R/estimate.R": "64f1e9c98c1fda40bacffd155e19bdad114d329678e6413f7e34d716acd8f6b1",
+    "R/export.R": "c978a06b721eda8cef0f9c49b23fa1f16915cd8dbf3ffeed6b13b7a56c4c3844",
+    "python/gcmsem/polygenicity.py": "1ce43151db1fb046c78415e5bb02baf4780c0485b03823261383d89d6616f1ee",
+    "python/gcmsem/cli.py": "c1e01536dbb4316a3bcd2c82f2bd0c352a65591e90b76b1c94612fcb4314a446",
+    "tests/python/test_polygenicity.py": "37603857a642e2e4f737daef13e56f82f6547192a1d2b372f01b600e1ff706ff",
+    "tests/r/test-estimation.R": "f7d9b95ebe949014d589de3baa107505b5cb7d21670b6b982e95e3291d98cfc6",
+    "tutorials/standalone_polygenicity.R": "38971acf6d533ea76a064fb2bb36c4f8aa49e49a4432b82be6c2205c2e3fce06"
+  }
+}

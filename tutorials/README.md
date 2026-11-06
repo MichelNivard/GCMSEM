@@ -9,7 +9,7 @@ GCMSEM estimates genetic moments from GWAS summary statistics and fits user-defi
 | [Working with R results](R-results.md) | Inspect objects, check fit with Q and its approximate uncertainty, interpret warnings and save results. |
 | [Height/weight and BMI/SBP](Causal-examples.md) | Obtain real GWAS summary statistics, estimate moments, draw six models and assess fit before interpreting paths. |
 | [Fifteen-trait correlations](Fifteen-trait-correlations.md) | Compute a full genetic-correlation matrix from GWAS files, run standard LDSC, and compare 105 pairs in R. |
-| [Kurtosis and polygenicity](Polygenicity.md) | Estimate effective polygenicity for 15 traits, run S-LD4M with its author-supplied reference inputs and compare it with GCMSEM, and inspect the scatterplot and uncertainty. |
+| [Kurtosis and polygenicity](Polygenicity.md) | Run standalone `estimate_polygenicity()` in R, inspect uncertainty and influential blocks, then study the 15-trait S-LD4M validation comparison. |
 | [Data and scores](Data-and-scores.md) | Understand the precomputed HapMap3-tag scores, input datasets and download checksums. |
 | [Standard LDSC environment](Standard-LDSC-environment.md) | Install the original LDSC software and standard reference/weight files. |
 | [Execution report](Execution-report.md) | Inspect measured results, checks and validation limits. |
@@ -29,7 +29,7 @@ Rscript -e 'install.packages("jsonlite", repos="https://cloud.r-project.org")'
 R CMD INSTALL .
 ```
 
-This installs R package version 0.3.0 and Python engine version 0.1.0. `estimate_moments()` uses the Python engine and requires `jsonlite`. Keep the environment activated when starting R. If starting R elsewhere, provide the environment's executable through the function's `python` argument.
+This installs R package version 0.4.0 and Python engine version 0.2.0. `estimate_moments()` uses the Python engine and requires `jsonlite`. Keep the environment activated when starting R. If starting R elsewhere, provide the environment's executable through the function's `python` argument.
 
 The [small worked example](Quickstart.md) generates three synthetic GWAS tables and scores locally. Run it immediately after installation to try `estimate_moments()` → `standardize_moments()` → `gcmsem()` without downloading the empirical datasets.
 

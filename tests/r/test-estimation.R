@@ -35,6 +35,7 @@ library(GCMSEM)
     "    blocks.append(dict(id=f'b{b}', ld=np.eye(n), snp=np.array([f'rs{b*n+j}' for j in range(n)]), a1=np.repeat('A', n), a2=np.repeat('C', n), af=np.tile([.2, .3], n//2), chrom=np.repeat('1', n), bp=np.arange(b*1000+1, b*1000+n+1)))",
     "s = build_scores(blocks, maf_edges=(0, .25, .5))",
     "save_scores(s, p/'signed scores.npz')",
+    "save_scores(build_scores(blocks, maf_edges=(0, .5)), p/'one-bin.npz')",
     "rng = np.random.default_rng(417)",
     "y = rng.normal(size=(160, 2)); y[:, 1] = .4*y[:, 0] + .8*y[:, 1]",
     "def table(name, header, rows):",
@@ -107,6 +108,35 @@ library(GCMSEM)
   check(identical(from_manifest$moments, y$moments) &&
         from_manifest$metadata$r_input$type == "manifest_data_frame",
         "an R manifest data frame returns the same numerical result")
+  poly <- suppressWarnings(estimate_polygenicity(files, scores, effect_scale = "allele",
+    n_blocks = 20, noise_intercept = 0, python = python))
+  check(inherits(poly, "gcmsem_polygenicity") && identical(poly$traits, c("A", "B")), "standalone polygenicity returns separate trait results")
+  check(identical(before, list.files(all.files = TRUE, recursive = TRUE)), "polygenicity creates no working-directory files by default")
+  check(all(poly$estimates$n_tags == 160) && all(poly$estimates$n_sources == 160), "polygenicity distinguishes source and tag counts")
+  for (trait in poly$traits) {
+    d <- poly$details[[trait]]
+    h <- sum(d$strata$source_snps*d$strata$variance)
+    denominator <- sum(d$strata$source_snps*(d$strata$fourth_cumulant+3*d$strata$variance^2))
+    check(abs(coef(poly)[trait] - 3*h^2/denominator) < 1e-9, "identity-LD polygenicity agrees with independent R algebra")
+    check(nrow(d$jackknife) == 20 && identical(dim(d$conditional_covariance), c(4L,4L)), "deletions and joint stratum covariance retained")
+  }
+  check(nrow(as.data.frame(poly)) == 2 && any(grepl("intermediate estimates", capture.output(summary(poly,trait="A")))), "readable polygenicity tables and detailed summary")
+  one_bin <- suppressWarnings(estimate_polygenicity(files["A"],file.path(fixture,"one-bin.npz"),
+    effect_scale="allele",n_blocks=20,noise_intercept=0,python=python))
+  check(identical(dim(one_bin$details$A$ld_mean),c(1L,1L)) && nrow(one_bin$details$A$strata)==1,
+    "single source stratum preserves matrix and table dimensions")
+  selected <- suppressWarnings(estimate_polygenicity(files, scores, traits="A", effect_scale="allele",
+    n_blocks=20, noise_intercept=c(A=0), python=python))
+  check(identical(coef(selected),coef(poly)["A"]), "trait selection preserves standalone analysis")
+  saveRDS(poly,file.path(fixture,"poly.rds"))
+  check(identical(readRDS(file.path(fixture,"poly.rds")),poly), "polygenicity RDS round trip")
+  exports <- export_gcmsem(poly,file.path(fixture,"poly-export"))
+  check(all(file.exists(exports)) && any(grepl("conditional_covariance",exports)), "polygenicity export includes covariance and audit tables")
+  check(inherits(failure(export_gcmsem(poly,file.path(fixture,"poly-export"))),"error"), "polygenicity export protects existing files")
+  grDevices::pdf(file.path(fixture,"poly.pdf")); plot(poly,trait="A"); grDevices::dev.off()
+  check(file.info(file.path(fixture,"poly.pdf"))$size > 0, "polygenicity influence plot renders")
+  check(inherits(failure(estimate_polygenicity(files,scores,traits="missing",effect_scale="allele")),"error"), "unknown polygenicity trait is rejected")
+  check(inherits(failure(estimate_polygenicity(files,scores,noise_intercept=-1,effect_scale="allele")),"error"), "invalid noise intercept is rejected")
   tables <- lapply(files, utils::read.delim)
   z <- estimate_moments(tables, scores, effect_scale = "allele", n_blocks = 20,
     noise_intercept = zero, python = python)

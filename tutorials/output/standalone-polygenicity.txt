@@ -1,0 +1,76 @@
+Warning message:
+Polygenicity Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero. Signed estimates and all deletions retained. 
+GCMSEM effective polygenicity
+LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
+      trait effective_count    se delta_se  n_tags n_sources n_blocks
+ Depression           20269 35513    29999 1074026   1719440      200
+*** POLYGENICITY DIAGNOSTICS: interpret flagged counts and SEs with care ***
+Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero
+Signed estimates retained. Reference-panel uncertainty is not included.
+              quantity     estimate           se
+1     genetic_variance 9.092928e-03 2.153113e-03
+2  fourth_cumulant_sum 6.518533e-09 1.764235e-08
+3              ld_term 5.719251e-09 1.327452e-09
+4            numerator 2.480440e-04 1.189081e-04
+5          denominator 1.223778e-08 1.776231e-08
+6      effective_count 2.026871e+04 3.551316e+04
+7    no_ld_denominator 6.761244e-09 1.764497e-08
+8          no_ld_count 3.668615e+04 1.873621e+05
+9      excess_kurtosis 1.376067e+02 3.675190e+02
+10       inverse_count 4.933714e-05 7.232350e-05
+GCMSEM effective polygenicity
+LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
+      trait effective_count    se delta_se  n_tags n_sources n_blocks
+ Depression           20269 35513    29999 1074026   1719440      200
+*** POLYGENICITY DIAGNOSTICS: interpret flagged counts and SEs with care ***
+Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero
+Signed estimates retained. Reference-panel uncertainty is not included.
+
+Depression: intermediate estimates and jackknife SEs
+            quantity   estimate         se
+    genetic_variance 9.0929e-03 2.1531e-03
+ fourth_cumulant_sum 6.5185e-09 1.7642e-08
+             ld_term 5.7193e-09 1.3275e-09
+           numerator 2.4804e-04 1.1891e-04
+         denominator 1.2238e-08 1.7762e-08
+     effective_count 2.0269e+04 3.5513e+04
+   no_ld_denominator 6.7612e-09 1.7645e-08
+         no_ld_count 3.6686e+04 1.8736e+05
+     excess_kurtosis 1.3761e+02 3.6752e+02
+       inverse_count 4.9337e-05 7.2323e-05
+
+Source strata: cumulants and SEs
+ stratum maf_min maf_max source_snps tag_snps        mean    mean_se
+       1    0.00    0.05      464696   108400  9.8644e-07 1.0070e-06
+       2    0.05    0.10      205404   126846  2.9253e-07 1.2429e-06
+       3    0.10    0.20      314059   238746  8.5068e-07 8.9190e-07
+       4    0.20    0.30      261563   210481 -5.7579e-08 9.4409e-07
+       5    0.30    0.50      473718   389553  3.5813e-07 7.0927e-07
+    variance variance_se third_cumulant third_cumulant_se fourth_cumulant
+ -1.3267e-09  2.9150e-09     7.4778e-12        7.8978e-12     -1.0010e-15
+  3.8105e-09  2.5411e-09     3.3440e-12        5.0342e-12     -1.5335e-14
+  7.2281e-09  2.0874e-09     6.3905e-12        3.6286e-12     -7.8494e-15
+  8.0230e-09  2.1618e-09     5.7384e-12        5.2195e-12      2.4996e-14
+  9.6221e-09  1.2965e-09     3.7358e-12        3.7151e-12      1.2794e-14
+ fourth_cumulant_se
+         3.5086e-14
+         1.8411e-14
+         1.0354e-14
+         1.4695e-14
+         1.0039e-14
+
+Most influential deletions (share of estimated count variance)
+ block chrom  start_bp    end_bp denominator effective_count variance_fraction
+    65     5  56284605  71748624  7.3404e-09           34313          0.154351
+   138    12    191619  13670520  7.5928e-09           33221          0.129741
+   154    13  94868584 104948077  8.2934e-09           29680          0.069459
+     2     1  14387134  26621101  8.2043e-09           28913          0.056838
+    31     2 186077879 204824324  1.0572e-08           28836          0.055544
+
+Assumptions:
+Zero-mean independent-source Gaussian variance mixture interpretation
+Mean L2 among tags in each MAF bin approximates the mean among all source variants
+Reference scores and source counts are treated as fixed; LD-reference uncertainty is not propagated
+Unequal-group block jackknife; nonlinear-ratio coverage remains uncalibrated
+Signed estimates retained without clipping or dropping deletions
+delta_se uses the joint conditional cumulant covariance with mean LD held fixed

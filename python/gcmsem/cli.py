@@ -58,6 +58,9 @@ def estimate_cli(args):
     log = logging.getLogger("gcmsem")
     if not args.overwrite and Path(args.out + ".metadata.json").exists():
         raise FileExistsError("completed output already exists; choose a new --out or use --overwrite")
+    poly_path = Path(args.out + ".polygenicity.json") if getattr(args, "polygenicity", False) else None
+    if poly_path is not None and poly_path.exists() and not args.overwrite:
+        raise FileExistsError("polygenicity output already exists; choose a new --out or use --overwrite")
     scores = load_scores(args.scores)
     log.info("SCORES tags=%d reference_variants=%g annotations=%d", len(scores["snp"]),
              np.sum(scores["counts"]), len(scores["counts"]))
@@ -65,6 +68,8 @@ def estimate_cli(args):
         args.sumstats, scores, min_info=args.min_info, min_n=args.min_n,
         af_tolerance=args.af_tolerance, allow_strand_flips=args.allow_strand_flips,
         keep_palindromic=args.keep_palindromic, logger=log)
+    if getattr(args, "polygenicity", False) and (len(traits) != 1 or args.max_order != 4 or args.moments is not None):
+        raise ValueError("polygenicity requires one trait, max-order 4 and all univariate moments")
     result = estimate_moments(beta, se, aligned, traits=traits, max_order=args.max_order,
         moment_tuples=None if args.moments is None else _read_tuples(args.moments, traits),
         noise_intercept=None if args.noise_intercept is None else _read_noise(args.noise_intercept, traits),
@@ -85,8 +90,14 @@ def estimate_cli(args):
         "qc": qc,
     }
     result["metadata"].update(provenance)
+    if poly_path is not None:
+        from .polygenicity import summarize_polygenicity, json_safe
+        poly = summarize_polygenicity(result, aligned)
     paths = write_results(result, args.out, overwrite=args.overwrite,
                           conditional=not args.no_conditional)
+    if poly_path is not None:
+        poly_path.write_text(json.dumps(json_safe(poly), allow_nan=False) + "\n")
+        log.info("OUTPUT %s", poly_path)
     for path in paths:
         log.info("OUTPUT %s", path)
     return 0
@@ -116,6 +127,9 @@ def parser():
     e.add_argument("--no-conditional", action="store_true", help="omit separate annotation-specific output bundles")
     e.add_argument("--overwrite", action="store_true")
     e.set_defaults(func=estimate_cli)
+    p = sub.add_parser("polygenicity", parents=[e], add_help=False,
+        help="estimate effective polygenicity for one GWAS; retain moments and diagnostics")
+    p.set_defaults(func=estimate_cli, polygenicity=True)
     return ap
 
 

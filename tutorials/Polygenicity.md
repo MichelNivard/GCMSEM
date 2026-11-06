@@ -1,6 +1,8 @@
-# Effective polygenicity: GCMSEM versus the author-released S-LD4M pipeline
+# Effective polygenicity in R: standalone analysis and S-LD4M validation
 
-We use the same 15 GWAS studies as the [genetic-correlation tutorial](Fifteen-trait-correlations.md), estimate effective polygenicity with each pipeline, and compare the results in R. S-LD4M receives the reference scores, annotations and regression weights distributed by its author. GCMSEM keeps its HapMap3 score workflow.
+Start with `GCMSEM::estimate_polygenicity()` to analyse your own GWAS and inspect the results in R. Section 3 runs a complete standalone depression example. It needs the R package, its Python engine and GCMSEM scores.
+
+The later validation uses the same 15 GWAS studies as the [genetic-correlation tutorial](Fifteen-trait-correlations.md) to estimate effective polygenicity with each pipeline and compare the results in R. S-LD4M receives the reference scores, annotations and regression weights distributed by its author. GCMSEM keeps its HapMap3 score workflow.
 
 **Correction to the earlier comparison:** the earlier r = 0.9651 used GCMSEM scores and weights in both programs. That is a [matched-input diagnostic](Polygenicity-matched-input.md). This page runs S-LD4M with its own reference inputs and reports its native baseline-category result.
 
@@ -55,7 +57,170 @@ For the count without LD, replace $a_c$ by $v_c$. This keeps the extra kurtosis 
 
 We estimate $a_c$ using the mean second-order score among retained **HM3 tags in bin $c$**, multiplied by the vector of estimated source variances. Applying that mean to every source in the bin assumes that the tags represent the source LD distribution. The released archive does not contain second-order scores at every source SNP, so this is an additional approximation. This approximation belongs to the GCMSEM conversion. The S-LD4M analysis below uses its own complete reference, annotation model, weights and native reporting rule. Different reference SNP universes can therefore change the target as well as the estimate.
 
-## 3. Understand the two inputs
+## 3. Run a standalone GCMSEM analysis in R
+
+Install R package **0.4.0** and Python engine **0.2.0** using the [installation instructions](README.md#install). If updating an existing checkout, reinstall both packages. Keep the Python environment activated when starting R, or set the `python` argument below to its executable.
+
+Download the checksum-verified scores and GWAS panel from Zenodo, from the repository root:
+
+```bash
+python tutorials/download_data.py --asset scores --asset panel --out tutorial-data
+```
+
+We use two files from those archives:
+
+| File | Contents and purpose |
+|---|---|
+| `tutorial-data/scores/eur_hm3.scores.npz` | Signed LD-power scores of orders one through four, HM3 tag IDs and alleles, genomic coordinates and deletion blocks, five MAF strata and their source SNP counts. The function uses these scores to separate SNP-effect moments from LD and sampling noise. |
+| `tutorial-data/sumstats/20544_11.tsv.gz` | Prepared depression GWAS summary statistics: `SNP`, `A1`, `A2`, `BETA`, `SE` and `N`, aligned to the release's reference. These effects and SEs are already in standardized-genotype units. |
+
+Open R in the repository directory:
+
+```r
+library(GCMSEM)
+
+p <- estimate_polygenicity(
+  sumstats = c(Depression = "tutorial-data/sumstats/20544_11.tsv.gz"),
+  scores = "tutorial-data/scores/eur_hm3.scores.npz",
+  effect_scale = "genotype_standardized",
+  n_blocks = 200L
+)
+p
+```
+
+`Depression` names the trait in the returned object. For your own GWAS reported as an effect per additional effect allele, use `effect_scale = "allele"`; GCMSEM converts both BETA and SE using the reference genotype SD. Ensure that your GWAS and scores use the same genome build. SNP IDs alone cannot verify that.
+
+The function checks and harmonizes the GWAS, estimates all four conditional cumulants in each source stratum, recalculates the polygenicity transformation in every genomic deletion, and returns a `gcmsem_polygenicity` object. It retains every eligible tag for this trait and does not trim a tail. With several traits, each is processed independently; adding another trait does not change this trait's SNP set.
+
+### What you should see
+
+The executed standalone analysis prints:
+
+```text
+GCMSEM effective polygenicity
+LD-adjusted Gaussian-mixture count; genomic-block jackknife SE
+      trait effective_count    se delta_se  n_tags n_sources n_blocks
+ Depression           20269 35513    29999 1074026   1719440      200
+*** POLYGENICITY DIAGNOSTICS: interpret flagged counts and SEs with care ***
+Depression: nonpositive_bin_variance; negative_fourth_cumulant_gaussian_mixture_incompatible; source_moment_inequality_violated; denominator_not_separated_from_zero
+Signed estimates retained. Reference-panel uncertainty is not included.
+```
+
+An R warning reports those same diagnostic flags when the function returns. Here the estimated count is about 20,269 with SE 35,513. The first MAF bin has a negative estimated variance, some fourth cumulants are negative, and the denominator is poorly separated from zero. These values remain available for inspection. This example illustrates a weakly determined count; the flags should accompany any report of its estimate.
+
+`se` is the block-jackknife SE of the complete nonlinear ratio. `delta_se` is a local linear approximation from the joint variance/fourth-cumulant covariance, holding mean LD fixed. Large differences between them indicate sensitivity to ratio curvature. The function also reports the reciprocal count and its SE; it does not attach a symmetric confidence interval to a potentially unstable ratio.
+
+### Trace the estimate and uncertainty
+
+```r
+summary(p, trait = "Depression")
+p$details$Depression$stages
+```
+
+`summary()` prints the estimate, all intermediate stages, the four cumulants and SEs for each MAF stratum, the five most influential deletions, and the assumptions. The second command selects just the intermediate table:
+
+```text
+            quantity   estimate         se
+    genetic_variance 9.0929e-03 2.1531e-03
+ fourth_cumulant_sum 6.5185e-09 1.7642e-08
+             ld_term 5.7193e-09 1.3275e-09
+           numerator 2.4804e-04 1.1891e-04
+         denominator 1.2238e-08 1.7762e-08
+     effective_count 2.0269e+04 3.5513e+04
+   no_ld_denominator 6.7612e-09 1.7645e-08
+         no_ld_count 3.6686e+04 1.8736e+05
+     excess_kurtosis 1.3761e+02 3.6752e+02
+       inverse_count 4.9337e-05 7.2323e-05
+```
+
+The numerator is $3H^2$; the denominator is the fourth-cumulant sum plus the LD term defined above. The fourth-cumulant sum is especially uncertain in this example. `genetic_variance` is in squared GWAS phenotype units; it is a proportion of phenotypic variance only when the phenotype has unit variance. `no_ld_count` is the conversion before accounting for LD; `inverse_count` is `1/effective_count`. Every stage SE comes from its own deletion estimates and includes covariance between the fitted components.
+
+These are ordinary R objects:
+
+```r
+as.data.frame(p)                         # One summary row per trait
+coef(p)                                 # Named effective counts
+p$details$Depression$strata              # Source counts, cumulants and SEs
+p$details$Depression$conditional_covariance # Joint variance/fourth-cumulant covariance
+p$details$Depression$covariance          # Joint covariance of the intermediate stages
+p$details$Depression$ld_mean             # Tag-based mean L2, by source stratum
+p$moments$Depression                     # Full GCMSEM moment object
+p$moments$Depression$metadata$qc         # Harmonization counts and input hashes
+p$moments$Depression$metadata$noise_intercept # Estimated sampling-noise calibration
+p$log                                   # Estimation and diagnostic log
+```
+
+Inspect the genomic deletions and draw their sensitivity plot:
+
+```r
+blocks <- p$details$Depression$jackknife
+head(blocks[order(blocks$variance_fraction, decreasing = TRUE),
+            c("chrom", "start_bp", "end_bp", "effective_count", "variance_fraction")])
+plot(p, trait = "Depression")
+```
+
+Each row is one leave-block-out calculation. `variance_fraction` is that deletion's contribution to the estimated jackknife variance of the count; it is not a proportion of genetic variance. In the plot, each open point represents a deletion and the red point is the full-data estimate.
+
+![Standalone depression analysis: denominator and effective count after each genomic deletion.](figures/standalone-polygenicity-deletions.png)
+
+### Arguments and their defaults
+
+Run `?estimate_polygenicity` in R for the installed help page.
+
+| Argument | Default | What it controls |
+|---|---|---|
+| `sumstats` | Required | A named vector of GWAS paths, a named list of GWAS data frames, or a manifest path/data frame with `trait`, `path`, `effect_scale`. Each GWAS needs `SNP`, `A1`, `A2`, `BETA`, `SE`; supported column aliases follow `estimate_moments()`. |
+| `scores` | Required | GCMSEM signed LD-power NPZ, including source counts and disjoint MAF bins. Reference ancestry and genome build should match the study. |
+| `effect_scale` | `NULL` | Supply `"allele"` or `"genotype_standardized"` for named files/data frames, optionally named separately for each input trait. With a manifest, omit this argument because the manifest declares the scales. |
+| `traits` | `NULL` | Select and order named traits from the input. NULL analyses all independently. |
+| `n_blocks` | `200L` | Maximum chromosome-respecting jackknife groups. Uses whole supplied blocks; fewer groups may be available. |
+| `noise_intercept` | `NULL` | Estimate sampling-noise calibration from LD regressions. To fix it, supply one nonnegative number or a named number for each selected trait. `1` assumes the supplied GWAS SEs correctly describe sampling variance. |
+| `min_info` | `NULL` | Optional minimum imputation INFO; requesting it requires an INFO column. |
+| `min_n` | `NULL` | Optional minimum sample size; requesting it requires an N column. |
+| `af_tolerance` | `0.1` | Maximum study/reference allele-frequency discrepancy when EAF is available. Must be below 0.5. |
+| `allow_strand_flips` | `FALSE` | Allow strand-complement allele matching. |
+| `keep_palindromic` | `FALSE` | Keep A/T and C/G SNPs only when EAF uniquely resolves the orientation. |
+| `max_memory_mb` | `2048` | Maximum estimated engine working memory per trait, in MiB. |
+| `max_condition` | `1e6` | Reject regression designs with a larger condition number. |
+| `python` | `Sys.which("python")` | Executable for the environment containing the current GCMSEM Python engine. |
+| `write.to.tsv` | `FALSE` | Also export tables, covariance matrices, moments, metadata and logs when TRUE. The primary return value remains the R object. |
+| `out` | `NULL` | Output filename prefix, required only when requesting TSV export. |
+| `overwrite` | `FALSE` | Permit replacement of the export's existing files. |
+| `verbose` | `FALSE` | Display the captured QC and estimation log. The log is always returned in `p$log`. |
+
+`print(p, digits = 5)` controls display precision. `summary(p, trait = NULL, digits = 5)` prints all traits, or a selected subset. `plot(p, trait = "Depression")` selects one trait; additional graphics arguments such as `pch` and `cex` can be passed to `plot()`.
+
+### Several traits and saving results
+
+```r
+panel <- estimate_polygenicity(
+  sumstats = "tutorial-data/manifests/panel.tsv",
+  scores = "tutorial-data/scores/eur_hm3.scores.npz",
+  traits = c("Depression", "Height")
+)
+panel
+summary(panel, trait = "Height")
+```
+
+The manifest supplies effect scales and paths. The function returns per-trait results, without estimating a between-trait covariance matrix for the counts. To retain the entire object:
+
+```r
+saveRDS(p, "depression-polygenicity.rds")
+p <- readRDS("depression-polygenicity.rds")
+
+# Optional readable exports from an already computed result:
+export_gcmsem(p, "results/depression-polygenicity")
+```
+
+Alternatively set `write.to.tsv = TRUE, out = "results/depression-polygenicity"` in the original call. The export includes a summary TSV, per-trait stages, strata, deletions, covariance and LD-mean tables, complete moment bundles, metadata and logs. `saveRDS()` preserves the complete object for a later R session.
+
+The executable [standalone script](standalone_polygenicity.R) runs this analysis, saves its R object and draws the figure. Its [console transcript](output/standalone-polygenicity.txt) contains the full executed output.
+
+### How this connects to the comparison below
+
+This standalone result uses **1,074,026 depression tags**. The historical 15-trait comparison below used **1,012,000 tags shared across all 15 studies**, including its documented removal of 60 final rows. That subset yields depression's earlier 30,796 (SE 108,315). SNP selection matters particularly for the rarest MAF stratum. The new package implementation reproduces the historical count and SE on those same inputs; its ordinary standalone default uses the full trait-specific eligible set. The comparison remains frozen so the S-LD4M reference correction can be evaluated against unchanged GCMSEM results.
+
+## 4. Understand the two inputs
 
 | Setting | GCMSEM | S-LD4M in this tutorial |
 |---|---|---|
@@ -74,7 +239,7 @@ This executes the author's released **1000 Genomes example configuration**. The 
 
 The earlier GCMSEM setup removed a 60-row tail from 1,012,060 shared HM3 tags. We retain that existing GCMSEM analysis so the change here is the S-LD4M pipeline. S-LD4M now applies its own native tail handling separately to each GWAS; the counts are recorded in `provenance.json`.
 
-## 4. Install and download the data
+## 5. Install and download the data
 
 Start in the GCMSEM checkout and activate its Python environment as described on the [installation page](README.md#install). Install GNU Octave and the HDF5 reader:
 
@@ -128,7 +293,7 @@ This creates `ell2.f64`, `ell4.f64` and `annot.f64`, containing the original dou
 
 The three full matrices would need over 11 GB in memory. [SLD4MDiskMatrix.m](SLD4MDiskMatrix.m) reads the block requested by the original regression function. It preserves the numerical values and row order. An independent small-array test compares all 14 native outputs against an ordinary in-memory call; every output agreed exactly in the executed check.
 
-## 5. Run both analyses from R
+## 6. Run both analyses from R
 
 ```r
 library(GCMSEM)
@@ -187,7 +352,7 @@ Traits with diagnostic flags: 12 of 15
 Inspect $comparison$flags and $annotations; signed estimates are retained.
 ```
 
-## 6. Inspect the R objects and draw the scatterplot
+## 7. Inspect the R objects and draw the scatterplot
 
 ```r
 result$comparison
@@ -220,7 +385,7 @@ Orange triangles identify diagnostic flags. Negative estimates and intervals cro
 
 Their references and SNP universes differ. The scatterplot measures agreement between independently configured pipelines; its correlation alone cannot establish accuracy or equality of their population targets. GCMSEM additionally uses a Gaussian-mixture interpretation and HM3-tag LD averages in its moment-to-count transformation.
 
-## 7. Reopen results and inspect provenance
+## 8. Reopen results and inspect provenance
 
 ```r
 result <- read_original_polygenicity(

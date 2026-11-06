@@ -53,6 +53,17 @@ Source distributions receive separate checks: negative variances, whether the co
 
 **Classical and higher-order Heywood cases are retained and prominently warned about.** The default does not constrain or discard them: sampling noise can push otherwise meaningful estimates outside the admissible region. An optional feasibility penalty changes the estimator and must be requested explicitly. [Working with R results](https://github.com/MichelNivard/GCMSEM/wiki/R-results) explains these flags, the Q fit discrepancy, its approximate SE and the exploratory model-fit reference.
 
+## Effective polygenicity from one or more GWAS
+
+Use [`estimate_polygenicity()`](man/estimate_polygenicity.Rd) with GWAS files and the
+GCMSEM score archive to estimate effective variant counts directly in R. Each
+trait uses its own eligible SNPs. The returned object contains counts and SEs,
+source cumulants, intermediate quantities, joint sampling covariance, all genomic
+deletions, influential-block diagnostics and logs. `summary()` explains the
+results; `plot()` displays denominator sensitivity. The [polygenicity tutorial](https://github.com/MichelNivard/GCMSEM/wiki/Polygenicity)
+starts with a standalone analysis and documents every argument, then validates
+the method against S-LD4M with the author's reference inputs.
+
 ## Install
 
 Use Python 3.10 or newer, R 4.1 or newer and a C++ compiler. In a terminal:
@@ -79,7 +90,7 @@ Start R with that Python environment activated, or pass its executable to `estim
 | [Working with R results](https://github.com/MichelNivard/GCMSEM/wiki/R-results) | Inspect objects, assess Q and its approximate uncertainty, interpret warnings and save results. |
 | [Height/weight and BMI/SBP](https://github.com/MichelNivard/GCMSEM/wiki/Causal-examples) | Download GWAS files, estimate moments and compare illustrated causal models before interpreting paths. |
 | [Fifteen-trait correlations](https://github.com/MichelNivard/GCMSEM/wiki/Fifteen-trait-correlations) | Compute genetic correlations from summary statistics, run standard LDSC and compare 105 trait pairs in an R scatterplot. |
-| [Kurtosis and polygenicity](https://github.com/MichelNivard/GCMSEM/wiki/Polygenicity) | Estimate effective polygenicity for 15 traits, run S-LD4M with its author-supplied reference inputs and compare it with GCMSEM, and inspect the scatterplot and uncertainty. |
+| [Kurtosis and polygenicity](https://github.com/MichelNivard/GCMSEM/wiki/Polygenicity) | Run standalone `estimate_polygenicity()` in R, inspect uncertainty and influential blocks, then study the 15-trait S-LD4M validation comparison. |
 | [Data and scores](https://github.com/MichelNivard/GCMSEM/wiki/Data-and-scores) | Understand the LD reference, score contents, source datasets and checksum-verified downloads. |
 | [Standard LDSC environment](https://github.com/MichelNivard/GCMSEM/wiki/Standard-LDSC-environment) | Install the original LDSC software and its standard reference and weights for the comparison. |
 | [Execution report](https://github.com/MichelNivard/GCMSEM/wiki/Execution-report) | Inspect the actual analyses, numerical checks and remaining validation limitations. |
@@ -87,6 +98,6 @@ Start R with that Python environment activated, or pass its executable to `estim
 
 ## Validation and development
 
-GCMSEM is new software. The [executed validation](docs/validation.md) includes known-model recovery, analytical-derivative checks and GWASBrewer simulations with realistic LD and unequal blocks. Higher-order interval coverage still needs improvement; the [statistical assumptions](docs/statistical-assumptions.md) explain the conditions behind moment estimation, SEM identification and uncertainty. R package 0.3.0 and Python package 0.1.0 have separate version numbers because they provide different parts of the workflow.
+GCMSEM is new software. The [executed validation](docs/validation.md) includes known-model recovery, analytical-derivative checks and GWASBrewer simulations with realistic LD and unequal blocks. Higher-order interval coverage still needs improvement; the [statistical assumptions](docs/statistical-assumptions.md) explain the conditions behind moment estimation, SEM identification and uncertainty. R package 0.4.0 and Python package 0.2.0 have separate version numbers because they provide different parts of the workflow.
 
 For the implementation and its RAM-style derivative structure, see [the engine guide](docs/engine.md). See [references](docs/references.md) and [contributing](CONTRIBUTING.md) for provenance and development checks.

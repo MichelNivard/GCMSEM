@@ -1,7 +1,7 @@
 Package: GCMSEM
 Type: Package
 Title: Genomic Comoment Structural Equation Models
-Version: 0.3.0
+Version: 0.4.0
 Authors@R: person("Michel G.", "Nivard", role = c("aut", "cre"), email = "m.g.nivard@bristol.ac.uk")
 Description: Defines linear structural equation models for genomic covariance,
     third cumulants and fourth cumulants. Propagates sparse source cumulants
@@ -9,11 +9,12 @@ Description: Defines linear structural equation models for genomic covariance,
     with full sampling-covariance sandwich uncertainty and explicit numerical
     diagnostics. Provides an interactive R interface to the accompanying Python
     summary-statistics pipeline, inspectable moment and fit objects, readable
-    summaries, and optional table export. No dependency on MCMSEM or lavaan.
+    summaries, effective polygenicity with block-jackknife diagnostics,
+    and optional table export. No dependency on MCMSEM or lavaan.
 License: MIT + file LICENSE
 Encoding: UTF-8
 Depends: R (>= 4.1.0)
-Imports: stats, utils
+Imports: stats, utils, graphics
 Suggests: jsonlite
 URL: https://github.com/MichelNivard/GCMSEM
 BugReports: https://github.com/MichelNivard/GCMSEM/issues
