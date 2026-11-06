@@ -242,6 +242,92 @@ Rounded results:
 
 Height supplies a reasonably precise point estimate for this reference and model. Depression illustrates why a returned count must be read together with its SE, denominator and source-moment diagnostics. Its uncertainty is too large to draw a firm conclusion about how its effective polygenicity compares with height. This is a deliberately chosen teaching contrast; both trait analyses retain their usual inputs and every deletion.
 
+### What every diagnostic check means
+
+These checks describe the `estimate_polygenicity()` workflow. They distinguish **warnings about returned estimates**, **SNP-level input filtering**, and **errors that stop computation**. SEM model-fit and identification diagnostics are described separately in [Working with R results](R-results.md).
+
+The ten polygenicity flags below examine point estimates or their estimated uncertainty. They are not ten formal hypothesis tests. A noisy estimate can fall outside the admissible region even when the population model is valid. GCMSEM retains signed estimates and all computed deletions; it does not constrain them or select favourable deletions to make these warnings disappear.
+
+Write $v_c$, $k_{3c}$ and $k_{4c}$ for variance, third cumulant and fourth cumulant in source bin $c$, and $M_c$ for its source SNP count. The total genetic variance is $H=\sum_c M_cv_c$, and the count is $3H^2/D$, with $D$ defined in Section 2.
+
+- **`nonpositive_bin_variance` — a source-bin variance is zero or negative.** Trigger: any $v_c\leq0$. A negative population variance is impossible; zero is a degenerate boundary where standardized moments cannot be formed. This warning checks the estimate's sign, without a significance test. Inspect the bin's `variance` and `variance_se` in `$strata`. Depression's first bin is only 0.46 SE below zero, so its warning is compatible with sampling noise around a small positive variance. The count remains available.
+
+- **`negative_fourth_cumulant_gaussian_mixture_incompatible` — a source-bin fourth cumulant is negative.** Trigger: any $k_{4c}<0$. For a zero-mean Gaussian variance mixture, $k_4=3\operatorname{Var}(\sigma^2)\geq0$. A negative estimate conflicts with that interpretation at the point-estimate level. Other valid distributions can have negative fourth cumulants. Inspect `fourth_cumulant` and `fourth_cumulant_se`; the first three depression bins are negative but each is less than one SE below zero. This flag does not formally reject the mixture model. An exactly zero fourth cumulant does not trigger it.
+
+- **`source_moment_inequality_violated` — the estimated variance, skewness and kurtosis are mutually inconsistent.** For bins with positive variance, the software checks $k_{4c}\geq k_{3c}^2/v_c-2v_c^2$. Equivalently, ordinary kurtosis must be at least squared skewness plus one. Strong asymmetry requires sufficiently large fourth moments. Failure means those point estimates cannot jointly describe a probability distribution. The check does not use their joint sampling covariance to test statistical significance. Depression fails in the 5–10% and 10–20% frequency bins; its negative-variance first bin is flagged separately and skipped here. Passing is a necessary consistency check, not validation of the complete genetic model.
+
+- **`nonpositive_total_genetic_variance` — the aggregate variance is zero or negative.** Trigger: $H\leq0$. The estimated source contributions do not sum to a positive genetic variance. Examine the bin estimates and their covariance to distinguish weak signal from possible scale or reference problems. Because the numerator squares $H$, the numerical count can still be positive when this warning is present; that positive count does not repair the invalid variance interpretation.
+
+- **`nonpositive_denominator` — the full-data count denominator is zero or negative.** Trigger: $D\leq0$. With a positive numerator, negative $D$ produces a negative effective count, outside its population interpretation; zero $D$ makes division undefined. A finite signed result is retained. Undefined numerical results are represented as `NA` in R, with the denominator and deletion records available for diagnosis. Inspect `$stages` to see the fourth-cumulant and LD contributions.
+
+- **`denominator_not_separated_from_zero` — uncertainty reaches the ratio's singularity.** Trigger: $D-1.96\,SE(D)\leq0$, using the block-jackknife denominator SE. This approximate normal-reference rule checks whether the denominator is sufficiently separated from zero for a stable ratio interpretation. Height has $D/SE(D)=4.99$; depression has 0.69. A failure signals potentially large, asymmetric uncertainty in the count. It is not a calibrated confidence-interval or model-rejection test. Inspect the nonlinear count SE, delta SE and deletion plot together; neither agreement between SE methods nor passing this rule proves coverage.
+
+- **`nonpositive_denominator_in_deletions` — deleting at least one genomic block takes the denominator to or below zero.** Trigger: any leave-block-out $D_{(-b)}\leq0$. The estimate is sensitive enough to encounter the ratio's singularity under genomic deletion. Locate the affected rows in `$jackknife`, using their chromosome and coordinate columns. Negative finite deletion counts are retained; an undefined deletion can make the corresponding uncertainty unavailable. The software does not remove the offending block. Conversely, positive denominators in every deletion do not guarantee precision: depression has all-positive deletions but still fails the preceding uncertainty check.
+
+- **`undefined_ratio_or_uncertainty` — at least one reported stage, deletion value or stage SE is nonfinite.** This checks all ten intermediate quantities, including the no-LD count, excess kurtosis and reciprocal count. A warning can therefore arise from a supplementary quantity even when the primary count is finite. Division by zero or numerical overflow are possible causes. Inspect `$stages` and `$jackknife` for `NA` to identify the affected quantity. Its uncertainty is not silently calculated after dropping problematic deletions; other finite quantities remain available.
+
+- **`count_outside_source_range` — a finite effective count is outside its intended range.** Trigger: $\widehat M_e\leq0$ or $\widehat M_e>\sum_c M_c$. Under the intended effective-count interpretation, the count should be positive and cannot exceed the number of represented source variants. The upper bound uses source SNPs, not HM3 tags. Failure can reflect noisy moment estimates or a poor working-model approximation. The count is retained without clipping. This check does not impose a lower bound of one and does not assess the no-LD count separately.
+
+- **`single_block_dominates_jackknife_variance` — one deletion supplies more than half the estimated count variance.** Trigger: any `variance_fraction > 0.5`. These fractions are contributions to the weighted-pseudovalue jackknife variance; they do not measure the fraction of genetic variance explained by a region. Failure means the reported uncertainty depends heavily on one genomic region. Inspect its coordinates, deletion count and denominator and investigate data quality or regional architecture before interpreting it. A dominant block is not automatically an erroneous block, and remains included. Height's largest contribution is 17.1%; depression's is 15.4% in these standalone runs.
+
+Passing all ten checks means none of these particular problems was detected. It does not verify ancestry or genome-build compatibility, the Gaussian-mixture interpretation, the use of tag LD averages as source LD averages, or confidence-interval coverage. Reference-panel uncertainty is not propagated. The variance and fourth-cumulant sign checks do not require estimates to be significantly positive.
+
+### Additional estimation warnings
+
+The moment engine can also return warnings in `$moments[[trait]]$metadata$warnings` and the log:
+
+| Check | Trigger and meaning | How to respond |
+|---|---|---|
+| Few genomic deletion groups | Fewer than 30 groups; the jackknife has limited information for uncertainty estimation. | Inspect the available reference blocks and group construction. More requested groups help only when enough distinct blocks exist. |
+| Large deletion | A group contains more than 10% of retained tags; the unequal-group jackknife remains approximate. | Inspect block sizes and coordinates. Do not discard a block solely because it is influential. |
+| Rank-deficient joint sampling covariance | The number of pooled moments is at least the number of deletion groups. The covariance cannot have full rank. | Avoid treating it as invertible. The polygenicity transformation can still have a computable scalar SE; assess its own diagnostics. |
+| Nonpositive pooled SNP-effect variance | A pooled variance is zero or negative, so corresponding genetic correlations are undefined. | Inspect the pooled moment and bin estimates. Signed moment estimates remain available. |
+
+The multivariate moment engine also checks positive semidefiniteness of the estimated genetic correlation matrix. `estimate_polygenicity()` processes each trait separately, so it does not perform a between-trait covariance or SEM identification test. These analyses are documented in [Working with R results](R-results.md).
+
+### Input checks, SNP filtering and errors
+
+Input QC precedes estimation. Removing a malformed or unalignable SNP at this stage is distinct from discarding an inconvenient fitted moment or jackknife result.
+
+| Check | What happens on failure | What to inspect or fix |
+|---|---|---|
+| R arguments and dependencies | Invalid trait names, effect scales, thresholds or noise-intercept values, missing files, missing `jsonlite`, or an unavailable/incompatible Python engine stop the call. | Follow the error message; supply explicit effect scales and the Python executable containing the current engine. |
+| GWAS table structure | Missing/ambiguous required columns, duplicate or empty SNP IDs, malformed tables, or a requested INFO/N filter without its column stop the call. | Repair the table rather than silently selecting among duplicate records. |
+| SNP-level QC | Tags absent from the reference, nonfinite BETA/SE, nonpositive SE, invalid supplied EAF, invalid alleles, allele/frequency mismatches and requested INFO/N failures are excluded and counted. | Inspect `$moments[[trait]]$metadata$qc`. A/T and C/G SNPs are dropped by default; keeping them requires EAF to resolve orientation uniquely. |
+| Score archive integrity | Missing fields, unsupported schema/orientation/scale, duplicate IDs, invalid coordinates/frequencies/counts, incompatible score dimensions, invalid LD-power values or inconsistent MAF bins stop the call. | Use a compatible, checksum-verified score archive. Structural validation cannot establish biological reference suitability. |
+| Sufficient data and supported strata | Too few usable tags for the regressions, an empty source/tag stratum, or a deletion that leaves a stratum without representative tags stops computation. | Inspect coverage and score strata; redesign sparse strata when building scores. Do not hide a failed deletion. |
+| Regression identifiability | An empty score column, deficient design rank or a condition number above `max_condition` in a full-data or deletion fit stops computation. | Inspect redundant/unsupported strata and reference coverage. Raising the condition limit alone does not resolve weak identification. |
+| Genomic grouping | Blocks must occupy contiguous rows, stay within chromosomes and support at least two deletion groups, with chromosome-respecting grouping and valid fractions. Invalid grouping stops computation. | Correct the score/block metadata and requested group count. |
+| Sampling-noise calibration | A supplied or estimated calibration must be finite, symmetric and positive semidefinite; a fixed univariate intercept must be nonnegative. Invalid calibration stops computation. | Inspect scales, SEs and calibration fit. A zero intercept is permitted when explicitly supplied; it asserts no sampling-noise contribution. |
+| Numerical and memory limits | Nonfinite fitted cumulants, a failed moment-regression deletion, or estimated memory above `max_memory_mb` stops the analysis. | Inspect the captured error log, input scales and available memory. A failed moment fit does not produce a partial jackknife covariance. |
+| Optional export protection | Invalid output arguments or existing managed files without `overwrite=TRUE` stop export. | Choose a new prefix or explicitly permit replacement. Ordinary in-memory use needs no output prefix. |
+
+Warnings and errors can be inspected in R:
+
+```r
+depression$estimates$flags                    # Ten polygenicity checks above
+depression$details$Depression$warnings        # Individual flag names
+depression$details$Depression$strata          # Bin estimates and SEs
+depression$details$Depression$stages          # Aggregate quantities and SEs
+depression$details$Depression$jackknife       # Every genomic deletion
+depression$moments$Depression$metadata$warnings # Moment-engine warnings
+depression$moments$Depression$metadata$qc     # SNP filtering counts
+depression$log                               # Captured estimation log
+```
+
+For a Python-engine failure, the R error also retains its log:
+
+```r
+tryCatch(estimate_polygenicity(
+  c(Depression = "tutorial-data/sumstats/20544_11.tsv.gz"),
+  "tutorial-data/scores/eur_hm3.scores.npz",
+  effect_scale = "genotype_standardized"
+), gcmsem_engine_error = function(e) {
+  cat(conditionMessage(e), "\n")
+  cat(e$log, sep = "\n")
+})
+```
+
 ### Arguments and their defaults
 
 Run `?estimate_polygenicity` in R for the installed help page.
