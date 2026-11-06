@@ -63,6 +63,24 @@ The external release preserves the original numerical archives and provenance. N
 
 ## Kurtosis and effective polygenicity
 
+The standalone R function `estimate_polygenicity()` now starts the
+[polygenicity tutorial](Polygenicity.md#3-run-a-standalone-gcmsem-analysis-in-r).
+The executed depression analysis retains 1,074,026 eligible HM3 tags and gives
+an effective count of **20,269 (jackknife SE 35,513; delta SE 29,999)**. The
+returned R object includes the cumulants, full sampling covariance, intermediate
+quantities, all 200 deletions, diagnostics and logs. Source-moment and
+weak-denominator warnings remain visible. The
+[console transcript](output/standalone-polygenicity.txt) and
+[deletion plot](figures/standalone-polygenicity-deletions.png) come from that run.
+
+The new production conversion also reproduces the historical shared-SNP
+depression count **30,796 (SE 108,315)** to relative tolerance `1e-12` when given
+the same inputs. The default standalone analysis uses each trait's eligible
+SNPs independently. The comparison below retains its original shared-SNP setup.
+The [execution record](../validation/results/standalone_polygenicity.json)
+records both analyses. R 0.4.0 passes `R CMD check` with zero errors, warnings
+and notes, including 41 estimation-bridge checks; Python 0.2.0 passes 62 tests.
+
 The [polygenicity tutorial](Polygenicity.md) runs unmodified S-LD4M on all 15 original GWAS using the author's full 1000 Genomes reference, 75 baseline-LD annotations, supplied EW2/EW4 weights and 100 native jackknife blocks. Each GWAS is matched independently to that reference (5,250,533–6,065,283 SNPs). The native baseline-category count is reported directly. GCMSEM retains its existing HM3 analysis. Pearson r is **0.6668**, with RMSE **8,190.4** effective variants. All traits and signed annotation estimates remain available with diagnostic flags and one-SE plots.
 
 The earlier r = 0.9651 used shared GCMSEM scores and weights. It is retained as an [archived matched-input diagnostic](Polygenicity-matched-input.md), together with its known-LD simulation. It is not evidence of independent-pipeline agreement. The public S-LD4M reference is 1000 Genomes; the 2019 paper's main analysis used UK10K. See the [new execution record](../docs/original-sld4m-validation.json) for source hashes, per-trait counts, numerical checks and limitations.

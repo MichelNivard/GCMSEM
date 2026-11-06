@@ -34,12 +34,20 @@
         stop("Conditional bundles require unique simple names")
       for(nm in names(children))files<-c(files,.export_plan(children[[nm]],paste0(prefix,".",nm)))
     }
+  } else if(inherits(x,"gcmsem_polygenicity")) {
+    files<-paste0(prefix,c(".polygenicity.tsv",".metadata.json",".log"))
+    for(trait in x$traits) {
+      stem<-paste0(prefix,".",trait)
+      files<-c(files,paste0(stem,c(".stages.tsv",".strata.tsv",".jackknife.tsv",
+        ".covariance.tsv",".conditional_covariance.tsv",".ld_mean.tsv")),
+        .export_plan(x$moments[[trait]],paste0(stem,".moments")))
+    }
   } else if(inherits(x,"gcmsem_fit")) {
     files<-paste0(prefix,c(".parameters.tsv",".fitted.tsv",".sampling_cov.tsv",
       ".vcov.tsv",".starts.tsv",".diagnostics.tsv",".model.txt"))
     if(!is.null(x$fit_measures))files<-c(files,paste0(prefix,".fit_measures.tsv"))
     if(length(x$log))files<-c(files,paste0(prefix,".log"))
-  } else stop("x must be a gcmsem_fit or gcmsem_moments object")
+  } else stop("x must be a GCMSEM fit, moments or polygenicity object")
   files
 }
 
@@ -52,6 +60,8 @@
     if(length(x$conditional))for(nm in names(x$conditional))
       paths<-c(paths,.export_optional_paths(x$conditional[[nm]],paste0(prefix,".",nm)))
   }
+  if(inherits(x,"gcmsem_polygenicity"))for(trait in x$traits)
+    paths<-c(paths,.export_optional_paths(x$moments[[trait]],paste0(prefix,".",trait,".moments")))
   paths
 }
 
@@ -93,6 +103,19 @@
       jsonlite::write_json(meta,paste0(prefix,".metadata.json"),auto_unbox=TRUE,pretty=TRUE,digits=NA,null="null",na="null")
     }
     if(length(x$conditional))for(nm in names(x$conditional)).write_export(x$conditional[[nm]],paste0(prefix,".",nm))
+  } else if(inherits(x,"gcmsem_polygenicity")) {
+    .export_table(x$estimates,paste0(prefix,".polygenicity.tsv"))
+    meta<-x$metadata
+    meta$assumptions<-lapply(x$details,function(d)d$assumptions)
+    meta$warnings<-lapply(x$details,function(d)d$warnings)
+    jsonlite::write_json(meta,paste0(prefix,".metadata.json"),auto_unbox=TRUE,pretty=TRUE,digits=NA,null="null")
+    for(trait in x$traits) {
+      stem<-paste0(prefix,".",trait);d<-x$details[[trait]]
+      for(nm in c("stages","strata","jackknife")) .export_table(d[[nm]],paste0(stem,".",nm,".tsv"))
+      for(nm in c("covariance","conditional_covariance","ld_mean"))
+        .export_table(.export_matrix(d[[nm]],"key"),paste0(stem,".",nm,".tsv"))
+      .write_export(x$moments[[trait]],paste0(stem,".moments"))
+    }
   } else {
     .export_table(x$parameters,paste0(prefix,".parameters.tsv"))
     .export_table(data.frame(key=names(x$observed),observed=as.numeric(x$observed),
@@ -129,7 +152,7 @@ export_gcmsem <- function(x,prefix,overwrite=FALSE) {
   if(length(existing)&&!overwrite)stop("Refusing to overwrite existing files: ",paste(existing,collapse=", "))
   needs_json<-function(z)inherits(z,"gcmsem_moments") &&
     (.structured_export_metadata(z)||any(vapply(z$conditional,needs_json,logical(1))))
-  if(needs_json(x)&&!requireNamespace("jsonlite",quietly=TRUE))
+  if((inherits(x,"gcmsem_polygenicity")||needs_json(x))&&!requireNamespace("jsonlite",quietly=TRUE))
     stop("Install jsonlite to export structured moment metadata")
   dir.create(dirname(prefix),recursive=TRUE,showWarnings=FALSE)
   if(!dir.exists(dirname(prefix)))stop("Could not create export directory")

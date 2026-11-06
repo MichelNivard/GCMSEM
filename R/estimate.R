@@ -142,6 +142,18 @@ estimate_moments <- function(sumstats, scores, effect_scale = NULL,
     max_moments = 5000L, max_memory_mb = 2048, max_condition = 1e6,
     conditional = TRUE, python = Sys.which("python"),
     write.to.tsv = FALSE, out = NULL, overwrite = FALSE, verbose = FALSE) {
+  ans <- do.call(.estimate_moments_engine, as.list(environment()))
+  ans$call <- match.call()
+  ans
+}
+
+.estimate_moments_engine <- function(sumstats, scores, effect_scale = NULL,
+    max_order = 4L, n_blocks = 200L, moment_keys = NULL, noise_intercept = NULL,
+    min_info = NULL, min_n = NULL, af_tolerance = 0.1,
+    allow_strand_flips = FALSE, keep_palindromic = FALSE,
+    max_moments = 5000L, max_memory_mb = 2048, max_condition = 1e6,
+    conditional = TRUE, python = Sys.which("python"),
+    write.to.tsv = FALSE, out = NULL, overwrite = FALSE, verbose = FALSE, .polygenicity = FALSE) {
   call <- match.call()
   for (nm in c("allow_strand_flips", "keep_palindromic", "conditional",
                "write.to.tsv", "overwrite", "verbose"))
@@ -179,7 +191,7 @@ estimate_moments <- function(sumstats, scores, effect_scale = NULL,
   input <- .gcmsem_prepare_sumstats(sumstats, effect_scale, workdir)
   traits <- input$manifest$trait
   prefix <- file.path(workdir, "moments")
-  args <- c("-m", "gcmsem.cli", "estimate", "--sumstats", input$path,
+  args <- c("-m", "gcmsem.cli", if (.polygenicity) "polygenicity" else "estimate", "--sumstats", input$path,
     "--scores", scores, "--out", prefix, "--max-order", as.character(max_order),
     "--blocks", as.character(n_blocks), "--af-tolerance", as.character(af_tolerance),
     "--max-moments", as.character(max_moments), "--max-memory-mb", as.character(max_memory_mb),
@@ -230,6 +242,11 @@ estimate_moments <- function(sumstats, scores, effect_scale = NULL,
       status = as.integer(status), log = log), class = c("gcmsem_engine_error", "error", "condition")))
   }
   result <- .gcmsem_read_engine_bundle(prefix)
+  if (.polygenicity) {
+    polyfile <- paste0(prefix, ".polygenicity.json")
+    if (!file.exists(polyfile)) stop("Update the Python GCMSEM engine: missing polygenicity output")
+    result$polygenicity <- jsonlite::fromJSON(polyfile, simplifyMatrix = TRUE)
+  }
   conditional_prefixes <- result$metadata$conditional_prefixes
   result$conditional <- list()
   if (length(conditional_prefixes)) {
